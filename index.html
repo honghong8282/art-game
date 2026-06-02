@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎨 미술사 퀴즈 게임</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f4ef;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.1);
+    --border-strong: rgba(0,0,0,0.2);
+    --text: #1a1a1a;
+    --text-muted: #6b6b6b;
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --purple-dark: #3C3489;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --amber: #633806;
+    --amber-light: #FAEEDA;
+    --green-light: #EAF3DE;
+    --green-dark: #27500A;
+    --red-light: #FCEBEB;
+    --red-dark: #791F1F;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'Nanum Gothic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  #app {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── 공통 타이포 ── */
+  .title-area { text-align: center; margin-bottom: 1.5rem; }
+  .title-area h1 { font-family: 'Nanum Myeongjo', serif; font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+  .title-area p { font-size: 13px; color: var(--text-muted); }
+
+  /* ── 시작 화면 ── */
+  .start-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+  .start-card .big-emoji { font-size: 52px; margin-bottom: 1rem; }
+  .start-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 0.6rem; }
+  .start-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; }
+  .badge-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.75rem; }
+  .badge { font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 100px; }
+  .badge-purple { background: var(--purple-light); color: var(--purple-dark); }
+  .badge-teal { background: var(--teal-light); color: var(--teal); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+
+  /* ── 버튼 ── */
+  .btn-primary {
+    display: inline-block;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 13px 36px;
+    font-family: 'Nanum Gothic', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-primary:active { transform: scale(.98); }
+  .btn-secondary {
+    background: none;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 11px 22px;
+    font-family: 'Nanum Gothic', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-secondary:hover { background: var(--bg); }
+
+  /* ── 진행 바 ── */
+  .progress-bar-wrap { background: #e5e0d8; border-radius: 100px; height: 6px; margin-bottom: 1.25rem; }
+  .progress-bar-fill { background: var(--purple); height: 6px; border-radius: 100px; transition: width .35s; }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+  .q-num { font-size: 13px; color: var(--text-muted); }
+  .q-score-badge { font-size: 13px; font-weight: 700; background: var(--purple-light); color: var(--purple-dark); padding: 3px 12px; border-radius: 100px; }
+
+  /* ── 일반 퀴즈 ── */
+  .question-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: .75rem;
+  }
+  .question-card .tag {
+    font-size: 11px; font-weight: 700;
+    background: var(--teal-light); color: var(--teal);
+    padding: 3px 9px; border-radius: 100px;
+    display: inline-block; margin-bottom: .65rem;
+  }
+  .question-card .tag-amber { background: var(--amber-light); color: var(--amber); }
+  .question-card .q-text { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.7; }
+
+  .hint-box {
+    background: var(--amber-light);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-bottom: .75rem;
+    font-size: 13px;
+    color: var(--amber);
+    display: none;
+  }
+  .hint-box.visible { display: block; }
+
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: .75rem; }
+  .choice-btn {
+    background: var(--surface);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 13px 14px;
+    font-family: 'Nanum Gothic', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.4;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .choice-btn:hover:not(:disabled) { background: var(--bg); border-color: var(--purple); transform: translateY(-1px); }
+  .choice-btn.correct { background: var(--green-light); border-color: #3B6D11; color: #173404; }
+  .choice-btn.wrong { background: var(--red-light); border-color: #A32D2D; color: var(--red-dark); }
+  .choice-btn:disabled { cursor: default; transform: none; }
+
+  .feedback {
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    margin-bottom: .75rem;
+    display: none;
+  }
+  .feedback.correct { background: var(--green-light); color: var(--green-dark); display: block; }
+  .feedback.wrong { background: var(--red-light); color: var(--red-dark); display: block; }
+
+  .action-row { display: flex; gap: 8px; align-items: center; }
+  .btn-hint {
+    background: none;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 9px 16px;
+    font-family: 'Nanum Gothic', sans-serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-hint:hover { background: var(--bg); }
+  .btn-next {
+    margin-left: auto;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 26px;
+    font-family: 'Nanum Gothic', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+    transition: opacity .15s;
+  }
+  .btn-next:hover { opacity: .88; }
+
+  /* ── 명화 부분 보기 퀴즈 ── */
+  .art-quiz-wrap {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: .75rem;
+  }
+  .art-stage-label {
+    font-size: 11px; font-weight: 700;
+    background: var(--amber-light); color: var(--amber);
+    padding: 3px 9px; border-radius: 100px;
+    display: inline-block; margin-bottom: .75rem;
+  }
+  .art-q-text { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.6; margin-bottom: 1rem; }
+  .art-canvas-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #1a1a2e;
+    margin-bottom: 1rem;
+  }
+  .art-canvas-wrap canvas { display: block; width: 100%; height: 100%; }
+  .reveal-progress { height: 4px; background: #e5e0d8; border-radius: 100px; }
+  .reveal-bar { height: 4px; background: var(--purple); border-radius: 100px; transition: width .5s; }
+  .reveal-row { display: flex; align-items: center; gap: 10px; margin-bottom: .75rem; }
+  .btn-reveal {
+    font-family: 'Nanum Gothic', sans-serif;
+    font-size: 12px;
+    background: none;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 6px 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s;
+  }
+  .btn-reveal:hover:not(:disabled) { background: var(--bg); }
+  .btn-reveal:disabled { opacity: .4; cursor: default; }
+
+  /* ── 결과 화면 ── */
+  .result-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+  .result-emoji { font-size: 52px; margin-bottom: .6rem; }
+  .result-score { font-family: 'Nanum Myeongjo', serif; font-size: 40px; font-weight: 700; color: var(--purple); margin-bottom: .2rem; }
+  .result-label { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .stat-row { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+  .stat-box { flex: 1; background: var(--bg); border-radius: var(--radius-sm); padding: .85rem; }
+  .stat-box .s-num { font-size: 24px; font-weight: 700; color: var(--text); }
+  .stat-box .s-lbl { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .result-msg { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: .5rem; }
+  .result-sub { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.75rem; }
+  .btn-row { display: flex; gap: 10px; justify-content: center; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- 시작 화면 -->
+  <div id="screen-start" class="screen active">
+    <div class="title-area">
+      <h1>🎨 미술사 퀴즈</h1>
+      <p>중학교 1학년 · 미술 작가와 작품 탐구</p>
+    </div>
+    <div class="start-card">
+      <div class="big-emoji">🖼️</div>
+      <h2>미술사 도전 퀴즈</h2>
+      <p>작가·작품 4지선다 10문제 + 명화 부분 맞추기 3문제<br>총 13문제 도전!</p>
+      <div class="badge-row">
+        <span class="badge badge-purple">작가·작품 퀴즈 10문제</span>
+        <span class="badge badge-amber">명화 부분 보기 3문제</span>
+        <span class="badge badge-teal">힌트 사용 가능</span>
+      </div>
+      <button class="btn-primary" onclick="startGame()">게임 시작</button>
+    </div>
+  </div>
+
+  <!-- 퀴즈 화면 -->
+  <div id="screen-quiz" class="screen">
+    <div class="q-meta">
+      <span class="q-num" id="q-num">1 / 13</span>
+      <span class="q-score-badge" id="score-badge">점수: 0</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:7%"></div>
+    </div>
+
+    <!-- 일반 퀴즈 -->
+    <div id="normal-quiz">
+      <div class="question-card">
+        <span class="tag" id="q-tag">작가</span>
+        <p class="q-text" id="q-text"></p>
+      </div>
+      <div class="hint-box" id="hint-box"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="action-row">
+        <button class="btn-hint" onclick="showHint()">💡 힌트 보기</button>
+        <button class="btn-next" id="btn-next" onclick="nextQuestion()">다음 문제 →</button>
+      </div>
+    </div>
+
+    <!-- 명화 부분 보기 -->
+    <div id="art-quiz" style="display:none;">
+      <div class="art-quiz-wrap">
+        <span class="art-stage-label">🔍 명화 부분 맞추기</span>
+        <p class="art-q-text" id="art-q-text">이 명화의 일부입니다. 어떤 작품일까요?</p>
+        <div class="art-canvas-wrap">
+          <canvas id="art-canvas" width="400" height="400"></canvas>
+        </div>
+        <div class="reveal-row">
+          <div class="reveal-progress" style="flex:1;">
+            <div class="reveal-bar" id="reveal-bar" style="width:20%"></div>
+          </div>
+          <button class="btn-reveal" id="btn-more-reveal" onclick="revealMore()">더 보기 (+20%)</button>
+        </div>
+      </div>
+      <div class="hint-box" id="art-hint-box"></div>
+      <div class="choices" id="art-choices"></div>
+      <div class="feedback" id="art-feedback"></div>
+      <div class="action-row">
+        <button class="btn-hint" onclick="showArtHint()">💡 힌트 보기</button>
+        <button class="btn-next" id="art-btn-next" onclick="nextQuestion()">다음 문제 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div id="screen-result" class="screen">
+    <div class="title-area"><h1>🎨 미술사 퀴즈</h1></div>
+    <div class="result-card">
+      <div class="result-emoji" id="r-emoji">🏆</div>
+      <div class="result-score" id="r-score">0점</div>
+      <div class="result-label">총점 (13문제 · 만점 130점)</div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="s-num" id="r-correct">0</div><div class="s-lbl">정답</div></div>
+        <div class="stat-box"><div class="s-num" id="r-wrong">0</div><div class="s-lbl">오답</div></div>
+        <div class="stat-box"><div class="s-num" id="r-hint">0</div><div class="s-lbl">힌트 사용</div></div>
+      </div>
+      <div class="result-msg" id="r-msg"></div>
+      <div class="result-sub" id="r-sub"></div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="restartGame()">다시 도전</button>
+        <button class="btn-primary" onclick="alert('선생님 컴퓨터에서 추가 활동을 진행해주세요!')">수업 이어가기</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ────────────────────────────
+   데이터
+──────────────────────────── */
+const NORMAL_Q = [
+  {tag:"작가", text:"'별이 빛나는 밤'을 그린 네덜란드 후기 인상주의 화가는?", choices:["빈센트 반 고흐","클로드 모네","파블로 피카소","살바도르 달리"], answer:0, hint:"귀를 자른 사건으로도 유명하며, 아를에서 고갱과 함께 지냈어요."},
+  {tag:"작품", text:"레오나르도 다빈치가 그린 세계에서 가장 유명한 초상화로, 파리 루브르 박물관에 있는 작품은?", choices:["모나리자","아테네 학당","최후의 만찬","비너스의 탄생"], answer:0, hint:"수수께끼 같은 미소로 유명한 이탈리아 여인의 초상화예요."},
+  {tag:"작가", text:"<게르니카>를 그린 입체주의(큐비즘)의 창시자는?", choices:["조르주 브라크","파블로 피카소","앙리 마티스","폴 세잔"], answer:1, hint:"스페인 출신으로, 20세기 가장 영향력 있는 화가 중 한 명이에요."},
+  {tag:"작품", text:"클로드 모네가 연작으로 그린 작품으로, 지베르니 연못 풍경을 담은 제목은?", choices:["인상, 해돋이","수련","건초더미","루앙 대성당"], answer:1, hint:"오랑주리 미술관 타원형 방에 전시된 대형 작품이에요."},
+  {tag:"작가", text:"<절규>로 유명한 표현주의 화가로, 노르웨이 출신인 작가는?", choices:["에드바르 뭉크","구스타프 클림트","에곤 실레","파울 클레"], answer:0, hint:"불안과 공포를 표현한 이 작품은 여러 번 도난당한 적이 있어요."},
+  {tag:"시대", text:"르네상스 시대를 대표하는 '천지창조'와 '최후의 심판'을 시스티나 예배당에 그린 화가는?", choices:["라파엘로","레오나르도 다빈치","미켈란젤로","도나텔로"], answer:2, hint:"조각가이자 화가로, 누워서 천장에 4년간 그림을 그렸다고 해요."},
+  {tag:"작품", text:"살바도르 달리의 대표작으로, 녹아내리는 시계가 등장하는 초현실주의 작품은?", choices:["기억의 지속","갈라의 초상","수수께끼의 욕망","꿈"], answer:0, hint:"시간의 유연성과 꿈을 표현했으며 '부드러운 시계'라고도 불려요."},
+  {tag:"작가", text:"'인상, 해돋이' 등을 그려 '인상주의'라는 이름의 유래가 된 프랑스 화가는?", choices:["폴 고갱","오귀스트 르누아르","클로드 모네","카미유 피사로"], answer:2, hint:"지베르니에 직접 연못 정원을 만들고 그림을 그렸어요."},
+  {tag:"시대", text:"다음 중 바로크 시대 화가가 아닌 사람은?", choices:["렘브란트","카라바조","요하네스 페르메이르","빈센트 반 고흐"], answer:3, hint:"빛과 어둠의 강렬한 대비, 드라마틱한 표현이 바로크의 특징이에요."},
+  {tag:"작품", text:"구스타프 클림트의 대표작으로, 황금빛 장식과 포옹하는 두 남녀를 담은 작품은?", choices:["아델레 블로흐바우어의 초상","유디트","키스","베토벤 프리즈"], answer:2, hint:"오스트리아 벨베데레 미술관에서 볼 수 있어요."}
+];
+
+const ART_Q = [
+  {
+    title:"별이 빛나는 밤 (반 고흐, 1889)",
+    hint:"소용돌이치는 하늘과 파란 밤하늘이 특징인 작품이에요.",
+    choices:["별이 빛나는 밤","모나리자","아테네 학당","키스"],
+    answer:0,
+    draw: function(ctx, reveal) {
+      const w=400, h=400;
+      ctx.fillStyle='#0d1b4b'; ctx.fillRect(0,0,w,h);
+      const swirls=[{x:80,y:60,r:55},{x:200,y:40,r:45},{x:320,y:70,r:50},{x:150,y:130,r:70},{x:280,y:100,r:60}];
+      swirls.forEach(s=>{
+        for(let a=0;a<Math.PI*2;a+=0.3){
+          const rx=s.x+Math.cos(a)*s.r*(0.5+Math.random()*0.5);
+          const ry=s.y+Math.sin(a)*s.r*(0.5+Math.random()*0.5);
+          const alpha=0.3+Math.random()*0.5;
+          ctx.strokeStyle=`rgba(100,149,237,${alpha})`;
+          ctx.lineWidth=3+Math.random()*4;
+          ctx.beginPath(); ctx.moveTo(rx,ry);
+          ctx.lineTo(rx+Math.cos(a+0.3)*20, ry+Math.sin(a+0.3)*20); ctx.stroke();
+        }
+      });
+      [[60,50],[200,30],[330,60],[120,100],[280,80],[370,40],[50,120],[240,110]].forEach(([sx,sy])=>{
+        ctx.fillStyle='#fffde7'; ctx.beginPath(); ctx.arc(sx,sy,3+Math.random()*3,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle='rgba(255,255,200,0.6)'; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.arc(sx,sy,8+Math.random()*5,0,Math.PI*2); ctx.stroke();
+      });
+      ctx.fillStyle='#1a3a1a';
+      ctx.beginPath(); ctx.moveTo(30,400); ctx.lineTo(20,200); ctx.lineTo(10,300); ctx.lineTo(5,180); ctx.lineTo(0,250); ctx.lineTo(0,400); ctx.fill();
+      ctx.fillStyle='#2d5a27';
+      ctx.beginPath(); ctx.moveTo(40,400); ctx.bezierCurveTo(20,300,30,200,35,160); ctx.bezierCurveTo(45,180,60,280,55,400); ctx.fill();
+      ctx.fillStyle='#0a1628'; ctx.fillRect(0,300,400,100);
+      [[50,280,40,20],[100,260,30,40],[170,270,50,30],[250,265,35,35],[320,275,45,25],[370,270,30,30]].forEach(([rx,ry,rw,rh])=>{
+        ctx.fillRect(rx,ry,rw,rh);
+        if(rw>40){ ctx.beginPath(); ctx.moveTo(rx+rw/2-5,ry); ctx.lineTo(rx+rw/2,ry-30); ctx.lineTo(rx+rw/2+5,ry); ctx.fill(); }
+      });
+      ctx.fillStyle='#ffd54f'; ctx.beginPath(); ctx.arc(340,60,30,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(255,220,50,0.5)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(340,60,42,0,Math.PI*2); ctx.stroke();
+      applyReveal(ctx,w,h,reveal);
+    }
+  },
+  {
+    title:"절규 (에드바르 뭉크, 1893)",
+    hint:"다리 위에서 불안에 떨며 귀를 막은 인물이 등장해요.",
+    choices:["절규","별이 빛나는 밤","수련","키스"],
+    answer:0,
+    draw: function(ctx, reveal) {
+      const w=400, h=400;
+      const grad=ctx.createLinearGradient(0,0,w,h*0.6);
+      grad.addColorStop(0,'#c62828'); grad.addColorStop(0.4,'#e65100'); grad.addColorStop(1,'#ffd54f');
+      ctx.fillStyle=grad; ctx.fillRect(0,0,w,h);
+      ctx.fillStyle='#1a237e';
+      ctx.beginPath(); ctx.moveTo(0,200);
+      for(let x=0;x<=w;x+=20){ ctx.lineTo(x, 200+Math.sin(x*0.04)*30+x*0.1); }
+      ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.fill();
+      ctx.strokeStyle='#3e2723'; ctx.lineWidth=8;
+      ctx.beginPath(); ctx.moveTo(0,h*0.55); ctx.lineTo(w*0.6,h*0.45); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,h*0.65); ctx.lineTo(w*0.6,h*0.55); ctx.stroke();
+      for(let i=0;i<7;i++){ ctx.beginPath(); ctx.moveTo(i*50,h*0.55+i*2); ctx.lineTo(i*50,h*0.65+i*2); ctx.stroke(); }
+      for(let i=0;i<12;i++){
+        const y=20+i*18;
+        ctx.strokeStyle=`rgba(180,${50+i*8},${i*5},0.7)`; ctx.lineWidth=2+Math.random()*2;
+        ctx.beginPath(); ctx.moveTo(0,y);
+        for(let x=0;x<w;x+=20){ ctx.lineTo(x, y+Math.sin(x*0.05+i)*15); } ctx.stroke();
+      }
+      ctx.strokeStyle='#2c1810'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(155,170); ctx.bezierCurveTo(140,220,120,280,110,340); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(155,170); ctx.bezierCurveTo(170,220,180,280,185,340); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(110,200); ctx.bezierCurveTo(100,175,120,160,140,158); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(185,200); ctx.bezierCurveTo(200,175,180,160,165,158); ctx.stroke();
+      ctx.fillStyle='#f0e0c0'; ctx.beginPath(); ctx.ellipse(155,145,22,28,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#1a0000'; ctx.beginPath(); ctx.ellipse(146,138,5,8,0,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(164,138,5,8,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#8b0000'; ctx.beginPath(); ctx.ellipse(155,158,8,10,0,0,Math.PI*2); ctx.fill();
+      applyReveal(ctx,w,h,reveal);
+    }
+  },
+  {
+    title:"키스 (구스타프 클림트, 1907)",
+    hint:"황금빛 장식 속에서 포옹하는 두 남녀가 그려져 있어요.",
+    choices:["키스","수련","별이 빛나는 밤","모나리자"],
+    answer:0,
+    draw: function(ctx, reveal) {
+      const w=400, h=400;
+      const bg=ctx.createRadialGradient(w/2,h/2,40,w/2,h/2,250);
+      bg.addColorStop(0,'#ffd54f'); bg.addColorStop(0.5,'#ffb300'); bg.addColorStop(1,'#e65100');
+      ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+      for(let i=0;i<60;i++){
+        const gx=Math.random()*w, gy=Math.random()*h;
+        if(Math.random()>0.5){
+          ctx.fillStyle=`rgba(255,255,255,${0.1+Math.random()*0.3})`;
+          ctx.beginPath(); ctx.arc(gx,gy,3+Math.random()*8,0,Math.PI*2); ctx.fill();
+        } else {
+          ctx.fillStyle=`rgba(180,100,0,${0.2+Math.random()*0.3})`;
+          const rs=5+Math.random()*12; ctx.fillRect(gx,gy,rs,rs);
+        }
+      }
+      ctx.fillStyle='rgba(210,150,30,0.9)';
+      ctx.beginPath(); ctx.ellipse(200,220,90,130,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#388e3c'; ctx.fillRect(0,330,w,70);
+      for(let i=0;i<30;i++){
+        const fx=Math.random()*w, fy=330+Math.random()*50;
+        const colors=['#e53935','#f06292','#fff176','#80cbc4','#ce93d8'];
+        ctx.fillStyle=colors[Math.floor(Math.random()*colors.length)];
+        ctx.beginPath(); ctx.arc(fx,fy,4+Math.random()*6,0,Math.PI*2); ctx.fill();
+      }
+      ctx.fillStyle='#f5cba7';
+      ctx.beginPath(); ctx.ellipse(190,130,28,35,-0.3,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(225,160,22,28,0.4,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=1;
+      for(let i=0;i<20;i++){
+        const lx=Math.random()*w;
+        ctx.beginPath(); ctx.moveTo(lx,0); ctx.lineTo(lx+Math.random()*40-20,h); ctx.stroke();
+      }
+      ctx.strokeStyle='#8d6e63'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(225,148,18,Math.PI,Math.PI*2); ctx.stroke();
+      ['#f48fb1','#f06292','#ffffff','#ffe082'].forEach((c,i)=>{
+        ctx.fillStyle=c; ctx.beginPath(); ctx.arc(210+i*10,145,4,0,Math.PI*2); ctx.fill();
+      });
+      applyReveal(ctx,w,h,reveal);
+    }
+  }
+];
+
+/* ────────────────────────────
+   모자이크 공개 함수
+──────────────────────────── */
+function applyReveal(ctx, w, h, reveal) {
+  const tileSize = Math.max(4, Math.floor(60 * (1 - reveal)));
+  if (tileSize <= 4) return;
+  const imgData = ctx.getImageData(0,0,w,h);
+  const d = imgData.data;
+  for (let ty=0; ty<h; ty+=tileSize) {
+    for (let tx=0; tx<w; tx+=tileSize) {
+      let r=0,g=0,b=0,cnt=0;
+      for (let py=ty; py<Math.min(ty+tileSize,h); py++) {
+        for (let px=tx; px<Math.min(tx+tileSize,w); px++) {
+          const idx=(py*w+px)*4;
+          r+=d[idx]; g+=d[idx+1]; b+=d[idx+2]; cnt++;
+        }
+      }
+      r=Math.round(r/cnt); g=Math.round(g/cnt); b=Math.round(b/cnt);
+      for (let py=ty; py<Math.min(ty+tileSize,h); py++) {
+        for (let px=tx; px<Math.min(tx+tileSize,w); px++) {
+          const idx=(py*w+px)*4;
+          d[idx]=r; d[idx+1]=g; d[idx+2]=b;
+        }
+      }
+    }
+  }
+  ctx.putImageData(imgData,0,0);
+}
+
+/* ────────────────────────────
+   게임 상태
+──────────────────────────── */
+let allQuestions=[], current=0, score=0, correctCount=0, wrongCount=0, hintTotal=0;
+let hintUsed=false, answered=false;
+let artReveal=0.2, artHintUsed=false, artAnswered=false;
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+function buildQuestions(){
+  const normal = shuffle(NORMAL_Q).map(q=>({type:'normal',...q}));
+  const arts   = shuffle(ART_Q).map(q=>({type:'art',...q}));
+  return [...normal.slice(0,10), ...arts.slice(0,3)];
+}
+
+/* ────────────────────────────
+   화면 전환
+──────────────────────────── */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ────────────────────────────
+   게임 시작
+──────────────────────────── */
+function startGame(){
+  allQuestions = buildQuestions();
+  current=0; score=0; correctCount=0; wrongCount=0; hintTotal=0;
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+/* ────────────────────────────
+   문제 렌더링
+──────────────────────────── */
+function renderQuestion(){
+  const q = allQuestions[current];
+  const total = allQuestions.length;
+  document.getElementById('q-num').textContent = (current+1)+' / '+total;
+  document.getElementById('score-badge').textContent = '점수: '+score;
+  document.getElementById('progress-fill').style.width = Math.round((current+1)/total*100)+'%';
+
+  if(q.type==='normal'){
+    document.getElementById('normal-quiz').style.display='block';
+    document.getElementById('art-quiz').style.display='none';
+    hintUsed=false; answered=false;
+    document.getElementById('q-tag').textContent = q.tag;
+    document.getElementById('q-text').textContent = q.text;
+    document.getElementById('hint-box').textContent='';
+    document.getElementById('hint-box').className='hint-box';
+    document.getElementById('feedback').textContent='';
+    document.getElementById('feedback').className='feedback';
+    document.getElementById('btn-next').style.display='none';
+    const ch=document.getElementById('choices'); ch.innerHTML='';
+    q.choices.forEach((c,i)=>{
+      const btn=document.createElement('button');
+      btn.className='choice-btn'; btn.textContent=c;
+      btn.onclick=()=>selectAnswer(i);
+      ch.appendChild(btn);
+    });
+  } else {
+    document.getElementById('normal-quiz').style.display='none';
+    document.getElementById('art-quiz').style.display='block';
+    artReveal=0.2; artHintUsed=false; artAnswered=false;
+    document.getElementById('art-q-text').textContent='이 명화의 일부입니다. 어떤 작품일까요?';
+    document.getElementById('art-hint-box').textContent='';
+    document.getElementById('art-hint-box').className='hint-box';
+    document.getElementById('art-feedback').textContent='';
+    document.getElementById('art-feedback').className='feedback';
+    document.getElementById('art-btn-next').style.display='none';
+    const revealBtn=document.getElementById('btn-more-reveal');
+    revealBtn.disabled=false;
+    document.getElementById('reveal-bar').style.width='20%';
+    drawArtCanvas();
+    const ch=document.getElementById('art-choices'); ch.innerHTML='';
+    q.choices.forEach((c,i)=>{
+      const btn=document.createElement('button');
+      btn.className='choice-btn'; btn.textContent=c;
+      btn.onclick=()=>selectArtAnswer(i);
+      ch.appendChild(btn);
+    });
+  }
+}
+
+/* ────────────────────────────
+   명화 캔버스 그리기
+──────────────────────────── */
+function drawArtCanvas(){
+  const q = allQuestions[current];
+  const canvas = document.getElementById('art-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,400,400);
+  q.draw(ctx, artReveal);
+}
+
+function revealMore(){
+  if(artAnswered) return;
+  artReveal = Math.min(1, artReveal+0.2);
+  document.getElementById('reveal-bar').style.width = Math.round(artReveal*100)+'%';
+  if(artReveal>=1) document.getElementById('btn-more-reveal').disabled=true;
+  drawArtCanvas();
+}
+
+/* ────────────────────────────
+   힌트
+──────────────────────────── */
+function showHint(){
+  if(answered || hintUsed) return;
+  hintUsed=true; hintTotal++;
+  const q=allQuestions[current];
+  const hb=document.getElementById('hint-box');
+  hb.textContent='💡 힌트: '+q.hint;
+  hb.classList.add('visible');
+}
+
+function showArtHint(){
+  if(artAnswered || artHintUsed) return;
+  artHintUsed=true; hintTotal++;
+  const q=allQuestions[current];
+  const hb=document.getElementById('art-hint-box');
+  hb.textContent='💡 힌트: '+q.hint;
+  hb.classList.add('visible');
+}
+
+/* ────────────────────────────
+   정답 선택
+──────────────────────────── */
+function selectAnswer(idx){
+  if(answered) return;
+  answered=true;
+  const q=allQuestions[current];
+  const btns=document.querySelectorAll('#choices .choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[q.answer].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(idx===q.answer){
+    const pts=hintUsed?5:10; score+=pts; correctCount++;
+    btns[idx].classList.add('correct');
+    fb.textContent='정답! '+(hintUsed?'(힌트 사용 +5점)':'🎉 +10점');
+    fb.className='feedback correct';
+  } else {
+    wrongCount++; btns[idx].classList.add('wrong');
+    fb.textContent='아쉽게도 틀렸어요. 정답: '+q.choices[q.answer];
+    fb.className='feedback wrong';
+  }
+  document.getElementById('btn-next').style.display='block';
+}
+
+function selectArtAnswer(idx){
+  if(artAnswered) return;
+  artAnswered=true;
+  artReveal=1; drawArtCanvas();
+  document.getElementById('reveal-bar').style.width='100%';
+  document.getElementById('btn-more-reveal').disabled=true;
+  const q=allQuestions[current];
+  const btns=document.querySelectorAll('#art-choices .choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[q.answer].classList.add('correct');
+  const fb=document.getElementById('art-feedback');
+  if(idx===q.answer){
+    const pts=artHintUsed?5:10; score+=pts; correctCount++;
+    btns[idx].classList.add('correct');
+    fb.textContent='정답! 전체 그림이 공개되었어요. '+(artHintUsed?'(힌트 사용 +5점)':'🎉 +10점');
+    fb.className='feedback correct';
+  } else {
+    wrongCount++; btns[idx].classList.add('wrong');
+    fb.textContent='아쉽게도 틀렸어요. 정답: '+q.title;
+    fb.className='feedback wrong';
+  }
+  document.getElementById('art-q-text').textContent='작품명: '+q.title;
+  document.getElementById('art-btn-next').style.display='block';
+}
+
+/* ────────────────────────────
+   다음 문제 / 결과
+──────────────────────────── */
+function nextQuestion(){
+  current++;
+  if(current>=allQuestions.length){ showResult(); }
+  else{ renderQuestion(); }
+}
+
+function showResult(){
+  showScreen('screen-result');
+  let emoji, msg, sub;
+  if(score>=110){ emoji='🏆'; msg='완벽해요! 미술사 박사 수준이에요!'; sub='작가와 작품을 모두 정확히 알고 있군요. 명화 부분 보기도 척척 맞췄나요?'; }
+  else if(score>=80){ emoji='🌟'; msg='훌륭해요! 미술사를 잘 알고 있네요.'; sub='특히 명화 부분 보기가 어렵지 않았나요? 조금만 더 공부하면 완벽해질 거예요!'; }
+  else if(score>=50){ emoji='🎨'; msg='좋은 시작이에요!'; sub='작품을 직접 보며 익히면 더 재미있어요. 다시 도전해볼까요?'; }
+  else{ emoji='📖'; msg='미술사를 더 공부해봐요!'; sub='힌트와 부분 공개 기능을 잘 활용해보세요. 다시 도전!'; }
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-score').textContent=score+'점';
+  document.getElementById('r-msg').textContent=msg;
+  document.getElementById('r-sub').textContent=sub;
+  document.getElementById('r-correct').textContent=correctCount;
+  document.getElementById('r-wrong').textContent=wrongCount;
+  document.getElementById('r-hint').textContent=hintTotal;
+}
+
+function restartGame(){ startGame(); }
+</script>
+</body>
+</html>
