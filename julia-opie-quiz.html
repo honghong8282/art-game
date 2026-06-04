@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>줄리아 오피 퀴즈</title>
+  <style>
+    :root {
+      --bg: #f5f0e8;
+      --accent: #e63946;
+      --accent2: #457b9d;
+      --accent3: #2a9d8f;
+      --text: #1d1d1b;
+      --card: #ffffff;
+      --muted: #6b6b6b;
+      --border: #d0ccc4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .artist-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1.2rem;
+      position: relative;
+    }
+
+    .artist-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    header h1 span {
+      color: var(--accent);
+    }
+
+    header p {
+      color: var(--muted);
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    /* ── Quiz container ── */
+    #quiz-container {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    /* ── Start screen ── */
+    #start-screen {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+
+    #start-screen h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+    #start-screen p  { color: var(--muted); line-height: 1.6; margin-bottom: 1.8rem; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-card {
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 1rem;
+      font-size: 0.88rem;
+    }
+
+    .info-card strong { display: block; font-size: 1.3rem; color: var(--accent); }
+
+    .btn {
+      display: inline-block;
+      padding: 0.85rem 2.4rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+
+    /* ── Question card ── */
+    #question-screen { display: none; }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .progress-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .question-card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 2rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      margin-bottom: 1rem;
+    }
+
+    .q-category {
+      display: inline-block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      background: #e8f4f8;
+      color: var(--accent2);
+    }
+
+    .q-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.55;
+      margin-bottom: 1.6rem;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .option-btn {
+      text-align: left;
+      padding: 0.9rem 1.1rem;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      line-height: 1.4;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent2);
+      background: #eaf4fb;
+    }
+
+    .option-btn.correct {
+      border-color: var(--accent3);
+      background: #d4f1ee;
+      color: #1a6b63;
+      font-weight: 600;
+    }
+
+    .option-btn.wrong {
+      border-color: var(--accent);
+      background: #fce8ea;
+      color: #9b1b27;
+    }
+
+    .option-btn:disabled { cursor: default; }
+
+    /* ── Explanation ── */
+    .explanation {
+      display: none;
+      margin-top: 1rem;
+      padding: 1rem 1.1rem;
+      background: #fffbf0;
+      border-left: 4px solid #f4a261;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .explanation.show { display: block; }
+
+    .next-btn-wrap {
+      text-align: right;
+      margin-top: 1.2rem;
+    }
+
+    .btn-secondary {
+      background: var(--text);
+      color: #fff;
+      padding: 0.7rem 1.8rem;
+      font-size: 0.92rem;
+    }
+
+    /* ── Result screen ── */
+    #result-screen {
+      display: none;
+      background: var(--card);
+      border-radius: 18px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+
+    .score-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 8px solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .score-num {
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .score-total { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; }
+
+    #result-screen h2 { font-size: 1.5rem; margin-bottom: 0.6rem; }
+    #result-screen .result-msg { color: var(--muted); line-height: 1.6; margin-bottom: 2rem; }
+
+    .review-list {
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+
+    .review-item {
+      display: flex;
+      gap: 0.7rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .review-item:last-child { border-bottom: none; }
+
+    .review-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+    .review-item.ok .review-icon::before  { content: '✅'; }
+    .review-item.bad .review-icon::before { content: '❌'; }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--text);
+      color: var(--text);
+      margin-right: 0.6rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="artist-icon">
+    <!-- Stylised flat face inspired by Julia Opie's silhouette style -->
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="50" fill="#e63946"/>
+      <!-- body -->
+      <rect x="28" y="62" width="44" height="38" rx="8" fill="#1d1d1b"/>
+      <!-- head -->
+      <ellipse cx="50" cy="44" rx="22" ry="25" fill="#f4d5bb"/>
+      <!-- hair -->
+      <ellipse cx="50" cy="22" rx="22" ry="14" fill="#1d1d1b"/>
+      <!-- eyes -->
+      <circle cx="42" cy="44" r="3" fill="#1d1d1b"/>
+      <circle cx="58" cy="44" r="3" fill="#1d1d1b"/>
+      <!-- mouth -->
+      <path d="M44 54 Q50 59 56 54" stroke="#1d1d1b" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h1>줄리아 <span>오피</span> 퀴즈</h1>
+  <p>Julia Opie — 영국의 미니멀리즘 아티스트를 알아보세요</p>
+</header>
+
+<div id="quiz-container">
+
+  <!-- Start Screen -->
+  <div id="start-screen">
+    <h2>퀴즈를 시작하기 전에</h2>
+    <p>줄리아 오피(Julia Opie, 1958~)는 영국의 현대 미술가로,<br>
+       납작한 색면, 디지털 애니메이션, 초상화 등으로 유명합니다.<br>
+       그녀의 삶과 작품에 대한 10문제를 풀어보세요.</p>
+    <div class="info-grid">
+      <div class="info-card"><strong>10</strong>문항</div>
+      <div class="info-card"><strong>4</strong>지선다</div>
+      <div class="info-card"><strong>예술</strong>장르</div>
+      <div class="info-card"><strong>해설</strong>제공</div>
+    </div>
+    <button class="btn btn-primary" onclick="startQuiz()">퀴즈 시작하기</button>
+  </div>
+
+  <!-- Question Screen -->
+  <div id="question-screen">
+    <div class="progress-wrap">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <span class="progress-label" id="progress-label">1 / 10</span>
+    </div>
+
+    <div class="question-card">
+      <span class="q-category" id="q-category"></span>
+      <p class="q-text" id="q-text"></p>
+      <div class="options" id="options"></div>
+      <div class="explanation" id="explanation"></div>
+    </div>
+
+    <div class="next-btn-wrap">
+      <button class="btn btn-secondary" id="next-btn" onclick="nextQuestion()" style="display:none">
+        다음 문제 →
+      </button>
+    </div>
+  </div>
+
+  <!-- Result Screen -->
+  <div id="result-screen">
+    <div class="score-circle">
+      <span class="score-num" id="score-num">0</span>
+      <span class="score-total">/ 10</span>
+    </div>
+    <h2 id="result-title"></h2>
+    <p class="result-msg" id="result-msg"></p>
+    <div class="review-list" id="review-list"></div>
+    <button class="btn btn-outline" onclick="location.reload()">처음으로</button>
+    <button class="btn btn-primary" onclick="restartQuiz()">다시 풀기</button>
+  </div>
+
+</div>
+
+<footer>Julia Opie Quiz &copy; 2026 · 교육 목적으로 제작되었습니다</footer>
+
+<script>
+const questions = [
+  {
+    category: "생애",
+    text: "줄리아 오피는 어느 나라 출신의 미술가인가요?",
+    options: ["독일", "미국", "영국", "프랑스"],
+    answer: 2,
+    explanation: "줄리아 오피(Julia Opie)는 1958년 영국 런던에서 태어난 영국 현대 미술가입니다."
+  },
+  {
+    category: "생애",
+    text: "줄리아 오피가 미술 교육을 받은 런던의 유명 미술학교는?",
+    options: ["로열 아카데미", "골드스미스 대학교", "센트럴 세인트 마틴스", "슬레이드 미술학교"],
+    answer: 1,
+    explanation: "오피는 1982~1986년 런던 골드스미스 대학교(Goldsmiths, University of London)에서 미술을 전공했습니다. 이 학교는 데미안 허스트 등 YBA(Young British Artists) 세대를 다수 배출한 것으로 유명합니다."
+  },
+  {
+    category: "스타일",
+    text: "줄리아 오피 작품의 대표적인 시각적 특징으로 가장 알맞은 것은?",
+    options: [
+      "거친 붓터치와 표현주의적 색채",
+      "평면적이고 윤곽선이 굵은 단순화된 인물 표현",
+      "사실적인 극사실주의(Hyperrealism) 인물화",
+      "추상적인 기하학적 패턴만 사용"
+    ],
+    answer: 1,
+    explanation: "오피의 작품은 검은 윤곽선과 납작한 단색 면(flat color)으로 인물을 단순화하는 미니멀리즘 스타일이 특징입니다. 픽토그램이나 아이콘처럼 보이는 인물 묘사가 트레이드마크입니다."
+  },
+  {
+    category: "주요 작품",
+    text: "줄리아 오피가 록밴드 블러(Blur)를 위해 제작하여 국제적으로 주목받은 앨범의 이름은?",
+    options: ["Parklife", "Think Tank", "13", "The Great Escape"],
+    answer: 1,
+    explanation: "2003년 발매된 블러(Blur)의 앨범 《Think Tank》의 커버 아트워크를 줄리아 오피가 담당했습니다. 밴드 멤버들을 오피 특유의 납작한 실루엣으로 표현해 큰 화제를 모았습니다."
+  },
+  {
+    category: "주요 작품",
+    text: "줄리아 오피가 제작한 대형 LED 애니메이션 공공 작품이 설치된 런던의 장소는?",
+    options: ["테이트 모던", "내셔널 갤러리", "빅토리아 앤 알버트 박물관", "서펜타인 갤러리"],
+    answer: 0,
+    explanation: "오피는 테이트 모던(Tate Modern) 등 다수의 공공 기관에 대형 LED·영상 작품을 설치했습니다. 그녀의 보행자 애니메이션 시리즈는 지하철역과 공공 공간에도 설치되어 있습니다."
+  },
+  {
+    category: "스타일",
+    text: "오피의 초상화 시리즈에서 인물의 얼굴을 표현하는 방식으로 가장 옳은 것은?",
+    options: [
+      "세밀한 명암과 피부 결로 사실감 부여",
+      "인상주의 기법으로 빛의 변화를 표현",
+      "눈·코·입을 단순한 도형으로 표현하거나 생략",
+      "다시점(Cubism) 분해 기법 사용"
+    ],
+    answer: 2,
+    explanation: "오피는 인물의 얼굴 특징을 극도로 단순화하여, 눈은 작은 점, 입은 한 획으로 표현하거나 아예 생략합니다. 이를 통해 특정 개인이면서도 보편적인 '누구나'처럼 보이는 효과를 냅니다."
+  },
+  {
+    category: "매체·기법",
+    text: "줄리아 오피가 적극적으로 활용한 현대적 매체로 가장 옳은 것은?",
+    options: [
+      "수채화와 파스텔",
+      "LED 디스플레이와 디지털 애니메이션",
+      "대형 유화 캔버스",
+      "청동 조각"
+    ],
+    answer: 1,
+    explanation: "오피는 초기의 조각·회화에서 나아가 LED 스크린, 컴퓨터 애니메이션, 비닐 컷아웃 등 현대적 매체를 폭넓게 사용합니다. 반복 루프 애니메이션으로 일상의 움직임을 포착하는 것이 큰 특징입니다."
+  },
+  {
+    category: "전시·수상",
+    text: "줄리아 오피가 수상한 영국의 권위 있는 현대미술상은?",
+    options: ["터너상(Turner Prize)", "볼프상", "프리츠커상", "아르코상"],
+    answer: 0,
+    explanation: "줄리아 오피는 1995년 터너상(Turner Prize) 후보에 오른 바 있습니다. 터너상은 테이트 갤러리가 수여하는 영국 최고 권위의 현대미술상입니다."
+  },
+  {
+    category: "주제",
+    text: "줄리아 오피의 작품에서 반복적으로 등장하는 주요 소재로 가장 거리가 먼 것은?",
+    options: ["도시를 걷는 사람들", "스포츠 선수들", "전쟁과 역사적 사건", "초상화·자화상"],
+    answer: 2,
+    explanation: "오피의 작품은 일상의 도시인, 산책·조깅하는 사람들, 스트리퍼·댄서 등 현대인의 일상 행위를 주로 다룹니다. 전쟁이나 역사적 사건은 그녀의 대표적 주제가 아닙니다."
+  },
+  {
+    category: "영향·맥락",
+    text: "줄리아 오피의 미술 스타일에 영향을 준 것으로 언급되는 미술 전통은?",
+    options: [
+      "일본 우키요에(浮世絵)와 팝아트",
+      "르네상스 종교화",
+      "바로크 궁정화",
+      "인상주의 풍경화"
+    ],
+    answer: 0,
+    explanation: "오피는 일본 우키요에의 납작한 색면과 윤곽선, 앤디 워홀 등 팝아트의 대중적 이미지 반복에서 영향을 받았다고 평가받습니다. 픽토그램·표지판 등 시각 기호 문화도 주요 참조점입니다."
+  }
+];
+
+let currentIndex = 0;
+let score = 0;
+let userAnswers = [];
+let shuffled = [];
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function startQuiz() {
+  shuffled = shuffle(questions);
+  currentIndex = 0;
+  score = 0;
+  userAnswers = [];
+
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('question-screen').style.display = 'block';
+  renderQuestion();
+}
+
+function restartQuiz() {
+  document.getElementById('result-screen').style.display = 'none';
+  startQuiz();
+}
+
+function renderQuestion() {
+  const q = shuffled[currentIndex];
+  const total = shuffled.length;
+
+  document.getElementById('progress-fill').style.width = `${(currentIndex / total) * 100}%`;
+  document.getElementById('progress-label').textContent = `${currentIndex + 1} / ${total}`;
+  document.getElementById('q-category').textContent = q.category;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('explanation').textContent = q.explanation;
+  document.getElementById('explanation').classList.remove('show');
+  document.getElementById('next-btn').style.display = 'none';
+
+  const optionsEl = document.getElementById('options');
+  optionsEl.innerHTML = '';
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = `${['①','②','③','④'][i]} ${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(selected) {
+  const q = shuffled[currentIndex];
+  const btns = document.querySelectorAll('.option-btn');
+
+  btns.forEach(b => b.disabled = true);
+  btns[q.answer].classList.add('correct');
+
+  if (selected === q.answer) {
+    score++;
+    userAnswers.push({ correct: true, qText: q.text });
+  } else {
+    btns[selected].classList.add('wrong');
+    userAnswers.push({ correct: false, qText: q.text });
+  }
+
+  document.getElementById('explanation').classList.add('show');
+  document.getElementById('next-btn').style.display = 'inline-block';
+  document.getElementById('next-btn').textContent =
+    currentIndex + 1 < shuffled.length ? '다음 문제 →' : '결과 보기';
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < shuffled.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('question-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  document.getElementById('score-num').textContent = score;
+
+  const pct = score / shuffled.length;
+  let title, msg;
+  if (pct === 1)       { title = '완벽해요! 🎨'; msg = '줄리아 오피에 대해 완벽하게 알고 있군요! 진정한 오피 전문가입니다.'; }
+  else if (pct >= 0.8) { title = '훌륭합니다!';  msg = '오피의 작품 세계를 깊이 이해하고 있습니다. 조금 더 공부하면 완벽해질 거예요!'; }
+  else if (pct >= 0.6) { title = '잘 했어요!';   msg = '기본적인 내용은 잘 파악하고 있어요. 오피의 작품을 더 감상해 보세요.'; }
+  else if (pct >= 0.4) { title = '아쉬워요';     msg = '줄리아 오피에 대해 더 알아볼 기회입니다. 다시 한번 도전해 보세요!'; }
+  else                 { title = '다시 도전!';   msg = '오피의 작품과 삶에 대해 더 많은 공부가 필요해요. 포기하지 마세요!'; }
+
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-msg').textContent = msg;
+
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  userAnswers.forEach((a, i) => {
+    const item = document.createElement('div');
+    item.className = `review-item ${a.correct ? 'ok' : 'bad'}`;
+    item.innerHTML = `<span class="review-icon"></span><span>Q${i+1}. ${a.qText}</span>`;
+    list.appendChild(item);
+  });
+}
+</script>
+</body>
+</html>
