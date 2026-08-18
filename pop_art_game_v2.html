@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POP QUIZ! 워홀 & 리히텐슈타인 미션</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#FF2E88;
+    --yellow:#FFD400;
+    --cyan:#00C2D1;
+    --ink:#14110F;
+    --cream:#FFF6E9;
+    --red:#FF3B30;
+    --green:#2BC48A;
+    --panel-shadow: 7px 7px 0 var(--ink);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image: radial-gradient(var(--ink) 1.1px, transparent 1.1px);
+    background-size: 16px 16px;
+    opacity:0.06;
+    pointer-events:none;
+    z-index:0;
+  }
+  #confettiCanvas{
+    position:fixed; inset:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:50;
+  }
+  .wrap{
+    position:relative; z-index:1;
+    max-width:640px; margin:0 auto;
+    padding:20px 16px 60px;
+    min-height:100vh;
+  }
+  .hidden{display:none !important;}
+
+  /* ---------- header ---------- */
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px;}
+  .brand{font-family:'Jua', sans-serif; font-size:19px; display:flex; align-items:center; gap:6px;}
+  .brand .dot{width:10px;height:10px;border-radius:50%; background:var(--pink); box-shadow:14px 0 0 var(--yellow), 28px 0 0 var(--cyan); margin-right:22px;}
+  .right-controls{display:flex; align-items:center; gap:8px;}
+  .streak-chip{
+    font-family:'JetBrains Mono', monospace; font-weight:700; font-size:12px;
+    background:#fff; border:2px solid var(--ink); color:var(--red);
+    padding:5px 9px; border-radius:999px; display:none; align-items:center; gap:3px;
+  }
+  .streak-chip.show{display:inline-flex;}
+  .score-chip{font-family:'JetBrains Mono', monospace; font-weight:700; font-size:13px; background:var(--ink); color:var(--cream); padding:6px 12px; border-radius:999px;}
+  .mute-btn{
+    width:30px; height:30px; border-radius:50%; border:2px solid var(--ink); background:#fff;
+    cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .progress-track{display:flex; gap:5px; margin-bottom:18px;}
+  .progress-seg{flex:1; height:8px; background:#00000014; border:2px solid var(--ink); border-radius:4px;}
+  .progress-seg.done{background:var(--pink);}
+  .progress-seg.current{background:var(--yellow);}
+
+  .panel{background:#fff; border:3px solid var(--ink); border-radius:6px; box-shadow:var(--panel-shadow); padding:22px 20px; margin-bottom:18px; position:relative;}
+  .kicker{display:inline-block; font-family:'JetBrains Mono', monospace; font-weight:700; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; background:var(--yellow); border:2px solid var(--ink); padding:3px 9px; border-radius:3px; margin-bottom:10px;}
+  h1.hero-title{font-family:'Jua', sans-serif; font-size:clamp(28px,8vw,42px); line-height:1.15; margin:8px 0 6px;}
+  .hero-title .accent{color:var(--pink); -webkit-text-stroke:1.5px var(--ink);}
+  .hero-title .accent2{color:var(--cyan); -webkit-text-stroke:1.5px var(--ink);}
+  p.lead{font-size:15px; line-height:1.65; color:#2a2a2a; margin:0 0 16px;}
+  .best-score{font-family:'JetBrains Mono', monospace; font-size:12px; color:#888; margin:-6px 0 14px;}
+
+  .stage-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:18px 0;}
+  .stage-card{border:2px solid var(--ink); border-radius:6px; padding:11px 12px 9px; background:var(--cream);}
+  .stage-card .num{font-family:'JetBrains Mono', monospace; font-weight:700; font-size:10.5px; color:var(--pink);}
+  .stage-card .name{font-family:'Jua', sans-serif; font-size:15px; margin-top:2px;}
+  .stage-card .desc{font-size:11.5px; color:#555; margin-top:3px; line-height:1.4;}
+
+  .btn{font-family:'Jua', sans-serif; font-size:17px; border:3px solid var(--ink); border-radius:8px; padding:13px 20px; background:var(--pink); color:var(--ink); cursor:pointer; box-shadow:5px 5px 0 var(--ink); transition:transform .08s ease; width:100%; text-align:center;}
+  .btn:active{transform:translate(3px,3px); box-shadow:2px 2px 0 var(--ink);}
+  .btn.secondary{background:var(--cyan);}
+  .btn.yellow{background:var(--yellow);}
+  .btn:disabled{opacity:0.45; cursor:not-allowed;}
+
+  .q-text{font-size:17px; font-weight:600; line-height:1.55; margin-bottom:16px;}
+  .q-index{font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:700; color:#888; margin-bottom:6px; display:flex; justify-content:space-between;}
+
+  .timer-wrap{margin-bottom:14px;}
+  .timer-track{height:8px; border:2px solid var(--ink); border-radius:5px; overflow:hidden; background:#fff;}
+  .timer-fill{height:100%; background:var(--red); width:100%; transition:width 1s linear, background .3s;}
+
+  .choices{display:flex; flex-direction:column; gap:10px;}
+  .choice{border:2.5px solid var(--ink); border-radius:8px; padding:12px 14px; background:#fff; font-size:14.5px; font-weight:500; cursor:pointer; text-align:left; transition:transform .06s ease, background .15s ease;}
+  .choice:hover{background:#fff8e0;}
+  .choice:active{transform:translate(2px,2px);}
+  .choice.correct{background:var(--yellow);}
+  .choice.wrong{background:#ffd7d0; border-color:var(--red);}
+  .choice.disabled{pointer-events:none;}
+
+  .ox-row{display:flex; gap:14px;}
+  .ox-btn{flex:1; font-family:'Jua', sans-serif; font-size:38px; border:3px solid var(--ink); border-radius:10px; padding:22px 0; cursor:pointer; background:#fff;}
+  .ox-btn.o{color:var(--cyan);}
+  .ox-btn.x{color:var(--red);}
+  .ox-btn.correct{background:var(--yellow);}
+  .ox-btn.wrong{background:#ffd7d0;}
+  .ox-btn.disabled{pointer-events:none;}
+
+  .match-card{border:2.5px solid var(--ink); border-radius:8px; padding:16px; background:#fff8e0; text-align:center; margin-bottom:14px; font-size:16px; font-weight:700;}
+  .team-row{display:flex; gap:10px;}
+  .team-btn{flex:1; border:3px solid var(--ink); border-radius:8px; padding:14px 8px; background:#fff; cursor:pointer; font-family:'Jua', sans-serif; font-size:14px; line-height:1.3;}
+  .team-btn.warhol{background:#ffe1f0;}
+  .team-btn.lich{background:#e0f7fa;}
+  .team-btn.correct{background:var(--yellow);}
+  .team-btn.wrong{background:#ffd7d0;}
+  .team-btn.disabled{pointer-events:none;}
+
+  input.blank-input{width:100%; border:2.5px solid var(--ink); border-radius:8px; padding:12px 14px; font-size:16px; font-family:'Space Grotesk', sans-serif; margin-bottom:10px;}
+  input.blank-input.correct{background:var(--yellow);}
+  input.blank-input.wrong{background:#ffd7d0;}
+
+  .feedback{font-size:13.5px; line-height:1.6; padding:12px 14px; border-radius:8px; border:2px solid var(--ink); margin-top:12px; background:var(--cream);}
+  .feedback.ok{background:#eaffea;}
+  .feedback.no{border-color:var(--red); background:#fff0ee;}
+  .feedback b{color:var(--pink);}
+
+  .hint-btn{background:none; border:none; text-decoration:underline; font-size:12.5px; color:#666; cursor:pointer; padding:0 0 10px;}
+
+  .mascot-row{display:flex; align-items:flex-start; gap:10px; margin-bottom:14px;}
+  .mascot{width:44px; height:44px; flex:0 0 auto;}
+  .bubble{border:2.5px solid var(--ink); border-radius:12px; padding:9px 12px; background:#fff; font-size:13px; font-weight:600; position:relative; flex:1;}
+
+  /* memory game */
+  .mem-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:8px;}
+  .mem-card{
+    aspect-ratio:1/1; border:2.5px solid var(--ink); border-radius:8px;
+    background:var(--pink);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; position:relative; overflow:hidden;
+  }
+  .mem-card .back-face{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'Jua', sans-serif; font-size:22px; color:#fff;
+    background-image: radial-gradient(#ffffff55 1.6px, transparent 1.6px);
+    background-size:9px 9px;
+  }
+  .mem-card .front-face{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center;
+    background:#fff; padding:4px; font-size:10.5px; font-weight:700; line-height:1.25; opacity:0; transform:scale(.8);
+    transition:opacity .15s ease, transform .15s ease;
+  }
+  .mem-card.flipped .front-face{opacity:1; transform:scale(1);}
+  .mem-card.flipped .back-face{opacity:0;}
+  .mem-card.matched{background:var(--yellow); cursor:default;}
+  .mem-card.matched .front-face{opacity:1; transform:scale(1); background:var(--yellow);}
+  .mem-card.wrongflash{animation:shake .3s;}
+  @keyframes shake{25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+  .mem-stats{font-family:'JetBrains Mono', monospace; font-size:12px; color:#666; margin-bottom:10px; display:flex; justify-content:space-between;}
+
+  /* stage clear interstitial */
+  .clear-badge{font-size:60px; text-align:center; margin:6px 0;}
+  .clear-title{font-family:'Jua', sans-serif; font-size:26px; text-align:center; margin-bottom:4px;}
+  .clear-sub{text-align:center; font-size:13px; color:#666; margin-bottom:16px;}
+  .badge-tag{
+    display:inline-flex; align-items:center; gap:6px; border:2.5px solid var(--ink); border-radius:999px;
+    padding:6px 14px; font-family:'Jua', sans-serif; font-size:14px; background:var(--yellow); margin:0 auto 16px; width:fit-content;
+  }
+
+  /* result */
+  .medal{font-family:'Jua', sans-serif; font-size:64px; text-align:center; margin:6px 0 2px;}
+  .score-big{font-family:'JetBrains Mono', monospace; font-size:15px; text-align:center; color:#555; margin-bottom:10px;}
+  .grade-title{font-family:'Jua', sans-serif; font-size:26px; text-align:center; margin-bottom:8px;}
+  .badge-shelf{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px 0;}
+  .badge-chip{border:2px solid var(--ink); border-radius:8px; padding:8px 10px; background:var(--cream); font-size:20px; text-align:center; width:56px;}
+  .badge-chip .label{font-size:9px; font-family:'JetBrains Mono', monospace; font-weight:700; margin-top:2px; line-height:1.2;}
+  .breakdown{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:16px 0;}
+  .bd-item{border:2px solid var(--ink); border-radius:6px; padding:10px; background:var(--cream); font-size:12px;}
+  .bd-item .bd-name{font-weight:700; font-family:'Jua', sans-serif; font-size:12.5px;}
+  .btn-row{display:flex; gap:10px;}
+  .footer-note{text-align:center; font-size:11.5px; color:#999; margin-top:24px; line-height:1.6;}
+</style>
+</head>
+<body>
+<canvas id="confettiCanvas"></canvas>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span>POP QUIZ</div>
+    <div class="right-controls">
+      <div class="streak-chip" id="streakChip">🔥 x0</div>
+      <div class="score-chip" id="scoreChip">SCORE 0</div>
+      <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
+    </div>
+  </div>
+
+  <div class="progress-track" id="progressTrack"></div>
+
+  <!-- START -->
+  <section id="screen-start">
+    <div class="panel">
+      <span class="kicker">3학년 미술 · 팝아트 단원</span>
+      <h1 class="hero-title">워홀 & <span class="accent">리히텐슈타인</span><br>미션에 <span class="accent2">도전</span>하라</h1>
+      <p class="lead">6개의 미션이 기다리고 있어요. 퀴즈, 카드 분류, 메모리 게임, 타임어택까지! 학습지 내용이 그대로 나오니 걱정 말고 도전해보세요.</p>
+      <div class="best-score hidden" id="bestScoreLine"></div>
+      <div class="stage-grid" id="stageGridPreview"></div>
+      <button class="btn" onclick="startGame()">▶ 미션 시작하기</button>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="screen-game" class="hidden">
+    <div class="panel">
+      <span class="kicker" id="stageLabel">MISSION 1</span>
+      <div class="q-index" id="qIndex"><span>Q1</span><span id="timerLabel"></span></div>
+      <div class="timer-wrap hidden" id="timerWrap"><div class="timer-track"><div class="timer-fill" id="timerFill"></div></div></div>
+      <div class="q-text" id="qText"></div>
+      <div id="answerArea"></div>
+      <div id="feedbackArea"></div>
+    </div>
+    <button class="btn hidden" id="nextBtn" onclick="nextQuestion()">다음 →</button>
+  </section>
+
+  <!-- STAGE CLEAR -->
+  <section id="screen-clear" class="hidden">
+    <div class="panel">
+      <div class="clear-badge" id="clearEmoji">🎉</div>
+      <div class="clear-title" id="clearTitle">MISSION CLEAR!</div>
+      <div class="clear-sub" id="clearSub"></div>
+      <div style="display:flex; justify-content:center;"><div class="badge-tag" id="clearBadgeTag"></div></div>
+      <div class="mascot-row">
+        <svg class="mascot" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="#FFD400" stroke="#14110F" stroke-width="2.5"/><circle cx="15" cy="19" r="2.6" fill="#14110F"/><circle cx="29" cy="19" r="2.6" fill="#14110F"/><path d="M13 28 Q22 35 31 28" stroke="#14110F" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+        <div class="bubble" id="clearMascotLine"></div>
+      </div>
+      <button class="btn secondary" onclick="continueAfterClear()" id="clearContinueBtn">다음 미션으로 →</button>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="screen-result" class="hidden">
+    <div class="panel">
+      <div class="medal" id="medalEmoji">🏆</div>
+      <div class="grade-title" id="gradeTitle"></div>
+      <div class="score-big" id="scoreBig"></div>
+      <p class="lead" id="gradeMsg" style="text-align:center;"></p>
+      <div class="badge-shelf" id="badgeShelf"></div>
+      <div class="breakdown" id="breakdown"></div>
+      <div class="feedback ok" id="finalTip"></div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn secondary" onclick="restartGame()">🔄 다시 도전</button>
+      </div>
+    </div>
+    <div class="footer-note">POP QUIZ · 3학년 미술 팝아트 학습 게임 · 앤디 워홀 &amp; 로이 리히텐슈타인</div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   SOUND (Web Audio API — no external files needed)
+============================================================ */
+let audioCtx = null;
+let muted = false;
+function ensureAudio(){ if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } }
+function tone(freq, start, dur, type='sine', gain=0.15){
+  if(muted || !audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = type; osc.frequency.value = freq;
+  g.gain.value = gain;
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start(audioCtx.currentTime + start);
+  g.gain.setValueAtTime(gain, audioCtx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + start + dur);
+  osc.stop(audioCtx.currentTime + start + dur);
+}
+function playSound(type){
+  ensureAudio();
+  if(!audioCtx) return;
+  if(type==='correct'){ tone(660,0,0.1,'triangle'); tone(880,0.09,0.16,'triangle'); }
+  else if(type==='wrong'){ tone(220,0,0.22,'sawtooth',0.1); }
+  else if(type==='clear'){ tone(523,0,0.1,'square',0.1); tone(659,0.1,0.1,'square',0.1); tone(784,0.2,0.22,'square',0.1); }
+  else if(type==='flip'){ tone(440,0,0.06,'square',0.06); }
+  else if(type==='tick'){ tone(300,0,0.04,'square',0.04); }
+}
+function toggleMute(){
+  muted = !muted;
+  document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
+  if(!muted) ensureAudio();
+}
+
+/* ============================================================
+   CONFETTI
+============================================================ */
+const confettiCanvas = document.getElementById('confettiCanvas');
+const cctx = confettiCanvas.getContext('2d');
+function resizeCanvas(){ confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+let confettiParticles = [];
+let confettiRAF = null;
+const confettiColors = ['#FF2E88','#FFD400','#00C2D1','#2BC48A','#14110F'];
+function burstConfetti(count=70){
+  for(let i=0;i<count;i++){
+    confettiParticles.push({
+      x: confettiCanvas.width/2 + (Math.random()-0.5)*120,
+      y: confettiCanvas.height*0.25,
+      vx:(Math.random()-0.5)*9,
+      vy:Math.random()*-7-3,
+      size:Math.random()*7+4,
+      color:confettiColors[Math.floor(Math.random()*confettiColors.length)],
+      rot:Math.random()*360,
+      vr:(Math.random()-0.5)*14,
+      life:0
+    });
+  }
+  if(!confettiRAF) animateConfetti();
+}
+function animateConfetti(){
+  cctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+  confettiParticles.forEach(p=>{
+    p.vy += 0.28; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+    cctx.save();
+    cctx.translate(p.x,p.y); cctx.rotate(p.rot*Math.PI/180);
+    cctx.fillStyle = p.color;
+    cctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+    cctx.restore();
+  });
+  confettiParticles = confettiParticles.filter(p=>p.y < confettiCanvas.height+40 && p.life < 260);
+  if(confettiParticles.length>0){ confettiRAF = requestAnimationFrame(animateConfetti); }
+  else { confettiRAF = null; cctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); }
+}
+
+/* ============================================================
+   DATA
+============================================================ */
+const stages = [
+  { id:'ox', label:'MISSION 1 · 배경 탐정', icon:'🕵️', type:'ox', badge:{name:'배경 탐정 배지', icon:'🕵️'},
+    questions:[
+      {q:"팝아트(Pop Art)는 'Popular Art(대중 예술)'의 줄임말이다.", a:true, exp:"팝아트는 '대중 예술'이라는 뜻으로, 일상 속 대중적 이미지를 예술의 소재로 삼았습니다."},
+      {q:"팝아트는 제2차 세계대전 이후 대량생산·대량소비 사회를 배경으로 등장했다.", a:true, exp:"산업 발달로 대량생산‧대량소비가 일반화된 사회 분위기가 팝아트 등장의 배경입니다."},
+      {q:"팝아트 예술가들은 순수 예술의 소재만을 고집하며 발전시켰다.", a:false, exp:"오히려 반대! 팝아트는 순수 예술의 틀을 벗어나 광고‧만화‧상품 이미지 등 일상의 대중적 이미지를 적극적으로 사용했습니다."},
+      {q:"팝아트는 처음 미국에서 시작되어 이후 영국으로 퍼져나갔다.", a:false, exp:"팝아트는 1950년대 영국에서 먼저 시작되었고, 1960년대 미국으로 넘어와 본격적으로 확산되었습니다."},
+      {q:"팝아트는 소비 사회의 속성을 비판하는 동시에 유희적으로 수용하는 이중적 태도를 보였다.", a:true, exp:"팝아트는 소비사회를 단순 비판만 한 것이 아니라, 그 이미지를 유희적으로 즐기며 수용하기도 했습니다."}
+    ]
+  },
+  { id:'match', label:'MISSION 2 · 작가 분류', icon:'🗂️', type:'match', badge:{name:'분류 전문가 배지', icon:'🗂️'},
+    questions:[
+      {q:"실크스크린(silkscreen)", a:'warhol', exp:"판에 구멍을 뚫어 잉크를 통과시켜 이미지를 반복 인쇄하는 워홀의 대표 기법입니다."},
+      {q:"벤데이 도트(Ben-Day Dots, 망점)", a:'lich', exp:"작은 점을 규칙적으로 배열해 색과 명암을 표현하는 리히텐슈타인의 기법입니다."},
+      {q:"〈마릴린 먼로〉", a:'warhol', exp:"당대 최고의 스타 이미지조차 대량소비되는 '상품'임을 보여준 워홀의 대표작입니다."},
+      {q:"〈행복한 눈물〉", a:'lich', exp:"과장된 감정 표현과 단순화된 사물 묘사로 대중매체의 감정 처리 방식을 보여준 작품입니다."},
+      {q:"캠벨 수프 캔", a:'warhol', exp:"슈퍼마켓의 흔한 통조림을 예술의 전당으로 끌어들인 워홀의 대표작입니다."},
+      {q:"〈꽝!(Whaam!)〉", a:'lich', exp:"1962년 전쟁 만화책 장면에서 영감을 받아 만화적 서사를 거대 캔버스로 확장한 작품입니다."},
+      {q:"작업실 이름 '팩토리(The Factory)'", a:'warhol', exp:"스튜디오를 개인 천재성의 공간이 아닌 산업적 생산 공간으로 바꾼 워홀의 발상입니다."},
+      {q:"선명한 검은 윤곽선과 만화적 이미지", a:'lich', exp:"저급 하위문화였던 만화의 형식을 고급 미술의 문맥으로 끌어올린 리히텐슈타인의 특징입니다."},
+      {q:"반복적 배치와 획일성 강조", a:'warhol', exp:"동일한 이미지를 나열하여 현대 사회의 획일성을 드러낸 워홀의 방식입니다."},
+      {q:"'산업적 역설(Industrial Irony)' — 망점을 일일이 수작업으로 그림", a:'lich', exp:"기계가 순식간에 찍어내는 방식을 예술가가 공들여 모방하는 역설적 시도입니다."}
+    ]
+  },
+  { id:'memory', label:'MISSION 3 · 짝 맞추기', icon:'🧠', type:'memory', badge:{name:'기억력 마스터 배지', icon:'🧠'},
+    pairs:[
+      ["실크스크린","마릴린 먼로"],
+      ["벤데이 도트","행복한 눈물"],
+      ["팩토리","앤디 워홀의 작업실"],
+      ["산업적 역설","로이 리히텐슈타인"],
+      ["캠벨 수프 캔","슈퍼마켓 통조림"],
+      ["꽝!(Whaam!)","전쟁 만화책 장면"]
+    ]
+  },
+  { id:'blank', label:'MISSION 4 · 용어 채우기', icon:'✏️', type:'blank', badge:{name:'용어 마스터 배지', icon:'✏️'},
+    questions:[
+      {q:"판에 구멍을 뚫어 잉크를 통과시켜 같은 이미지를 여러 번 인쇄하는 워홀의 핵심 기법은 '(　　　)'이다.", answers:["실크스크린"], hint:"영어로는 silkscreen", exp:"실크스크린은 전통 회화의 유일무이성을 부정하고 이미지를 무한 복제하는 판화 기법입니다."},
+      {q:"작은 점들을 규칙적으로 배열해 색과 명암을 표현하는 신문‧만화 인쇄 기법으로, 리히텐슈타인이 회화로 확대한 기법은 '(　　　)'이다.", answers:["벤데이 도트","벤데이도트","망점","벤데이 도트(망점)"], hint:"Ben-Day Dots, 다른 말로 '망점'", exp:"벤데이 도트는 인쇄물의 미세한 점을 리히텐슈타인이 일일이 수작업으로 확대해 그린 기법입니다."},
+      {q:"워홀이 자신의 작업실을 부르던 이름은 '(　　　)'이다.", answers:["팩토리","the factory","더 팩토리"], hint:"영어로 The Factory", exp:"작업실을 개인적 영감의 공간이 아닌 산업적 생산 공간으로 재정의한 이름입니다."},
+      {q:"팝아트가 1950년대 처음 등장한 나라는 '(　　　)'이다.", answers:["영국"], hint:"이후 1960년대에 미국으로 넘어갔습니다", exp:"팝아트는 영국에서 시작되어 1960년대 미국에서 본격적으로 확산되었습니다."},
+      {q:"리히텐슈타인의 작품 〈꽝!〉은 1962년 (　　　) 장면에서 영감을 받아 제작되었다.", answers:["전쟁만화","전쟁 만화","만화책"], hint:"만화책의 한 장면", exp:"전투기 격추 장면을 강렬한 의성어와 함께 만화적으로 묘사한 작품입니다."}
+    ]
+  },
+  { id:'speed', label:'MISSION 5 · 타임어택', icon:'⏱️', type:'speed', badge:{name:'스피드왕 배지', icon:'⏱️'},
+    questions:[
+      {q:"워홀의 대표작은?", choices:["마릴린 먼로","꽝!","행복한 눈물","게르니카"], a:0, exp:"〈마릴린 먼로〉는 워홀의 실크스크린 대표작입니다."},
+      {q:"리히텐슈타인의 핵심 기법은?", choices:["실크스크린","벤데이 도트","유화 임파스토","콜라주"], a:1, exp:"리히텐슈타인은 망점, 즉 벤데이 도트를 회화로 확대했습니다."},
+      {q:"팝아트가 처음 등장한 나라는?", choices:["프랑스","미국","영국","이탈리아"], a:2, exp:"팝아트는 1950년대 영국에서 시작되었습니다."},
+      {q:"워홀의 작업실 이름은?", choices:["스튜디오54","팩토리","아틀리에","워크샵"], a:1, exp:"워홀은 작업실을 '팩토리(The Factory)'라 불렀습니다."},
+      {q:"팝아트가 예술적으로 강조한 것은?", choices:["유일무이한 원본성","반복과 복제","자연광 표현","섬세한 손끝 붓터치"], a:1, exp:"팝아트는 반복과 기계적 복제를 통해 현대 소비사회를 표현했습니다."}
+    ]
+  },
+  { id:'final', label:'MISSION 6 · 최종 감상', icon:'🏁', type:'mc', badge:{name:'팝아트 마스터 배지', icon:'🏁'},
+    questions:[
+      {q:"팝아트가 예술사에 가져온 변화로 옳지 않은 것은?", choices:["희소성에서 복제성으로의 변화","고급 예술과 저속 문화의 경계가 허물어짐","무언가를 만드는 것보다 '선택'이 중요해짐","작가 개인의 고유한 감정 표현이 가장 중요해짐"], a:3, exp:"팝아트는 오히려 작가의 개성보다 반복·복제·선택을 중시하는 방향으로 예술의 무게중심을 옮겼습니다."},
+      {q:"워홀의 실크스크린 기법이 궁극적으로 강조하는 예술적 가치는?", choices:["작품의 유일무이성","반복과 기계적 복제","손으로 그린 정교한 붓터치","자연광의 미묘한 표현"], a:1, exp:"워홀은 실크스크린을 통해 전통 회화의 '유일무이성'을 부정하고 이미지를 상품처럼 반복‧복제했습니다."},
+      {q:"리히텐슈타인이 벤데이 도트를 힘들게 '수작업'으로 그려 넣은 이유로 가장 적절한 것은?", choices:["기계 인쇄가 당시 불가능했기 때문에","대중문화의 형식을 고전 미술의 품격으로 승화시키려는 시도였기 때문에","단순한 실수가 반복된 것이기 때문에","색채 대비를 없애기 위해서"], a:1, exp:"기계가 순식간에 찍어내는 저렴한 인쇄 방식을 예술가가 공들여 모방한 것은 대중문화를 고급 미술의 문맥으로 끌어올리려는 '산업적 역설'입니다."},
+      {q:"현대 시각 문화에 대한 '부정적 관점(아우라의 상실)'과 관련된 설명은?", choices:["누구나 예술을 향유할 수 있는 민주화가 이루어졌다","이미지의 희소성이 낮아지고 일회성 소비문화에 대한 우려가 있다","정보 공유가 확산되어 접근성이 높아졌다","예술이 삶의 일부로 자연스럽게 들어왔다"], a:1, exp:"'아우라의 상실' 관점은 이미지가 무한 복제되면서 희소성과 원본성이 사라지고, 일회성으로 소비되는 것에 대한 우려를 담고 있습니다."},
+      {q:"〈마릴린 먼로〉에서 워홀이 전하고자 한 의미로 가장 적절한 것은?", choices:["유명인의 이미지조차 대량소비되는 하나의 '상품'이다","은막 스타의 신성함을 영원히 기념하려 했다","초상화의 전통 기법을 계승‧발전시켰다","정치적 저항의 메시지를 표현했다"], a:0, exp:"워홀은 당대 최고의 스타 이미지를 반복 인쇄함으로써, 유명인의 이미지조차 대량소비되는 '상품'임을 시사했습니다."}
+    ]
+  }
+];
+
+const correctPhrases = ["완벽한 반복이야! 워홀도 흐뭇해할걸요 🎨","정답 적중! 벤데이 도트처럼 촘촘하네요 ✨","오예! 감이 아주 좋아요 👍","훌륭해요! 팝아트 감각이 있네요"];
+const wrongPhrases = ["꽝! 리히텐슈타인 만화처럼 아쉽지만 괜찮아요 💥","아깝다! 해설 보고 다시 기억해봐요","다음엔 맞힐 수 있어요, 힘내요!","괜찮아요, 실수도 배움의 과정이죠"];
+
+/* ============================================================
+   STATE
+============================================================ */
+let state = null;
+let bestScore = null;
+let memState = null;
+let speedTimer = null;
+
+function freshState(){
+  return {
+    stageIdx:0, qIdx:0, score:0, maxScore:0, answered:false, streak:0, maxStreak:0,
+    stageResults: stages.map(s=> s.type==='memory' ? {correct:0,total:s.pairs.length} : {correct:0,total:s.questions.length}),
+    badgesEarned: []
+  };
+}
+
+/* ============================================================
+   PROGRESS / SCORE UI
+============================================================ */
+function renderProgress(){
+  const track = document.getElementById('progressTrack');
+  track.innerHTML = '';
+  stages.forEach((s,i)=>{
+    const seg = document.createElement('div');
+    seg.className = 'progress-seg' + (i < state.stageIdx ? ' done' : i === state.stageIdx ? ' current' : '');
+    track.appendChild(seg);
+  });
+}
+function updateScoreChip(){
+  document.getElementById('scoreChip').textContent = 'SCORE ' + state.score;
+  const sc = document.getElementById('streakChip');
+  if(state.streak >= 2){ sc.textContent = '🔥 x' + state.streak; sc.classList.add('show'); }
+  else { sc.classList.remove('show'); }
+}
+
+function renderStagePreview(){
+  const grid = document.getElementById('stageGridPreview');
+  grid.innerHTML = '';
+  stages.forEach((s,i)=>{
+    const card = document.createElement('div');
+    card.className = 'stage-card';
+    const desc = s.type==='ox' ? '팝아트 등장 배경 OX 퀴즈'
+      : s.type==='match' ? '워홀 vs 리히텐슈타인 카드 분류'
+      : s.type==='memory' ? '짝 맞추기 메모리 게임'
+      : s.type==='blank' ? '핵심 미술 용어 빈칸 채우기'
+      : s.type==='speed' ? '10초 제한! 타임어택 퀴즈'
+      : '종합 이해도 4지선다';
+    card.innerHTML = `<div class="num">${s.icon} MISSION ${i+1}</div><div class="name">${s.label.split('·')[1].trim()}</div><div class="desc">${desc}</div>`;
+    grid.appendChild(card);
+  });
+}
+renderStagePreview();
+
+/* ============================================================
+   SCREEN CONTROL
+============================================================ */
+function showScreen(id){
+  ['screen-start','screen-game','screen-clear','screen-result'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden', s!==id);
+  });
+}
+
+function startGame(){
+  ensureAudio();
+  state = freshState();
+  updateScoreChip();
+  renderProgress();
+  showScreen('screen-game');
+  renderStageStart();
+}
+
+function restartGame(){
+  document.getElementById('bestScoreLine').classList.toggle('hidden', bestScore===null);
+  if(bestScore!==null){ document.getElementById('bestScoreLine').textContent = `🏅 이전 최고 기록: ${bestScore}점`; }
+  showScreen('screen-start');
+  state = freshState();
+  renderProgress();
+}
+
+/* ============================================================
+   STAGE ENTRY (some stages loop questions, memory is one big render)
+============================================================ */
+function renderStageStart(){
+  state.qIdx = 0;
+  const stage = currentStage();
+  if(stage.type === 'memory'){
+    renderMemoryStage();
+  } else {
+    renderQuestion();
+  }
+}
+
+function currentStage(){ return stages[state.stageIdx]; }
+function currentQ(){ return currentStage().questions[state.qIdx]; }
+
+/* ============================================================
+   GENERIC QUESTION RENDER (ox/match/blank/mc/speed)
+============================================================ */
+function renderQuestion(){
+  state.answered = false;
+  clearSpeedTimer();
+  const stage = currentStage();
+  const q = currentQ();
+  document.getElementById('stageLabel').textContent = stage.icon + ' ' + stage.label;
+  document.getElementById('qIndex').querySelector('span').textContent = `Q${state.qIdx+1} / ${stage.questions.length}`;
+  document.getElementById('timerLabel').textContent = '';
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('feedbackArea').innerHTML = '';
+  document.getElementById('nextBtn').classList.add('hidden');
+  document.getElementById('timerWrap').classList.toggle('hidden', stage.type!=='speed');
+  renderProgress();
+
+  const area = document.getElementById('answerArea');
+  area.innerHTML = '';
+
+  if(stage.type === 'ox'){
+    const row = document.createElement('div'); row.className = 'ox-row';
+    const oBtn = document.createElement('button'); oBtn.className='ox-btn o'; oBtn.textContent='O';
+    const xBtn = document.createElement('button'); xBtn.className='ox-btn x'; xBtn.textContent='X';
+    oBtn.onclick = ()=>answerOX(true, oBtn, xBtn);
+    xBtn.onclick = ()=>answerOX(false, oBtn, xBtn);
+    row.appendChild(oBtn); row.appendChild(xBtn);
+    area.appendChild(row);
+  }
+  else if(stage.type === 'match'){
+    const card = document.createElement('div'); card.className='match-card'; card.textContent = q.q;
+    area.appendChild(card);
+    const row = document.createElement('div'); row.className='team-row';
+    const wBtn = document.createElement('button'); wBtn.className='team-btn warhol';
+    wBtn.innerHTML = '🎨 앤디 워홀<br><span style="font-family:Space Grotesk;font-weight:400;font-size:11px;">실크스크린 팀</span>';
+    const lBtn = document.createElement('button'); lBtn.className='team-btn lich';
+    lBtn.innerHTML = '💥 리히텐슈타인<br><span style="font-family:Space Grotesk;font-weight:400;font-size:11px;">벤데이 도트 팀</span>';
+    wBtn.onclick = ()=>answerMatch('warhol', wBtn, lBtn);
+    lBtn.onclick = ()=>answerMatch('lich', wBtn, lBtn);
+    row.appendChild(wBtn); row.appendChild(lBtn);
+    area.appendChild(row);
+  }
+  else if(stage.type === 'blank'){
+    const input = document.createElement('input'); input.type='text'; input.className='blank-input';
+    input.placeholder = '정답을 입력하세요'; input.id='blankInput';
+    area.appendChild(input);
+    const hintBtn = document.createElement('button'); hintBtn.className='hint-btn'; hintBtn.textContent='💡 힌트 보기';
+    hintBtn.onclick = ()=>{ hintBtn.textContent = '힌트: ' + q.hint; };
+    area.appendChild(hintBtn);
+    const submitBtn = document.createElement('button'); submitBtn.className='btn'; submitBtn.textContent='제출하기';
+    submitBtn.onclick = ()=>answerBlank(input, submitBtn, hintBtn);
+    area.appendChild(submitBtn);
+    input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ answerBlank(input, submitBtn, hintBtn); }});
+  }
+  else if(stage.type === 'mc'){
+    const box = document.createElement('div'); box.className='choices';
+    q.choices.forEach((c,i)=>{
+      const btn = document.createElement('button'); btn.className='choice'; btn.textContent=c;
+      btn.onclick = ()=>answerMC(i, box);
+      box.appendChild(btn);
+    });
+    area.appendChild(box);
+  }
+  else if(stage.type === 'speed'){
+    const box = document.createElement('div'); box.className='choices';
+    q.choices.forEach((c,i)=>{
+      const btn = document.createElement('button'); btn.className='choice'; btn.textContent=c;
+      btn.onclick = ()=>answerSpeed(i, box);
+      box.appendChild(btn);
+    });
+    area.appendChild(box);
+    startSpeedTimer(box);
+  }
+}
+
+/* ============================================================
+   ANSWER HANDLERS
+============================================================ */
+function mascotFeedback(correct){
+  const arr = correct ? correctPhrases : wrongPhrases;
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function markResult(correct, expText, bonus){
+  bonus = bonus || 0;
+  state.maxScore += 10;
+  if(correct){
+    state.streak++; state.maxStreak = Math.max(state.maxStreak, state.streak);
+    let combo = 0;
+    if(state.streak >= 3) combo = 5;
+    state.score += 10 + bonus + combo;
+    state.stageResults[state.stageIdx].correct++;
+    playSound('correct');
+  } else {
+    state.streak = 0;
+    playSound('wrong');
+  }
+  updateScoreChip();
+  const fb = document.getElementById('feedbackArea');
+  const comboLine = (correct && state.streak>=3) ? `<br><span style="color:var(--red);font-weight:700;">🔥 ${state.streak}연속 정답 콤보! +5 보너스</span>` : '';
+  fb.innerHTML = `<div class="feedback ${correct?'ok':'no'}"><b>${mascotFeedback(correct)}</b><br>${expText}${comboLine}</div>`;
+  document.getElementById('nextBtn').classList.remove('hidden');
+  state.answered = true;
+}
+
+function answerOX(choice, oBtn, xBtn){
+  if(state.answered) return;
+  const q = currentQ();
+  const correct = (choice === q.a);
+  oBtn.classList.add('disabled'); xBtn.classList.add('disabled');
+  if(q.a === true){ oBtn.classList.add('correct'); if(!correct) xBtn.classList.add('wrong'); }
+  else{ xBtn.classList.add('correct'); if(!correct) oBtn.classList.add('wrong'); }
+  markResult(correct, q.exp);
+}
+
+function answerMatch(choice, wBtn, lBtn){
+  if(state.answered) return;
+  const q = currentQ();
+  const correct = (choice === q.a);
+  wBtn.classList.add('disabled'); lBtn.classList.add('disabled');
+  const rightBtn = q.a === 'warhol' ? wBtn : lBtn;
+  const wrongBtn = q.a === 'warhol' ? lBtn : wBtn;
+  rightBtn.classList.add('correct');
+  if(!correct) wrongBtn.classList.add('wrong');
+  markResult(correct, q.exp);
+}
+
+function normalize(str){ return str.replace(/\s+/g,'').replace(/[()（）·,.]/g,'').toLowerCase(); }
+function answerBlank(input, submitBtn, hintBtn){
+  if(state.answered) return;
+  const q = currentQ();
+  const val = normalize(input.value);
+  const correct = q.answers.some(ans => normalize(ans) === val || (val.length>=2 && normalize(ans).includes(val)));
+  input.classList.add(correct?'correct':'wrong');
+  input.disabled = true; submitBtn.disabled = true; hintBtn.style.display='none';
+  const answerText = q.answers[0];
+  markResult(correct, (correct? '' : `정답: <b>${answerText}</b><br>`) + q.exp);
+}
+
+function answerMC(idx, box){
+  if(state.answered) return;
+  const q = currentQ();
+  const correct = (idx === q.a);
+  [...box.children].forEach((btn,i)=>{
+    btn.classList.add('disabled');
+    if(i === q.a) btn.classList.add('correct');
+    else if(i === idx) btn.classList.add('wrong');
+  });
+  markResult(correct, q.exp);
+}
+
+/* ---- speed round with timer ---- */
+function startSpeedTimer(box){
+  let timeLeft = 10;
+  const fill = document.getElementById('timerFill');
+  const label = document.getElementById('timerLabel');
+  fill.style.width = '100%'; fill.style.background = 'var(--red)';
+  label.textContent = `⏱ ${timeLeft}s`;
+  speedTimer = setInterval(()=>{
+    timeLeft--;
+    fill.style.width = (timeLeft/10*100) + '%';
+    label.textContent = `⏱ ${timeLeft}s`;
+    if(timeLeft <= 3){ playSound('tick'); }
+    if(timeLeft <= 0){
+      clearSpeedTimer();
+      if(!state.answered){ answerSpeed(-1, box); }
+    }
+  }, 1000);
+}
+function clearSpeedTimer(){ if(speedTimer){ clearInterval(speedTimer); speedTimer=null; } }
+
+function answerSpeed(idx, box){
+  if(state.answered) return;
+  clearSpeedTimer();
+  const q = currentQ();
+  const correct = (idx === q.a);
+  const fillEl = document.getElementById('timerFill');
+  const timeLeftPct = parseFloat(fillEl.style.width) || 0;
+  const bonus = correct ? Math.round(timeLeftPct/100*5) : 0;
+  [...box.children].forEach((btn,i)=>{
+    btn.classList.add('disabled');
+    if(i === q.a) btn.classList.add('correct');
+    else if(i === idx) btn.classList.add('wrong');
+  });
+  document.getElementById('timerLabel').textContent = idx===-1 ? '⏱ 시간종료!' : '';
+  markResult(correct, q.exp, bonus);
+  if(bonus>0){
+    document.getElementById('feedbackArea').innerHTML += `<div style="text-align:center;font-size:12px;font-weight:700;color:var(--cyan);margin-top:4px;">⚡ 스피드 보너스 +${bonus}</div>`;
+  }
+}
+
+/* ============================================================
+   MEMORY GAME
+============================================================ */
+function renderMemoryStage(){
+  const stage = currentStage();
+  document.getElementById('stageLabel').textContent = stage.icon + ' ' + stage.label;
+  document.getElementById('qIndex').querySelector('span').textContent = '카드를 뒤집어 짝을 맞춰보세요';
+  document.getElementById('timerLabel').textContent = '';
+  document.getElementById('timerWrap').classList.add('hidden');
+  document.getElementById('qText').textContent = '';
+  document.getElementById('feedbackArea').innerHTML = '';
+  document.getElementById('nextBtn').classList.add('hidden');
+  renderProgress();
+
+  let cards = [];
+  stage.pairs.forEach((pair, pid)=>{
+    cards.push({pairId:pid, text:pair[0]});
+    cards.push({pairId:pid, text:pair[1]});
+  });
+  // shuffle
+  for(let i=cards.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [cards[i],cards[j]]=[cards[j],cards[i]]; }
+  cards = cards.map((c,i)=>({...c, idx:i, matched:false}));
+
+  memState = { cards, flipped:[], matched:0, lock:false, attempts:0 };
+
+  const area = document.getElementById('answerArea');
+  area.innerHTML = '';
+  const statsDiv = document.createElement('div');
+  statsDiv.className = 'mem-stats';
+  statsDiv.innerHTML = `<span>맞춘 짝: <b id="memMatched">0</b> / ${stage.pairs.length}</span><span>시도 횟수: <b id="memAttempts">0</b></span>`;
+  area.appendChild(statsDiv);
+
+  const grid = document.createElement('div');
+  grid.className = 'mem-grid';
+  grid.id = 'memGrid';
+  memState.cards.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'mem-card';
+    el.dataset.idx = c.idx;
+    el.innerHTML = `<div class="back-face">✦</div><div class="front-face">${c.text}</div>`;
+    el.onclick = ()=>flipMemCard(c.idx, el);
+    grid.appendChild(el);
+  });
+  area.appendChild(grid);
+}
+
+function flipMemCard(idx, el){
+  if(memState.lock) return;
+  const card = memState.cards[idx];
+  if(card.matched || el.classList.contains('flipped')) return;
+  if(memState.flipped.length>=2) return;
+
+  playSound('flip');
+  el.classList.add('flipped');
+  memState.flipped.push({idx, el});
+
+  if(memState.flipped.length === 2){
+    memState.attempts++;
+    document.getElementById('memAttempts').textContent = memState.attempts;
+    memState.lock = true;
+    const [a,b] = memState.flipped;
+    const cardA = memState.cards[a.idx], cardB = memState.cards[b.idx];
+    if(cardA.pairId === cardB.pairId){
+      setTimeout(()=>{
+        cardA.matched = true; cardB.matched = true;
+        a.el.classList.add('matched'); b.el.classList.add('matched');
+        memState.matched++;
+        document.getElementById('memMatched').textContent = memState.matched;
+        playSound('correct');
+        memState.flipped = [];
+        memState.lock = false;
+        if(memState.matched === currentStage().pairs.length){
+          state.stageResults[state.stageIdx].correct = currentStage().pairs.length;
+          state.score += Math.max(0, currentStage().pairs.length*15 - Math.max(0,(memState.attempts - currentStage().pairs.length))*2);
+          state.maxScore += currentStage().pairs.length*15;
+          updateScoreChip();
+          setTimeout(()=>{ goToStageClear(); }, 500);
+        }
+      }, 450);
+    } else {
+      playSound('wrong');
+      a.el.classList.add('wrongflash'); b.el.classList.add('wrongflash');
+      setTimeout(()=>{
+        a.el.classList.remove('flipped','wrongflash');
+        b.el.classList.remove('flipped','wrongflash');
+        memState.flipped = [];
+        memState.lock = false;
+      }, 700);
+    }
+  }
+}
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+function nextQuestion(){
+  const stage = currentStage();
+  if(state.qIdx < stage.questions.length - 1){
+    state.qIdx++;
+    renderQuestion();
+  } else {
+    goToStageClear();
+  }
+}
+
+function goToStageClear(){
+  const stage = currentStage();
+  const result = state.stageResults[state.stageIdx];
+  const pct = Math.round((result.correct/result.total)*100);
+  const tier = pct>=80 ? 'gold' : pct>=50 ? 'silver' : 'bronze';
+  const badgeIcon = tier==='gold' ? '🥇' : tier==='silver' ? '🥈' : '🥉';
+  state.badgesEarned.push({name:stage.badge.name, icon:stage.badge.icon, tier, tierIcon:badgeIcon});
+
+  document.getElementById('clearEmoji').textContent = tier==='gold' ? '🎉' : tier==='silver' ? '👏' : '💪';
+  document.getElementById('clearTitle').textContent = `MISSION ${state.stageIdx+1} CLEAR!`;
+  document.getElementById('clearSub').textContent = `${result.correct} / ${result.total} 성공`;
+  document.getElementById('clearBadgeTag').innerHTML = `${badgeIcon} ${stage.badge.icon} ${stage.badge.name} 획득!`;
+  const lines = tier==='gold'
+    ? ["완벽해요! 팝아트 전문가 수준이에요 🏆","최고예요! 다음 미션도 이 기세로!"]
+    : tier==='silver'
+    ? ["잘했어요! 조금만 더 다듬으면 완벽해요","좋아요! 해설을 한 번 더 훑어보면 좋겠어요"]
+    : ["좋은 시작이에요! 다음 미션에서 만회해봐요","괜찮아요, 학습지를 다시 살펴보면 쉬워질 거예요"];
+  document.getElementById('clearMascotLine').textContent = lines[Math.floor(Math.random()*lines.length)];
+  document.getElementById('clearContinueBtn').textContent = state.stageIdx < stages.length-1 ? '다음 미션으로 →' : '최종 결과 보기 →';
+
+  playSound('clear');
+  showScreen('screen-clear');
+  burstConfetti(tier==='gold' ? 90 : 55);
+}
+
+function continueAfterClear(){
+  if(state.stageIdx < stages.length - 1){
+    state.stageIdx++;
+    state.qIdx = 0;
+    showScreen('screen-game');
+    renderStageStart();
+  } else {
+    showResult();
+  }
+}
+
+/* ============================================================
+   RESULT
+============================================================ */
+function showResult(){
+  renderProgress();
+  const pct = Math.min(100, Math.round((state.score/state.maxScore)*100));
+  let medal, grade, msg;
+  if(pct >= 90){ medal='🏆'; grade='팝아트 마스터'; msg='워홀과 리히텐슈타인의 세계를 완벽하게 이해했어요. 실크스크린과 벤데이 도트, 이제 눈 감고도 설명할 수 있겠네요!'; }
+  else if(pct >= 70){ medal='🎨'; grade='팝아트 큐레이터'; msg='핵심 개념을 탄탄하게 이해하고 있어요. 틀린 문제의 해설을 한 번 더 읽어보면 완벽해질 거예요.'; }
+  else if(pct >= 50){ medal='🖼️'; grade='팝아트 견습생'; msg='기본기는 갖췄어요! 실크스크린 vs 벤데이 도트, 워홀 vs 리히텐슈타인을 다시 한 번 비교해 정리해봐요.'; }
+  else { medal='🔍'; grade='팝아트 탐험가'; msg='이제 막 팝아트의 세계에 발을 들였어요. 학습지 2~4번 내용을 다시 살펴보고 재도전해보세요!'; }
+
+  if(bestScore === null || state.score > bestScore){ bestScore = state.score; }
+
+  document.getElementById('medalEmoji').textContent = medal;
+  document.getElementById('gradeTitle').textContent = grade;
+  document.getElementById('scoreBig').textContent = `${state.score} / ${state.maxScore}점 (${pct}%) · 최고 콤보 ${state.maxStreak}연속`;
+  document.getElementById('gradeMsg').textContent = msg;
+
+  const shelf = document.getElementById('badgeShelf');
+  shelf.innerHTML = '';
+  state.badgesEarned.forEach(b=>{
+    const chip = document.createElement('div');
+    chip.className = 'badge-chip';
+    chip.innerHTML = `${b.icon}<div class="label">${b.tierIcon}</div>`;
+    shelf.appendChild(chip);
+  });
+
+  const bd = document.getElementById('breakdown');
+  bd.innerHTML = '';
+  stages.forEach((s,i)=>{
+    const r = state.stageResults[i];
+    const item = document.createElement('div');
+    item.className = 'bd-item';
+    item.innerHTML = `<div class="bd-name">${s.icon} ${s.label.split('·')[1].trim()}</div>${r.correct} / ${r.total} 정답`;
+    bd.appendChild(item);
+  });
+
+  document.getElementById('finalTip').innerHTML =
+    `<b>정리 한 줄:</b> 팝아트는 대량생산·소비 사회를 배경으로, 워홀은 <b>실크스크린</b>의 반복성을, 리히텐슈타인은 <b>벤데이 도트</b>의 만화적 이미지를 통해 예술을 '희소성'에서 '복제성'으로, '만들기'에서 '선택하기'로 바꾸어 놓았습니다.`;
+
+  showScreen('screen-result');
+  burstConfetti(pct>=90 ? 140 : 90);
+}
+</script>
+</body>
+</html>
