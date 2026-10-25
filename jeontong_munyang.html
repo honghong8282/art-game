@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="중학교 미술 수업용 전통문양 도안 만들기 도구 · made by 홍인">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8F%BA%3C/text%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>전통문양 패턴 만들기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&text=%E5%A3%BD%E7%A6%8F%E5%BA%B7%E5%AF%A7&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#E8EDED; --panel:#F8FAF9; --ink:#1C2333; --muted:#566275; --line:#C8D2D4;
+  --accent:#23408E; --accent-ink:#FFFFFF; --accent-soft:#DCE4F4; --stage:#DCE3E4; --shadow:rgba(28,35,51,.10);
+  --serif:"Gowun Batang","Nanum Myeongjo","Noto Serif KR",serif;
+  --sans:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121821; --panel:#1A222E; --ink:#E7EBF0; --muted:#9BA7B7; --line:#2C3848;
+    --accent:#93ABE9; --accent-ink:#0E1420; --accent-soft:#25324A; --stage:#202A36; --shadow:rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121821; --panel:#1A222E; --ink:#E7EBF0; --muted:#9BA7B7; --line:#2C3848;
+  --accent:#93ABE9; --accent-ink:#0E1420; --accent-soft:#25324A; --stage:#202A36; --shadow:rgba(0,0,0,.35);
+}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.top{max-width:1180px;margin:0 auto;padding:28px 20px 8px}
+.top h1{font-family:var(--serif);font-weight:700;font-size:clamp(1.6rem,3.4vw,2.3rem);line-height:1.25;margin:0;letter-spacing:-.01em}
+.top p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+
+.layout{max-width:1180px;margin:0 auto;padding:16px 20px 40px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+@media (max-width:880px){.layout{grid-template-columns:1fr}}
+
+.viewtabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+.viewtabs button{border:1px solid var(--line);background:transparent;padding:6px 14px;border-radius:999px;cursor:pointer;color:var(--muted)}
+.viewtabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+.stage{background:var(--stage);border-radius:6px;padding:clamp(10px,2.4vw,22px);box-shadow:inset 0 0 0 1px var(--line)}
+.stage canvas{display:block;width:100%;height:auto;aspect-ratio:1/1;border-radius:2px;box-shadow:0 8px 26px var(--shadow)}
+
+.info{margin-top:18px;max-width:68ch}
+.info h2{font-family:var(--serif);font-size:1.25rem;margin:0 0 6px;font-weight:700}
+.info p{margin:0 0 6px;color:var(--muted)}
+.info b{color:var(--ink);font-weight:400;font-family:var(--serif)}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:9px 16px;border-radius:6px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:hover{border-color:var(--accent)}
+#status{color:var(--muted);font-size:.9rem}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 18px 18px}
+@media (min-width:881px){.panel{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));max-height:calc(100vh - 32px);overflow:auto}}
+fieldset{border:0;margin:0;padding:16px 0 4px;border-bottom:1px solid var(--line)}
+fieldset:last-child{border-bottom:0}
+legend{font-family:var(--serif);font-weight:700;font-size:1.05rem;padding:0;margin-bottom:10px}
+
+.motif-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mgroup{grid-column:1/-1;margin:6px 0 -2px;font-size:.85rem;color:var(--muted)}
+.mgroup:first-child{margin-top:0}
+.motif{border:1px solid var(--line);background:transparent;border-radius:6px;padding:6px 4px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.82rem;color:var(--muted)}
+.motif canvas{width:100%;max-width:64px;aspect-ratio:1/1;height:auto;border-radius:3px}
+.motif[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);color:var(--ink)}
+.motif.draw{justify-content:center;font-size:.85rem;color:var(--accent);border-style:dashed}
+.motif.draw span.plus{font-size:1.6rem;line-height:1}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.9rem}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+
+.slider{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin-bottom:12px;font-size:.92rem}
+.slider output{color:var(--muted);font-variant-numeric:tabular-nums}
+.slider input{grid-column:1/-1;width:100%;accent-color:var(--accent)}
+
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.swatch{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:transparent;border-radius:6px;padding:5px 10px 5px 6px;cursor:pointer;font-size:.88rem}
+.swatch i{display:inline-flex;width:22px;height:22px;border-radius:50%;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.swatch i em{flex:1}
+.swatch[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.custom-colors{display:flex;gap:16px;margin-top:10px;font-size:.9rem}
+.custom-colors label{display:flex;align-items:center;gap:6px}
+.custom-colors input{width:38px;height:30px;border:1px solid var(--line);border-radius:4px;padding:0;background:none}
+.check{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.92rem}
+.check input{accent-color:var(--accent);width:18px;height:18px}
+
+.pad-wrap{position:fixed;inset:0;background:rgba(10,14,22,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.pad-wrap[hidden]{display:none}
+.pad{background:var(--panel);border-radius:10px;padding:18px;width:min(380px,100%);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.pad h2{font-family:var(--serif);margin:0 0 4px;font-size:1.2rem}
+.pad p{margin:0 0 12px;color:var(--muted);font-size:.9rem}
+.pad canvas{display:block;width:100%;aspect-ratio:1/1;height:auto;border-radius:6px;touch-action:none;cursor:crosshair;box-shadow:inset 0 0 0 1px var(--line)}
+.pad-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pad-row .grow{flex:1}
+
+.modetabs{display:flex;gap:0;margin-top:16px;border-bottom:1px solid var(--line)}
+.modetabs button{border:0;background:transparent;padding:10px 16px;cursor:pointer;color:var(--muted);font-family:var(--serif);font-size:1.05rem;border-bottom:3px solid transparent;margin-bottom:-1px}
+.modetabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:700}
+.hint{margin:8px 0 0;color:var(--muted);font-size:.86rem}
+.tstage{background:var(--stage);border-radius:6px;padding:clamp(10px,2.4vw,22px);box-shadow:inset 0 0 0 1px var(--line)}
+.tstage.drag{box-shadow:inset 0 0 0 3px var(--accent)}
+.tstage canvas{display:block;max-width:100%;height:auto;margin:0 auto;box-shadow:0 8px 26px var(--shadow);border-radius:2px}
+.tempty{aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;border:2px dashed var(--line);border-radius:6px;padding:20px}
+.tempty p{margin:0;color:var(--muted);max-width:40ch}
+.tempty .tempty-title{font-family:var(--serif);font-size:1.25rem;color:var(--ink)}
+.info ol{margin:0;padding-left:1.3em;color:var(--muted)}
+.info li{margin-bottom:4px}
+.cstage{background:var(--stage);border-radius:6px;padding:clamp(10px,2.4vw,22px);box-shadow:inset 0 0 0 1px var(--line)}
+.cstage canvas{display:block;width:100%;max-width:520px;height:auto;margin:0 auto;box-shadow:0 8px 26px var(--shadow);border-radius:4px}
+.citem{display:block;width:100%;text-align:left;border:1px solid var(--line);background:transparent;border-radius:6px;padding:9px 12px;margin-bottom:6px;cursor:pointer}
+.citem b{display:block;font-family:var(--serif);font-weight:700}
+.citem small{display:block;color:var(--muted);font-size:.84rem;line-height:1.45}
+.citem[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.field{display:block;margin-bottom:12px;font-size:.92rem}
+.field input,.field textarea,.panel select{display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--bg);color:var(--ink);font:inherit;resize:vertical}
+.panel select{margin-top:6px}
+.bottlectl{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:10px}
+.spin{display:flex;align-items:center;gap:8px;font-size:.92rem;color:var(--muted)}
+.spin input{width:170px;accent-color:var(--accent)}
+#cv.grab{cursor:grab;touch-action:pan-y}
+.compgrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:1100px){.compgrid{grid-template-columns:1fr}}
+.estage{background:var(--stage);border-radius:6px;padding:clamp(8px,1.6vw,14px);box-shadow:inset 0 0 0 1px var(--line)}
+.estage canvas{display:block;width:100%;height:auto;border-radius:2px}
+#ecv{cursor:move;touch-action:none;box-shadow:0 6px 18px var(--shadow)}
+#pcv{cursor:grab;touch-action:pan-y}
+.top{position:relative}
+.credit{position:absolute;top:36px;right:20px;display:flex;align-items:center;gap:12px}
+.credit-label{font-family:var(--sans);font-size:.66rem;letter-spacing:.34em;color:var(--muted)}
+.credit-rule{width:26px;height:1px;background:var(--accent);opacity:.55}
+.credit-name{font-family:var(--serif);font-weight:700;font-size:1.02rem;letter-spacing:.22em;color:var(--ink)}
+@media (max-width:640px){.credit{position:static;justify-content:flex-end;margin-bottom:8px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="credit" aria-label="made by 홍인"><span class="credit-label">MADE BY</span><span class="credit-rule" aria-hidden="true"></span><span class="credit-name">홍인</span></div>
+  <h1>전통문양 도안 만들기</h1>
+  <p id="subtitle"></p>
+  <nav class="modetabs" aria-label="작업 고르기">
+    <button type="button" data-mode="pattern">무늬 배열하기</button>
+    <button type="button" data-mode="trace">사진을 도안으로</button>
+    <button type="button" data-mode="comp">병 작품 꾸미기</button>
+    <button type="button" data-mode="card">진로 문양 카드</button>
+  </nav>
+</header>
+
+<main class="layout" id="patternMode">
+  <section>
+    <div class="viewtabs" id="views" aria-label="미리보기 방식"></div>
+    <div class="bottlectl" id="bottleCtl" hidden>
+      <div class="chips" id="shapes" aria-label="병 모양"></div>
+      <label class="spin">병 돌리기 <input type="range" id="spin" min="0" max="360" step="1"></label>
+      <span class="hint" style="margin:0">그림을 좌우로 끌어도 돌아가요.</span>
+    </div>
+    <div class="stage"><canvas id="cv" width="720" height="720" aria-label="패턴 미리보기"></canvas></div>
+    <div class="actions">
+      <button class="btn primary" id="dl" hidden>그림 파일로 저장</button>
+      <button class="btn" id="random">무작위로 조합하기</button>
+      <span id="status" role="status"></span>
+    </div>
+    <div class="info">
+      <h2 id="infoTitle"></h2>
+      <p id="infoMotif"></p>
+      <p id="infoArr"></p>
+    </div>
+  </section>
+
+  <aside class="panel" aria-label="패턴 설정">
+    <fieldset>
+      <legend>단위 문양</legend>
+      <div class="motif-grid" id="motifs"></div>
+    </fieldset>
+    <fieldset>
+      <legend>배열 방식</legend>
+      <div class="chips" id="arrs"></div>
+    </fieldset>
+    <fieldset>
+      <legend>크기와 간격</legend>
+      <div class="slider"><label for="size">무늬 크기</label><output id="sizeO"></output><input type="range" id="size" min="30" max="180" step="2"></div>
+      <div class="slider"><label for="gap">무늬 사이 간격</label><output id="gapO"></output><input type="range" id="gap" min="0" max="80" step="1"></div>
+      <div class="slider"><label for="rot">무늬 돌리기</label><output id="rotO"></output><input type="range" id="rot" min="0" max="360" step="5"></div>
+      <div class="slider"><label for="lw">선 굵기</label><output id="lwO"></output><input type="range" id="lw" min="1" max="9" step="0.5"></div>
+      <div class="slider" id="countRow"><label for="count">첫 바퀴 무늬 개수</label><output id="countO"></output><input type="range" id="count" min="3" max="16" step="1"></div>
+    </fieldset>
+    <fieldset>
+      <legend>색</legend>
+      <div class="swatches" id="palettes"></div>
+      <div class="custom-colors" id="customColors" hidden>
+        <label>무늬 <input type="color" id="inkPick"></label>
+        <label>바탕 <input type="color" id="bgPick"></label>
+      </div>
+      <label class="check"><input type="checkbox" id="fill"> 안쪽을 연하게 칠하기</label>
+    </fieldset>
+  </aside>
+</main>
+
+<main class="layout" id="traceMode" hidden>
+  <section>
+    <div class="tstage" id="tstage">
+      <div class="tempty" id="tempty">
+        <p class="tempty-title">사진이나 그림을 넣어 주세요</p>
+        <p>꽃, 새, 동물 사진이나 종이에 그린 밑그림 사진 모두 좋아요. 사진은 이 기기 안에서만 바뀌고 어디에도 올라가지 않아요.</p>
+        <button class="btn primary" id="tPick2" type="button">사진 고르기</button>
+      </div>
+      <canvas id="tcv" hidden aria-label="선 도안 결과"></canvas>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="tUse" type="button" hidden>이 도안을 패턴 문양으로 쓰기</button>
+      <button class="btn" id="tOrig" type="button" aria-pressed="false" hidden>원본 보기</button>
+      <button class="btn" id="tDl" type="button" hidden>그림 파일로 저장</button>
+      <span id="tStatus" role="status"></span>
+    </div>
+    <div class="info">
+      <h2>이렇게 써 보세요</h2>
+      <ol>
+        <li>배경이 단순하고 주인공이 크게 찍힌 사진일수록 선이 깔끔하게 나와요.</li>
+        <li>선의 양과 잡티 지우기를 조절해 꼭 필요한 선만 남겨 보세요. 무엇을 덜어낼지 고르는 것이 문양화의 핵심이에요.</li>
+        <li>저장한 도안을 출력해 보고 그리거나, 패턴 문양으로 보내 반복 무늬로 만들어 보세요.</li>
+      </ol>
+    </div>
+  </section>
+  <aside class="panel" aria-label="도안 설정">
+    <fieldset>
+      <legend>사진 넣기</legend>
+      <button class="btn" id="tPick" type="button">사진 고르기</button>
+      <input type="file" id="tFile" accept="image/*" hidden>
+      <p class="hint">사진을 왼쪽 칸에 끌어다 놓거나 붙여 넣어도 돼요.</p>
+    </fieldset>
+    <fieldset>
+      <legend>표현 방식</legend>
+      <div class="chips" id="tModes"></div>
+      <p class="hint" id="tModeDesc"></p>
+    </fieldset>
+    <fieldset>
+      <legend>선 다듬기</legend>
+      <div class="slider"><label for="tDetail">선의 양</label><output id="tDetailO"></output><input type="range" id="tDetail" min="1" max="10" step="1"></div>
+      <div class="slider"><label for="tSimple">단순하게</label><output id="tSimpleO"></output><input type="range" id="tSimple" min="0" max="8" step="1"></div>
+      <div class="slider"><label for="tWeight">선 굵기</label><output id="tWeightO"></output><input type="range" id="tWeight" min="0" max="4" step="1"></div>
+      <div class="slider"><label for="tSpeck">잡티 지우기</label><output id="tSpeckO"></output><input type="range" id="tSpeck" min="0" max="10" step="1"></div>
+      <div class="slider" id="tToneRow"><label for="tTone">농담 면의 양</label><output id="tToneO"></output><input type="range" id="tTone" min="0" max="10" step="1"></div>
+    </fieldset>
+    <fieldset>
+      <legend>색</legend>
+      <div class="swatches" id="tPalettes"></div>
+    </fieldset>
+  </aside>
+</main>
+
+<main class="layout" id="compMode" hidden>
+  <section>
+    <div class="compgrid">
+      <div>
+        <p class="hint" style="margin:0 0 8px">펼친 면 · 문양을 눌러 고르고 끌어서 옮기세요. 점선이 병의 앞면 가운데예요.</p>
+        <div class="estage"><canvas id="ecv" aria-label="병을 펼친 면"></canvas></div>
+      </div>
+      <div>
+        <p class="hint" style="margin:0 0 8px">완성 모습 · 끌거나 슬라이더로 돌려 보세요.</p>
+        <div class="estage"><canvas id="pcv" width="720" height="720" aria-label="병 작품 미리보기"></canvas></div>
+        <label class="spin" style="margin-top:10px">병 돌리기 <input type="range" id="aSpin" min="0" max="360" step="1"></label>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="aDl3d" type="button" hidden>완성 모습 저장</button>
+      <button class="btn" id="aDlFlat" type="button" hidden>펼친 도안 저장</button>
+      <button class="btn" id="aReset" type="button">예시로 다시 시작</button>
+      <button class="btn" id="aClear" type="button">모두 지우기</button>
+      <span id="aStatus" role="status"></span>
+    </div>
+    <div class="info">
+      <h2>작품 구성 팁</h2>
+      <ol>
+        <li>주인공 문양 하나를 앞면에 크게 놓고, 어깨와 굽에는 띠 장식을 둘러 화면을 정리해 보세요.</li>
+        <li>내 꿈을 담은 글귀나 직접 그린 문양을 전통 문양과 함께 놓아 하나의 이야기를 만들어 보세요.</li>
+        <li>병을 돌려 보며 옆면과 뒷면에도 작은 문양을 놓으면 어느 쪽에서 보아도 완성된 작품이 돼요.</li>
+      </ol>
+    </div>
+  </section>
+  <aside class="panel" aria-label="작품 설정">
+    <fieldset><legend>병 모양</legend><div class="chips" id="aShapes"></div></fieldset>
+    <fieldset>
+      <legend>문양 넣기</legend>
+      <div class="motif-grid" id="aMotifs"></div>
+      <div class="pad-row"><button class="btn primary grow" id="aAddOne" type="button">하나 넣기</button><button class="btn grow" id="aAddBand" type="button">띠로 두르기</button></div>
+      <p class="hint">내 문양과 사진 도안은 다른 탭에서 만들면 여기에도 나타나요.</p>
+    </fieldset>
+    <fieldset>
+      <legend>글귀 넣기</legend>
+      <label class="field">내 꿈을 담은 글귀<textarea id="aText" rows="2" maxlength="60" placeholder="예: 꿈을 향해 거슬러 오르다"></textarea></label>
+      <button class="btn" id="aAddText" type="button">글귀 넣기</button>
+    </fieldset>
+    <fieldset id="aSelBox" hidden>
+      <legend id="aSelTitle">고른 요소</legend>
+      <div class="slider"><label for="aSize">크기</label><output id="aSizeO"></output><input type="range" id="aSize" min="30" max="420" step="1"></div>
+      <div class="slider" id="aRotRow"><label for="aRot">돌리기</label><output id="aRotO"></output><input type="range" id="aRot" min="-180" max="180" step="5"></div>
+      <label class="field" id="aTextRow">글귀 고치기<textarea id="aEdit" rows="2" maxlength="60"></textarea></label>
+      <div class="pad-row">
+        <button class="btn" id="aFlip" type="button">좌우 뒤집기</button>
+        <button class="btn" id="aDup" type="button">복제</button>
+        <button class="btn" id="aFront" type="button">맨 앞으로</button>
+        <button class="btn" id="aDel" type="button">지우기</button>
+      </div>
+    </fieldset>
+  </aside>
+</main>
+
+<main class="layout" id="cardMode" hidden>
+  <section>
+    <div class="cstage"><canvas id="ccv" width="1080" height="1350" aria-label="진로 문양 카드 미리보기"></canvas></div>
+    <div class="actions">
+      <button class="btn primary" id="cDl" type="button" hidden>카드를 그림 파일로 저장</button>
+      <span id="cStatus" role="status"></span>
+    </div>
+    <div class="info">
+      <h2>활동 안내</h2>
+      <ol>
+        <li>내가 꿈꾸는 진로 분야를 고르고, 추천 문양 가운데 마음에 드는 것을 골라요.</li>
+        <li>문양에 담긴 뜻을 내 꿈과 연결해 내 말로 고쳐 써 보세요.</li>
+        <li>무늬 배열하기에서 만든 패턴이나 사진 도안을 카드 그림으로 넣을 수 있어요.</li>
+      </ol>
+    </div>
+  </section>
+  <aside class="panel" aria-label="카드 설정">
+    <fieldset>
+      <legend>진로 분야</legend>
+      <div class="chips" id="cFields"></div>
+      <p class="hint" id="cFieldSub"></p>
+    </fieldset>
+    <fieldset>
+      <legend>추천 문양</legend>
+      <div id="cItems"></div>
+      <div class="chips" id="cAlts"></div>
+      <label class="hint" for="cAny" style="display:block;margin-top:12px">다른 문양으로 바꾸기</label>
+      <select id="cAny"></select>
+    </fieldset>
+    <fieldset>
+      <legend>그림 형태</legend>
+      <div class="chips" id="cArts"></div>
+    </fieldset>
+    <fieldset>
+      <legend>카드 글</legend>
+      <label class="field">나의 꿈<input id="cDream" maxlength="30" placeholder="예: 데이터 분석가"></label>
+      <label class="field">문양에 담은 뜻<textarea id="cMeaning" rows="3" maxlength="90"></textarea></label>
+      <label class="field">이름<input id="cName" maxlength="24" placeholder="예: 1학년 3반 김OO"></label>
+    </fieldset>
+  </aside>
+</main>
+
+<div class="pad-wrap" id="padWrap" hidden>
+  <div class="pad" role="dialog" aria-modal="true" aria-labelledby="padTitle">
+    <h2 id="padTitle">단위 문양 직접 그리기</h2>
+    <p>네모 칸 안에 문양 하나를 그리면, 그 문양이 반복되어 패턴이 됩니다.</p>
+    <canvas id="pad" width="300" height="300"></canvas>
+    <label class="check"><input type="checkbox" id="padMirror" checked> 좌우 대칭으로 그리기</label>
+    <div class="pad-row">
+      <button class="btn" id="padUndo">한 획 지우기</button>
+      <button class="btn" id="padClear">모두 지우기</button>
+    </div>
+    <div class="pad-row">
+      <button class="btn" id="padCancel">닫기</button>
+      <button class="btn primary grow" id="padUse">이 문양으로 패턴 만들기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const TAU = Math.PI*2;
+const W = 720;
+
+/* ---------- 문양 정의 (좌표: -50 ~ 50) ---------- */
+function spiral(p, cx, cy, R, turns, a0, dir){
+  const N = 64;
+  for(let k=0;k<=N;k++){
+    const t=k/N, r=R*(1-t*0.82), a=a0+dir*turns*TAU*t;
+    const x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
+    if(k===0) p.moveTo(x,y); else p.lineTo(x,y);
+  }
+}
+function spiralFrom(p, px, py, R, turns, a0, dir){
+  spiral(p, px-R*Math.cos(a0), py-R*Math.sin(a0), R, turns, a0, dir);
+}
+function leaf(x,y,deg,len){
+  const l=new Path2D();
+  l.moveTo(0,0); l.quadraticCurveTo(len*.5,-len*.38,len,0); l.quadraticCurveTo(len*.5,len*.38,0,0); l.closePath();
+  const p=new Path2D(); p.addPath(l, new DOMMatrix().translate(x,y).rotate(deg)); return p;
+}
+function circle(x,y,r){const p=new Path2D(); p.moveTo(x+r,y); p.arc(x,y,r,0,TAU); return p;}
+
+const BUILDERS = {
+  lotus(){
+    const c=new Path2D(); c.moveTo(0,28); c.bezierCurveTo(-20,8,-16,-28,0,-46); c.bezierCurveTo(16,-28,20,8,0,28); c.closePath();
+    const l=new Path2D(); l.moveTo(-3,30); l.bezierCurveTo(-30,24,-46,0,-40,-24); l.bezierCurveTo(-22,-18,-8,4,-3,30); l.closePath();
+    const r=new Path2D(); r.moveTo(3,30); r.bezierCurveTo(30,24,46,0,40,-24); r.bezierCurveTo(22,-18,8,4,3,30); r.closePath();
+    const v=new Path2D(); v.moveTo(0,20); v.lineTo(0,-30);
+    const b=new Path2D(); b.moveTo(-38,36); b.quadraticCurveTo(0,50,38,36); b.moveTo(-24,44); b.quadraticCurveTo(0,54,24,44);
+    return {fills:[l,r,c], strokes:[l,r,c,v,b]};
+  },
+  cloud(){
+    const body=new Path2D(); body.moveTo(-26,12);
+    body.bezierCurveTo(-48,12,-50,-16,-28,-18);
+    body.bezierCurveTo(-26,-42,6,-44,8,-22);
+    body.bezierCurveTo(22,-38,48,-22,34,-4);
+    body.bezierCurveTo(48,8,34,24,20,14);
+    body.bezierCurveTo(8,22,-14,22,-26,12); body.closePath();
+    const c=new Path2D();
+    spiral(c,-26,-3,10,1.15,Math.PI,1);
+    spiral(c,6,-17,11,1.15,-Math.PI/2,1);
+    spiral(c,27,3,8,1.1,0,1);
+    const t=new Path2D(); t.moveTo(-26,12); t.bezierCurveTo(-38,32,-10,38,4,30); t.bezierCurveTo(16,24,26,38,44,40);
+    return {fills:[body], strokes:[body,c,t]};
+  },
+  vine(){
+    const s=new Path2D(); s.moveTo(-30,18); s.bezierCurveTo(-10,-30,10,30,30,-18);
+    spiralFrom(s,-30,18,14,1.3,0,1);
+    spiralFrom(s,30,-18,14,1.3,Math.PI,1);
+    const l1=leaf(-6,-1,-125,24), l2=leaf(6,1,55,24), l3=leaf(-18,0,-60,16), l4=leaf(18,0,120,16);
+    return {fills:[l1,l2,l3,l4], strokes:[s,l1,l2,l3,l4]};
+  },
+  meander(){
+    const p=new Path2D(); let x=-40,y=40; p.moveTo(x,y);
+    const lens=[80,80,80,68,68,56,56,44,44,32,32,20,20];
+    const dirs=[[1,0],[0,-1],[-1,0],[0,1]];
+    lens.forEach((L,i)=>{const d=dirs[i%4]; x+=d[0]*L; y+=d[1]*L; p.lineTo(x,y);});
+    return {fills:[], strokes:[p]};
+  },
+  wave(){
+    const s=new Path2D(); [50,38,26,14].forEach(r=>{s.moveTo(r,0); s.arc(0,0,r,0,TAU);});
+    const f=new Path2D(); [44,32,20].forEach(r=>{f.moveTo(r,0); f.arc(0,0,r,0,TAU);}); const dt=scaleDots([[0,0]],3);
+    return {fills:[circle(0,0,26)], strokes:[s], fine:[f], solid:[dt], occlude:[circle(0,0,50)], rowRatio:.25};
+  },
+  plum(){
+    const petals=[]; for(let k=0;k<5;k++){const a=-Math.PI/2+k*TAU/5; petals.push(circle(22*Math.cos(a),22*Math.sin(a),16));}
+    const st=new Path2D();
+    for(let k=0;k<5;k++){const a=-Math.PI/2+Math.PI/5+k*TAU/5; st.moveTo(7*Math.cos(a),7*Math.sin(a)); st.lineTo(15*Math.cos(a),15*Math.sin(a)); st.moveTo(17*Math.cos(a)+2,17*Math.sin(a)); st.arc(17*Math.cos(a),17*Math.sin(a),2,0,TAU);}
+    const c=circle(0,0,7);
+    return {fills:petals, strokes:[...petals,c,st]};
+  },
+  custom(){
+    const p=new Path2D();
+    (S.custom||[]).forEach(st=>{ if(!st.length) return; p.moveTo(st[0][0],st[0][1]); if(st.length===1) p.lineTo(st[0][0]+.01,st[0][1]); else st.forEach(pt=>p.lineTo(pt[0],pt[1])); });
+    return {fills:[], strokes:[p]};
+  }
+};
+
+function ell(x,y,rx,ry,rot){const p=new Path2D(); p.ellipse(x,y,rx,ry,rot||0,0,TAU); return p;}
+function leafN(x,y,deg,len,wid){
+  const w=(wid||.38)*len, l=new Path2D();
+  l.moveTo(0,0); l.quadraticCurveTo(len*.5,-w,len,0); l.quadraticCurveTo(len*.5,w,0,0); l.closePath();
+  const p=new Path2D(); p.addPath(l,new DOMMatrix().translate(x,y).rotate(deg)); return p;
+}
+function cubicPts(a,b,c,d,n){
+  const pts=[]; for(let i=0;i<=n;i++){const t=i/n,u=1-t;
+    pts.push([u*u*u*a[0]+3*u*u*t*b[0]+3*u*t*t*c[0]+t*t*t*d[0], u*u*u*a[1]+3*u*u*t*b[1]+3*u*t*t*c[1]+t*t*t*d[1]]);}
+  return pts;
+}
+function tubeSides(pts,w0,w1){
+  const L=[],R=[],n=pts.length;
+  for(let i=0;i<n;i++){
+    const a=pts[Math.max(0,i-1)], b=pts[Math.min(n-1,i+1)];
+    let tx=b[0]-a[0], ty=b[1]-a[1]; const m=Math.hypot(tx,ty)||1; tx/=m; ty/=m;
+    const w=w0+(w1-w0)*i/(n-1);
+    L.push([pts[i][0]-ty*w, pts[i][1]+tx*w]); R.push([pts[i][0]+ty*w, pts[i][1]-tx*w]);
+  }
+  return {L,R};
+}
+function tube(pts,w0,w1){
+  const {L,R}=tubeSides(pts,w0,w1), p=new Path2D();
+  p.moveTo(L[0][0],L[0][1]); L.forEach(q=>p.lineTo(q[0],q[1])); R.reverse().forEach(q=>p.lineTo(q[0],q[1])); p.closePath(); return p;
+}
+function tubeC(a,b,c,d,w0,w1){ return tube(cubicPts(a,b,c,d,40),w0,w1); }
+function catmull(c,seg){
+  const out=[]; for(let i=0;i<c.length-1;i++){const p0=c[Math.max(0,i-1)],p1=c[i],p2=c[i+1],p3=c[Math.min(c.length-1,i+2)];
+    for(let k=0;k<seg;k++){const t=k/seg,t2=t*t,t3=t2*t; out.push([0,1].map(j=>.5*(2*p1[j]+(-p0[j]+p2[j])*t+(2*p0[j]-5*p1[j]+4*p2[j]-p3[j])*t2+(-p0[j]+3*p1[j]-3*p2[j]+p3[j])*t3)));}}
+  out.push(c[c.length-1]); return out;
+}
+function mirrorX(p){ const q=new Path2D(); q.addPath(p,new DOMMatrix().scale(-1,1)); return q; }
+
+Object.assign(BUILDERS,{
+  sun(){
+    const d=circle(0,-6,26), r=circle(0,-6,32);
+    const c=new Path2D();
+    c.moveTo(-48,34); c.bezierCurveTo(-36,24,-24,40,-12,32); c.bezierCurveTo(0,24,10,40,24,32); c.bezierCurveTo(34,26,42,34,48,30);
+    c.moveTo(-40,44); c.bezierCurveTo(-28,36,-16,48,-4,42); c.bezierCurveTo(8,36,20,46,34,42);
+    return {fills:[d], strokes:[d,r,c]};
+  },
+  mountain(){
+    const m=new Path2D();
+    m.moveTo(-48,30); m.lineTo(-32,-2); m.quadraticCurveTo(-28,-10,-24,-2); m.lineTo(-14,14);
+    m.lineTo(2,-34); m.quadraticCurveTo(6,-44,10,-34); m.lineTo(26,6); m.lineTo(33,-8); m.quadraticCurveTo(37,-15,41,-8); m.lineTo(48,30); m.closePath();
+    const s=new Path2D();
+    s.moveTo(6,-30); s.quadraticCurveTo(0,-10,6,10); s.moveTo(-28,2); s.quadraticCurveTo(-32,14,-28,24); s.moveTo(37,-4); s.quadraticCurveTo(34,8,38,20);
+    s.moveTo(-48,40); s.bezierCurveTo(-36,32,-24,46,-12,40); s.bezierCurveTo(0,34,12,46,24,40); s.bezierCurveTo(34,35,42,42,48,38);
+    return {fills:[m], strokes:[m,s]};
+  },
+  pine(){
+    const trunk=tubeC([-2,48],[-16,26],[16,6],[8,-30],6.5,2.6);
+    const br=[tubeC([-3,18],[-12,12],[-20,8],[-30,2],2.6,1.4),tubeC([3,2],[12,2],[20,0],[28,-4],2.4,1.3),tubeC([5,-12],[0,-18],[-6,-22],[-14,-26],2.2,1.2)];
+    const tufts=[], lines=new Path2D();
+    [[-30,2,19],[28,-4,17],[-14,-26,15],[8,-30,17]].forEach(([x,y,r])=>{
+      const t=new Path2D(); t.moveTo(x-r,y); t.ellipse(x,y,r,r*.72,0,Math.PI,TAU); t.closePath(); tufts.push(t);
+      for(let k=1;k<10;k++){const a=Math.PI+k*Math.PI/10; lines.moveTo(x,y); lines.lineTo(x+Math.cos(a)*r*.96,y+Math.sin(a)*r*.69);}
+      lines.moveTo(x-r*.55,y); lines.ellipse(x,y,r*.55,r*.4,0,Math.PI,TAU);
+    });
+    return {layers:[{fills:[trunk,...br],strokes:[trunk,...br]},{occlude:tufts,fills:tufts,strokes:[...tufts,lines]}]};
+  },
+  lingzhi(){
+    const cap=new Path2D();
+    cap.moveTo(-36,0); cap.bezierCurveTo(-42,-28,-10,-42,4,-30); cap.bezierCurveTo(20,-44,46,-28,38,-4);
+    cap.bezierCurveTo(32,6,10,0,0,4); cap.bezierCurveTo(-12,8,-30,8,-36,0); cap.closePath();
+    const rings=new Path2D();
+    [.68,.38].forEach(k=>rings.addPath(cap,new DOMMatrix().translate(0,-12).scale(k).translate(0,12)));
+    const stem=tubeC([0,2],[6,18],[-12,30],[-4,46],4,3);
+    const sm=new Path2D(); sm.moveTo(-2,32); sm.bezierCurveTo(-18,26,-30,30,-34,36); sm.bezierCurveTo(-26,40,-14,40,-2,34);
+    return {layers:[{fills:[stem,sm],strokes:[stem,sm]},{occlude:[cap],fills:[cap],strokes:[cap,rings]}]};
+  },
+  crane(){
+    const far=new Path2D();
+    far.moveTo(0,-2); far.bezierCurveTo(4,-20,0,-34,-10,-46); far.lineTo(-9,-38); far.lineTo(-15,-37); far.lineTo(-8,-31);
+    far.bezierCurveTo(-6,-18,-4,-8,6,0); far.closePath();
+    const body=ell(-2,4,18,7.5,-.12);
+    const wing=new Path2D();
+    wing.moveTo(-10,0); wing.bezierCurveTo(-16,-22,-28,-38,-46,-44); wing.lineTo(-41,-38); wing.lineTo(-48,-35); wing.lineTo(-40,-31);
+    wing.lineTo(-45,-26); wing.bezierCurveTo(-30,-18,-16,-8,4,0); wing.closePath();
+    const neck=tubeC([12,0],[22,-2],[28,-8],[36,-16],2.6,1.8);
+    const head=circle(38,-17,4.2);
+    const misc=new Path2D();
+    misc.moveTo(41,-18); misc.lineTo(51,-13); misc.lineTo(41,-15.5);
+    misc.moveTo(-14,8); misc.lineTo(-46,22); misc.moveTo(-12,10); misc.lineTo(-46,27);
+    misc.moveTo(-46,22); misc.lineTo(-50,19); misc.moveTo(-46,27); misc.lineTo(-50,25);
+    misc.moveTo(-18,6); misc.lineTo(-30,4); misc.lineTo(-22,9);
+    return {layers:[{occlude:[far],fills:[far],strokes:[far]},{occlude:[body,wing],fills:[body,wing,head],strokes:[misc,body,neck,head,wing]}]};
+  },
+  turtle(){
+    const parts=[ell(0,-35,7,9), ell(-23,-18,6,10,.7), ell(23,-18,6,10,-.7), ell(-21,20,6,9,-.7), ell(21,20,6,9,.7)];
+    const tail=new Path2D(); tail.moveTo(-3,28); tail.lineTo(0,40); tail.lineTo(3,28);
+    const shell=ell(0,0,24,28);
+    const hex=new Path2D(), pts=[];
+    for(let k=0;k<6;k++){const a=k*TAU/6; pts.push([Math.cos(a)*10,Math.sin(a)*11]);}
+    hex.moveTo(pts[0][0],pts[0][1]); pts.forEach(p=>hex.lineTo(p[0],p[1])); hex.closePath();
+    pts.forEach(p=>{const m=Math.hypot(p[0]/24,p[1]/28); hex.moveTo(p[0],p[1]); hex.lineTo(p[0]/m*.98,p[1]/m*.98);});
+    const eye=new Path2D(); eye.moveTo(-3,-38); eye.arc(-3,-38,1,0,TAU); eye.moveTo(4,-38); eye.arc(3,-38,1,0,TAU);
+    return {layers:[{fills:parts,strokes:[...parts,tail,eye]},{occlude:[shell],fills:[shell],strokes:[shell,hex]}]};
+  },
+  deer(){
+    const legs=[tubeC([-20,10],[-21,22],[-23,32],[-25,46],3,1.8),tubeC([-13,12],[-13,24],[-12,34],[-11,46],3,1.8),
+                tubeC([6,12],[7,24],[8,34],[9,46],3,1.8),tubeC([12,9],[14,20],[17,32],[19,44],3,1.8)];
+    const body=ell(-5,5,22,11);
+    const neck=tubeC([8,2],[13,-6],[17,-14],[20,-20],6,4);
+    const head=ell(25,-22,9,5,.35);
+    const ear=leafN(18,-25,-160,9,.45), tail=leafN(-26,-1,200,7,.5);
+    const ant=new Path2D();
+    ant.moveTo(20,-26); ant.quadraticCurveTo(14,-40,20,-50); ant.moveTo(17,-36); ant.lineTo(9,-42); ant.moveTo(18,-44); ant.lineTo(26,-48);
+    ant.moveTo(24,-27); ant.quadraticCurveTo(28,-38,36,-44); ant.moveTo(28,-34); ant.lineTo(35,-33);
+    const spots=new Path2D(); [[-14,2],[-4,0],[6,3],[-10,10],[0,9]].forEach(([x,y])=>{spots.moveTo(x+1.8,y); spots.arc(x,y,1.8,0,TAU);});
+    const eye=new Path2D(); eye.moveTo(28,-23); eye.arc(27,-23,1,0,TAU);
+    return {layers:[{fills:legs,strokes:legs},{occlude:[body,neck,head],fills:[body,neck,head,ear,tail],strokes:[body,neck,head,ear,tail,ant,spots,eye]}]};
+  },
+  orchid(){
+    const leaves=[tubeC([0,46],[-4,10],[-28,-28],[-46,-36],3.4,.3),tubeC([2,46],[10,4],[30,-34],[46,-30],3.4,.3),
+                  tubeC([-2,46],[-18,22],[-42,10],[-48,26],3,.3),tubeC([2,46],[18,26],[34,18],[44,32],3,.3),
+                  tubeC([0,46],[2,20],[-10,0],[-16,-14],2.6,.3)];
+    const stem=tubeC([3,46],[6,30],[8,16],[10,4],1.2,1);
+    const fl=[leafN(10,4,-95,15,.4),leafN(10,4,-30,13,.4),leafN(10,4,-160,13,.4),leafN(10,4,20,9,.5),leafN(10,4,155,9,.5)];
+    return {fills:[...leaves,...fl], strokes:[...leaves,stem,...fl]};
+  },
+  chrysanthemum(){
+    const outer=[],inner=[];
+    for(let k=0;k<18;k++){const a=k*TAU/18; outer.push(ell(Math.cos(a)*30,Math.sin(a)*30,16,4.6,a));}
+    for(let k=0;k<12;k++){const a=(k+.5)*TAU/12; inner.push(ell(Math.cos(a)*16,Math.sin(a)*16,10,4,a));}
+    const c=circle(0,0,8), dots=new Path2D();
+    for(let k=0;k<6;k++){const a=k*TAU/6; dots.moveTo(Math.cos(a)*4+1,Math.sin(a)*4); dots.arc(Math.cos(a)*4,Math.sin(a)*4,1,0,TAU);}
+    return {layers:[{fills:outer,strokes:outer},{occlude:[circle(0,0,24)],fills:inner,strokes:inner},{occlude:[c],fills:[c],strokes:[c,dots]}]};
+  },
+  bamboo(){
+    const segs=[], nodes=new Path2D();
+    const stalk=(x,w,ys)=>{for(let i=0;i<ys.length-1;i++){const p=new Path2D(); p.rect(x-w/2,ys[i]+1.5,w,ys[i+1]-ys[i]-3); segs.push(p);} ys.slice(1,-1).forEach(y=>{nodes.moveTo(x-w/2-1.5,y); nodes.lineTo(x+w/2+1.5,y);});};
+    stalk(-16,9,[-52,-24,6,34,52]); stalk(10,6,[-52,-36,-8,22,52]);
+    const lv=[leafN(12,-8,-35,28,.24),leafN(12,-8,-8,24,.24),leafN(12,-8,20,26,.24),
+              leafN(-14,6,205,26,.24),leafN(-14,6,180,22,.24),leafN(-14,6,232,22,.24),
+              leafN(11,22,150,18,.26)];
+    return {layers:[{fills:segs,strokes:[...segs,nodes]},{fills:lv,strokes:lv}]};
+  },
+  peony(){
+    const lv=[leafN(-6,26,140,28,.42),leafN(6,26,40,28,.42),leafN(0,30,90,20,.42)];
+    const outer=[],inner=[],ruff=new Path2D();
+    for(let k=0;k<8;k++){const a=k*TAU/8+.2, x=Math.cos(a)*22, y=Math.sin(a)*20-6; outer.push(circle(x,y,14));
+      ruff.moveTo(Math.cos(a)*30+Math.cos(a+1.6)*4, Math.sin(a)*28-6+Math.sin(a+1.6)*4); ruff.quadraticCurveTo(Math.cos(a)*26,Math.sin(a)*24-6,Math.cos(a)*30+Math.cos(a-1.6)*4, Math.sin(a)*28-6+Math.sin(a-1.6)*4);}
+    for(let k=0;k<6;k++){const a=k*TAU/6; inner.push(circle(Math.cos(a)*11,Math.sin(a)*10-6,10));}
+    const c=circle(0,-6,6), dots=new Path2D();
+    for(let k=0;k<7;k++){const a=k*TAU/7; dots.moveTo(Math.cos(a)*3+.9,Math.sin(a)*3-6); dots.arc(Math.cos(a)*3,Math.sin(a)*3-6,.9,0,TAU);}
+    return {layers:[{fills:lv,strokes:lv},{occlude:outer,fills:outer,strokes:[...outer,ruff]},{occlude:inner,fills:inner,strokes:inner},{occlude:[c],fills:[c],strokes:[c,dots]}]};
+  },
+  dragon(){
+    const cps=[[-24,-26],[-4,-38],[24,-34],[36,-12],[18,4],[-10,4],[-30,20],[-20,40],[10,42],[34,30],[46,14]];
+    const pts=catmull(cps,8);
+    const n=pts.length;
+    const {L:R,R:L}=tubeSides(pts,8.5,1);
+    const body=tube(pts,8.5,1);
+    const spikes=new Path2D(), scales=new Path2D(), legs=new Path2D(), legFill=[];
+    for(let i=3;i<n-8;i+=4){
+      const a=L[i], b=L[i+2], p=pts[i+1], q=L[i+1], len=Math.hypot(q[0]-p[0],q[1]-p[1])||1, h=5*(1-i/n)+2;
+      spikes.moveTo(a[0],a[1]); spikes.lineTo(q[0]+(q[0]-p[0])/len*h, q[1]+(q[1]-p[1])/len*h); spikes.lineTo(b[0],b[1]); spikes.closePath();
+    }
+    const {L:L2,R:R2}=tubeSides(pts,6,.6);
+    for(let i=4;i<n-4;i+=5){ scales.moveTo(L2[i][0],L2[i][1]); scales.quadraticCurveTo(pts[i+1][0],pts[i+1][1],R2[i][0],R2[i][1]); }
+    [Math.round(n*.2),Math.round(n*.42),Math.round(n*.62),Math.round(n*.8)].forEach(i=>{
+      const p=pts[i], q=R[i], len=Math.hypot(q[0]-p[0],q[1]-p[1])||1, ux=(q[0]-p[0])/len, uy=(q[1]-p[1])/len;
+      const t=[pts[i+1][0]-pts[i-1][0], pts[i+1][1]-pts[i-1][1]], tl=Math.hypot(t[0],t[1])||1, tx=t[0]/tl, ty=t[1]/tl;
+      const k=[q[0]+ux*7-tx*4, q[1]+uy*7-ty*4], f=[k[0]+ux*5+tx*4, k[1]+uy*5+ty*4];
+      const leg=tube([q,k,f],2.4,1.6); legFill.push(leg);
+      [-0.7,0,0.7].forEach(d=>{const ca=Math.atan2(uy+ty*.6,ux+tx*.6)+d; legs.moveTo(f[0],f[1]); legs.lineTo(f[0]+Math.cos(ca)*4,f[1]+Math.sin(ca)*4);});
+    });
+    const p0=pts[0], p1=pts[3]; const ang=Math.atan2(p0[1]-p1[1],p0[0]-p1[0])*180/Math.PI;
+    const hl=new Path2D();
+    hl.moveTo(-3,-9); hl.lineTo(10,-10); hl.quadraticCurveTo(19,-9,21,-3); hl.lineTo(12,0); hl.lineTo(21,3); hl.quadraticCurveTo(18,9,8,8); hl.lineTo(-3,9); hl.closePath();
+    const hx=new Path2D();
+    hx.moveTo(1,-9); hx.quadraticCurveTo(-6,-18,-15,-20); hx.moveTo(5,-10); hx.quadraticCurveTo(2,-19,-4,-24);
+    hx.moveTo(20,-3); hx.bezierCurveTo(27,-11,31,0,38,-7); hx.moveTo(19,5); hx.bezierCurveTo(25,13,31,5,36,11);
+    hx.moveTo(-3,9); hx.lineTo(-6,13); hx.moveTo(1,9); hx.lineTo(-1,14);
+    hx.moveTo(9.8,-4); hx.arc(8,-4,1.8,0,TAU);
+    const M=new DOMMatrix().translate(p0[0],p0[1]).rotate(ang).scale(1.25);
+    const head=new Path2D(); head.addPath(hl,M); const hdet=new Path2D(); hdet.addPath(hx,M);
+    const mn=new Path2D(); [[-2,-6,-14,-12,-18,-4],[-2,0,-16,-2,-20,6],[-2,6,-12,10,-16,16],[0,-9,-8,-20,-4,-26]].forEach(([a,b,c,d,e2,f])=>{ mn.moveTo(a,b); mn.quadraticCurveTo(c,d,e2,f); });
+    const mane=new Path2D(); mane.addPath(mn,M); const ep=M.transformPoint(new DOMPoint(8,-4)); const eyeS=scaleDots([[ep.x,ep.y]],1.6);
+    const pearl=circle(-40,8,7), fl=new Path2D();
+    spiral(fl,-40,8,5,1,0,1); fl.moveTo(-47,8); fl.quadraticCurveTo(-52,2,-49,-4); fl.moveTo(-33,8); fl.quadraticCurveTo(-28,2,-31,-4); fl.moveTo(-40,15); fl.quadraticCurveTo(-36,21,-40,26);
+    return {layers:[{fills:[spikes,...legFill],strokes:[spikes,...legFill],fine:[legs]},{occlude:[body],fills:[body],strokes:[body],fine:[scales]},{strokes:[],fine:[mane]},{occlude:[head],fills:[head,pearl],strokes:[head,pearl],fine:[hdet,fl],solid:[eyeS]}]};
+  },
+  bat(){
+    const w=new Path2D();
+    w.moveTo(5,-8); w.bezierCurveTo(16,-22,34,-22,48,-12); w.quadraticCurveTo(40,-4,42,8); w.quadraticCurveTo(34,2,30,13);
+    w.quadraticCurveTo(22,6,17,15); w.quadraticCurveTo(12,7,5,8); w.closePath();
+    const wl=mirrorX(w);
+    const rib=new Path2D(); rib.moveTo(6,-5); rib.lineTo(42,8); rib.moveTo(6,-5); rib.lineTo(30,13); rib.moveTo(6,-5); rib.lineTo(17,15);
+    const ribL=mirrorX(rib);
+    const body=ell(0,2,7,13), head=circle(0,-14,7);
+    const ears=new Path2D(); ears.moveTo(-6,-17); ears.lineTo(-7,-27); ears.lineTo(-1,-20); ears.moveTo(6,-17); ears.lineTo(7,-27); ears.lineTo(1,-20);
+    ears.moveTo(-2,-14); ears.arc(-3,-14,1,0,TAU); ears.moveTo(4,-14); ears.arc(3,-14,1,0,TAU);
+    const tail=new Path2D(); tail.moveTo(-4,14); tail.quadraticCurveTo(0,26,4,14);
+    return {layers:[{fills:[w,wl],strokes:[w,wl,rib,ribL]},{occlude:[body,head],fills:[body,head],strokes:[body,head,ears,tail]}]};
+  }
+});
+
+
+function tubeF(pts,wf){
+  const L=[],R=[],n=pts.length;
+  for(let i=0;i<n;i++){
+    const a=pts[Math.max(0,i-1)], b=pts[Math.min(n-1,i+1)];
+    let tx=b[0]-a[0], ty=b[1]-a[1]; const m=Math.hypot(tx,ty)||1; tx/=m; ty/=m;
+    const w=wf(i/(n-1)); L.push([pts[i][0]-ty*w, pts[i][1]+tx*w]); R.push([pts[i][0]+ty*w, pts[i][1]-tx*w]);
+  }
+  const p=new Path2D(); p.moveTo(L[0][0],L[0][1]); L.forEach(q=>p.lineTo(q[0],q[1])); R.slice().reverse().forEach(q=>p.lineTo(q[0],q[1])); p.closePath();
+  return {path:p,L,R};
+}
+Object.assign(BUILDERS,{
+  koi(){
+    const pts=catmull([[-26,20],[-24,2],[-12,-16],[4,-28],[18,-36],[27,-42]],10), n=pts.length;
+    const wf=t=>1.4+9.5*Math.pow(Math.sin(Math.PI*Math.min(1,.06+t*.8)),.8);
+    const {path:body,L,R}=tubeF(pts,wf);
+    const sc=new Path2D();
+    for(let i=Math.round(n*.25),row=0;i<n*.8;i+=3,row++){
+      const p=pts[i], q=pts[i+1], d=Math.atan2(q[1]-p[1],q[0]-p[0]), w=wf(i/(n-1));
+      const nx=-Math.sin(d), ny=Math.cos(d), offs=row%2?[-.45,.1,.6]:[-.2,.35];
+      offs.forEach(o=>{ if(Math.abs(o)>.7) return; const cx=p[0]+nx*w*o, cy=p[1]+ny*w*o, r=w*.32; sc.moveTo(cx+Math.cos(d+Math.PI/2)*r, cy+Math.sin(d+Math.PI/2)*r); sc.arc(cx,cy,r,d+Math.PI/2,d+Math.PI*1.5); });
+    }
+    const t0=pts[0], t1=pts[3], ta=Math.atan2(t0[1]-t1[1],t0[0]-t1[0])*180/Math.PI;
+    const tail=[leafN(t0[0],t0[1],ta-34,24,.55),leafN(t0[0],t0[1],ta+34,24,.55)];
+    const hi=n-5, hp=pts[hi], hq=pts[hi+1], hd=Math.atan2(hq[1]-hp[1],hq[0]-hp[0]);
+    const det=new Path2D();
+    const ex=pts[n-4][0]-Math.sin(hd)*2.6, ey=pts[n-4][1]+Math.cos(hd)*2.6; det.moveTo(ex+2.4,ey); det.arc(ex,ey,2.4,0,TAU); det.moveTo(ex+.8,ey); det.arc(ex,ey,.8,0,TAU);
+    det.moveTo(L[n-7][0],L[n-7][1]); det.quadraticCurveTo(pts[n-6][0]-Math.cos(hd)*3,pts[n-6][1]-Math.sin(hd)*3,R[n-7][0],R[n-7][1]);
+    const tip=pts[n-1]; det.moveTo(tip[0],tip[1]); det.bezierCurveTo(tip[0]+8,tip[1]+2,tip[0]+6,tip[1]+10,tip[0]+12,tip[1]+12);
+    const mi=Math.round(n*.5), md=Math.atan2(pts[mi+1][1]-pts[mi][1],pts[mi+1][0]-pts[mi][0])*180/Math.PI;
+    const finV=[leafV(L[mi][0],L[mi][1],md+150,20,.5,4), leafV(L[mi-6][0],L[mi-6][1],md+160,14,.5,3), leafV(R[n-12][0],R[n-12][1],md+55,15,.5,3), leafV(R[Math.round(n*.3)][0],R[Math.round(n*.3)][1],md+70,11,.5,2)], fins=finV.map(o=>o.p), tailV=[leafV(t0[0],t0[1],ta-34,24,.55,4).v,leafV(t0[0],t0[1],ta+34,24,.55,4).v];
+    const wv=new Path2D();
+    wv.moveTo(-50,50); wv.bezierCurveTo(-48,30,-30,22,-18,30); spiralFrom(wv,-18,30,7,1.1,-Math.PI*.15,1);
+    wv.moveTo(-34,50); wv.bezierCurveTo(-30,40,-22,38,-16,42);
+    wv.moveTo(-8,50); wv.bezierCurveTo(-4,36,14,30,26,38); spiralFrom(wv,26,38,6,1.1,-Math.PI*.1,1);
+    wv.moveTo(4,50); wv.bezierCurveTo(10,44,18,42,22,46);
+    wv.moveTo(30,50); wv.bezierCurveTo(36,42,46,42,50,46);
+    const crest=new Path2D(); crest.moveTo(-50,50); crest.bezierCurveTo(-48,30,-30,22,-18,30); crest.bezierCurveTo(-10,34,-10,44,-8,50); crest.closePath();
+    const crest2=new Path2D(); crest2.moveTo(-8,50); crest2.bezierCurveTo(-4,36,14,30,26,38); crest2.bezierCurveTo(32,42,30,48,30,50); crest2.closePath();
+    const drops=new Path2D(); [[-30,14],[-36,4],[-26,2],[34,20],[40,10],[30,6]].forEach(([x,y],i)=>{const r=i%3===0?2:1.3; drops.moveTo(x+r,y); drops.arc(x,y,r,0,TAU);});
+    const eyeS=scaleDots([[ex,ey]],1.3);
+    return {layers:[{occlude:[crest,crest2],fills:[crest,crest2],strokes:[wv],solid:[drops]},{occlude:[...tail,...fins],fills:[...tail,...fins],strokes:[...tail,...fins],fine:[...finV.map(o=>o.v),...tailV]},{occlude:[body],fills:[body],strokes:[body],fine:[sc,det],solid:[eyeS]}]};
+  },
+  flowers(){
+    const stems=[tubeC([0,48],[-2,22],[-16,2],[-26,-24],1.6,1.1),tubeC([0,48],[4,20],[20,6],[28,-18],1.6,1.1),tubeC([0,36],[2,12],[-2,-12],[2,-36],1.4,1)];
+    const petals=[], cen=[];
+    [[-26,-26,11],[29,-20,10],[2,-38,10],[-30,6,7]].forEach(([x,y,r])=>{ for(let k=0;k<5;k++) petals.push(leafN(x,y,k*72-90,r,.55)); cen.push(circle(x,y,r*.22)); });
+    const lv=[leafN(-6,18,-165,16,.38),leafN(8,14,-15,16,.38),leafN(-16,-6,-125,12,.38),leafN(20,-2,-45,12,.38),leafN(0,-18,-150,10,.4),leafN(1,-2,-25,10,.4),leafN(-2,40,200,14,.35),leafN(2,40,-20,14,.35)];
+    const tw=new Path2D(); tw.moveTo(-16,2); tw.quadraticCurveTo(-26,4,-30,6);
+    spiralFrom(tw,12,10,5,1.2,0,-1); spiralFrom(tw,-8,-24,4,1.2,Math.PI,1);
+    return {layers:[{fills:lv,strokes:[...stems,...lv,tw]},{occlude:petals,fills:petals,strokes:[...petals,...cen]}]};
+  },
+  su(){return {text:"壽"};}, bok(){return {text:"福"};}, gang(){return {text:"康"};}, nyeong(){return {text:"寧"};}
+});
+
+/* ---------- 세밀한 문양 ---------- */
+function place(path,x,y,deg,sx,sy){ const q=new Path2D(); q.addPath(path,new DOMMatrix().translate(x,y).rotate(deg||0).scale(sx||1,sy||sx||1)); return q; }
+function petalShape(len,wid){ const p=new Path2D(); p.moveTo(0,0); p.bezierCurveTo(-wid,-len*.25,-wid*.9,-len*.78,0,-len); p.bezierCurveTo(wid*.9,-len*.78,wid,-len*.25,0,0); p.closePath(); return p; }
+function petalVeins(len,wid,n){ const v=new Path2D(); for(let i=0;i<n;i++){ const t=n>1?(i/(n-1))*2-1:0; v.moveTo(0,-len*.08); v.quadraticCurveTo(t*wid*.5,-len*.45,t*wid*.4,-len*.84+Math.abs(t)*len*.14); } return v; }
+function ruffPetal(len,wid,waves,amp){
+  const p=new Path2D(); p.moveTo(0,0); p.bezierCurveTo(-wid*.6,-len*.15,-wid,-len*.42,-wid,-len*.66);
+  const N=48; for(let k=0;k<=N;k++){ const a=Math.PI-Math.PI*k/N; p.lineTo(wid*Math.cos(a), -len*.66-len*.34*Math.sin(a)-amp*Math.pow(Math.abs(Math.sin(a*waves)),.6)); }
+  p.bezierCurveTo(wid,-len*.42,wid*.6,-len*.15,0,0); p.closePath(); return p;
+}
+function leafV(x,y,deg,len,wid,nv){
+  const w=(wid||.38)*len, l=new Path2D(); l.moveTo(0,0); l.quadraticCurveTo(len*.5,-w,len,0); l.quadraticCurveTo(len*.5,w,0,0); l.closePath();
+  const v=new Path2D(); v.moveTo(len*.04,0); v.quadraticCurveTo(len*.5,-w*.06,len*.9,0);
+  const n=nv||3; for(let k=1;k<=n;k++){ const t=k/(n+1), bx=len*t*.92, h=w*.78*Math.sin(Math.PI*Math.min(.95,t*.9+.08));
+    v.moveTo(bx,0); v.quadraticCurveTo(bx+len*.06,-h*.5,bx+len*.13,-h*.92); v.moveTo(bx,0); v.quadraticCurveTo(bx+len*.06,h*.5,bx+len*.13,h*.92); }
+  return {p:place(l,x,y,deg), v:place(v,x,y,deg)};
+}
+function blossom(x,y,R,rot){
+  const petals=[], fine=new Path2D(), solid=new Path2D();
+  for(let k=0;k<5;k++){ const a=(rot||0)+k*TAU/5-Math.PI/2, px=x+Math.cos(a)*R*.5, py=y+Math.sin(a)*R*.5, r=R*.5;
+    const p=new Path2D(); const na=a; p.moveTo(px+Math.cos(na+.25)*r, py+Math.sin(na+.25)*r); p.arc(px,py,r,na+.25,na-.25+TAU);
+    p.quadraticCurveTo(px+Math.cos(na)*r*.82, py+Math.sin(na)*r*.82, px+Math.cos(na+.25)*r, py+Math.sin(na+.25)*r); petals.push(p);
+    fine.moveTo(x+Math.cos(a)*R*.22,y+Math.sin(a)*R*.22); fine.quadraticCurveTo(x+Math.cos(a+.15)*R*.5,y+Math.sin(a+.15)*R*.5,x+Math.cos(a)*R*.72,y+Math.sin(a)*R*.72); }
+  for(let k=0;k<11;k++){ const a=k*TAU/11+.2, l=R*(.34+.06*(k%3)); fine.moveTo(x+Math.cos(a)*R*.12,y+Math.sin(a)*R*.12); fine.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l);
+    const r=Math.max(.7,R*.045); solid.moveTo(x+Math.cos(a)*l+r,y+Math.sin(a)*l); solid.arc(x+Math.cos(a)*l,y+Math.sin(a)*l,r,0,TAU); }
+  solid.moveTo(x+R*.12,y); solid.arc(x,y,R*.12,0,TAU);
+  return {petals,fine,solid};
+}
+function scaleDots(pts,r){ const s=new Path2D(); pts.forEach(([x,y])=>{ s.moveTo(x+r,y); s.arc(x,y,r,0,TAU); }); return s; }
+
+Object.assign(BUILDERS,{
+  lotus(){
+    const B=[0,24];
+    const mk=(len,wid,deg,dx)=>{ const inner=new Path2D(); inner.addPath(petalShape(len*.76,wid*.6),new DOMMatrix().translate(0,-len*.12));
+      return {p:place(petalShape(len,wid),B[0]+dx,B[1],deg), f:[place(inner,B[0]+dx,B[1],deg), place(petalVeins(len,wid,5),B[0]+dx,B[1],deg)]}; };
+    const back=[mk(40,13,-26,-2),mk(40,13,26,2)], low=[mk(25,10,-100,-6),mk(25,10,100,6)], side=[mk(37,15,-54,-4),mk(37,15,54,4)], c=mk(50,18,0,0);
+    const calyx=ell(0,26,14,4.5), stem=tubeC([0,29],[1,36],[-1,42],[0,50],2.6,2.2);
+    const padL=new Path2D(); padL.moveTo(-50,48); padL.bezierCurveTo(-46,36,-30,32,-14,40); padL.bezierCurveTo(-24,42,-30,46,-34,50); padL.closePath();
+    const padR=mirrorX(padL), pv=new Path2D();
+    [[-44,46,-32,36],[-38,48,-24,38],[-30,49,-18,41]].forEach(([a,b,c2,d])=>{ pv.moveTo(a,b); pv.lineTo(c2,d); pv.moveTo(-a,b); pv.lineTo(-c2,d); });
+    const L=(arr)=>({occlude:arr.map(o=>o.p),fills:arr.map(o=>o.p),strokes:arr.map(o=>o.p),fine:arr.flatMap(o=>o.f)});
+    return {layers:[{fills:[padL,padR,stem],strokes:[padL,padR,stem],fine:[pv]},L(back),L(low),L(side),L([c]),{occlude:[calyx],fills:[calyx],strokes:[calyx]}]};
+  },
+  cloud(){
+    const body=new Path2D(); body.moveTo(-26,12);
+    body.bezierCurveTo(-48,12,-50,-16,-28,-18); body.bezierCurveTo(-26,-42,6,-44,8,-22); body.bezierCurveTo(22,-38,48,-22,34,-4);
+    body.bezierCurveTo(48,8,34,24,20,14); body.bezierCurveTo(8,22,-14,22,-26,12); body.closePath();
+    const inner=place(body,0,-6,0,.8); const c=new Path2D(), cf=new Path2D();
+    spiral(c,-26,-3,10,1.2,Math.PI,1); spiral(c,6,-17,11,1.2,-Math.PI/2,1); spiral(c,27,3,8,1.15,0,1);
+    spiral(cf,-26,-3,6.5,1,Math.PI,1); spiral(cf,6,-17,7,1,-Math.PI/2,1); spiral(cf,27,3,5,1,0,1);
+    const t1=tubeC([-24,14],[-40,34],[-8,42],[8,30],4,1.6), t2=tubeC([8,30],[20,22],[30,40],[46,38],2.4,.4);
+    const tl=new Path2D(); tl.moveTo(-26,16); tl.bezierCurveTo(-38,32,-10,38,6,31); tl.moveTo(10,30); tl.bezierCurveTo(20,25,28,38,44,38);
+    return {layers:[{fills:[t1,t2],strokes:[t1,t2],fine:[tl]},{occlude:[body],fills:[body],strokes:[body,c],fine:[inner,cf]}]};
+  },
+  vine(){
+    const stem=tubeC([-34,22],[-10,-34],[10,34],[34,-22],2.3,2.3);
+    const sp=new Path2D(); spiralFrom(sp,-34,22,13,1.35,0,1); spiralFrom(sp,34,-22,13,1.35,Math.PI,1);
+    const br=[tubeC([-13,-2],[-15,-18],[-4,-28],[5,-24],1.7,1),tubeC([13,2],[15,18],[4,28],[-5,24],1.7,1)];
+    spiralFrom(sp,5,-24,6,1.2,Math.PI*.9,1); spiralFrom(sp,-5,24,6,1.2,-Math.PI*.1,1);
+    const fs=new Path2D(); spiralFrom(fs,-34,22,7,1.1,0,1); spiralFrom(fs,34,-22,7,1.1,Math.PI,1); spiralFrom(fs,-26,14,3.5,1.2,Math.PI*.5,1); spiralFrom(fs,26,-14,3.5,1.2,-Math.PI*.5,1);
+    const lv=[leafV(-13,-2,128,22,.42,3),leafV(13,2,-52,22,.42,3),leafV(-24,6,205,14,.45,2),leafV(24,-6,25,14,.45,2),leafV(-10,-22,-160,12,.45,2),leafV(10,22,20,12,.45,2)];
+    return {layers:[{fills:[stem,...br],strokes:[stem,...br,sp],fine:[fs]},{occlude:lv.map(o=>o.p),fills:lv.map(o=>o.p),strokes:lv.map(o=>o.p),fine:lv.map(o=>o.v)}]};
+  },
+  peony(){
+    const cy=-6;
+    const pl=(x,y,deg,s)=>{ const a=leafV(0,0,-62,24,.4,3), b=leafV(0,0,-90,30,.4,3), c=leafV(0,0,-118,24,.4,3), st=new Path2D(); st.moveTo(0,0); st.lineTo(0,10);
+      return {p:[a.p,b.p,c.p].map(q=>place(q,x,y,deg,s)), v:[a.v,b.v,c.v,st].map(q=>place(q,x,y,deg,s))}; };
+    const lvs=[pl(-14,30,-58,.95),pl(14,30,58,.95),pl(0,34,0,.7)];
+    const outer=[],of=[],mid=[],mf=[],inn=[];
+    for(let k=0;k<7;k++){ const d=k*360/7+8; outer.push(place(ruffPetal(31,17,3,2.6),0,cy,d)); of.push(place(petalVeins(29,15,5),0,cy,d)); }
+    for(let k=0;k<6;k++){ const d=k*60+30; mid.push(place(ruffPetal(22,13,3,2),0,cy,d)); mf.push(place(petalVeins(20,11,3),0,cy,d)); }
+    for(let k=0;k<5;k++){ const d=k*72; inn.push(place(petalShape(13,9),0,cy,d)); }
+    const cen=circle(0,cy,4.5), dots=new Path2D(), fl=new Path2D();
+    for(let k=0;k<12;k++){ const a=k*TAU/12, r=7.5+(k%2)*1.6; fl.moveTo(Math.cos(a)*3,cy+Math.sin(a)*3); fl.lineTo(Math.cos(a)*r,cy+Math.sin(a)*r); dots.moveTo(Math.cos(a)*r+1.1,cy+Math.sin(a)*r); dots.arc(Math.cos(a)*r,cy+Math.sin(a)*r,1.1,0,TAU); }
+    return {layers:[{occlude:lvs.flatMap(o=>o.p),fills:lvs.flatMap(o=>o.p),strokes:lvs.flatMap(o=>o.p),fine:lvs.flatMap(o=>o.v)},
+      {occlude:outer,fills:outer,strokes:outer,fine:of},{occlude:mid,fills:mid,strokes:mid,fine:mf},{occlude:inn,fills:inn,strokes:inn},
+      {occlude:[cen],fills:[cen],strokes:[cen],fine:[fl],solid:[dots]}]};
+  },
+  plum(){
+    const br=[tubeC([-50,44],[-30,24],[-14,20],[2,4],4.2,2.6),tubeC([2,4],[12,-8],[22,-18],[38,-36],2.6,1),tubeC([-22,22],[-28,14],[-32,6],[-40,-2],1.8,.7),tubeC([12,-8],[20,-6],[28,-2],[34,2],1.4,.6)];
+    const bark=new Path2D(); [[-40,36],[-26,23],[-8,15],[8,-4]].forEach(([x,y])=>{ bark.moveTo(x-2,y+1); bark.quadraticCurveTo(x,y-2,x+3,y); });
+    const b1=blossom(6,-12,23,.2), b2=blossom(-28,12,14,.6), b3=blossom(30,-2,9,0);
+    const bud=[circle(36,-34,3.6),circle(-40,-3,3),circle(18,-18,2.6)], sep=new Path2D();
+    [[36,-34,3.6],[-40,-3,3],[18,-18,2.6]].forEach(([x,y,r])=>{ sep.moveTo(x-r,y+r*.6); sep.quadraticCurveTo(x,y+r*1.8,x+r,y+r*.6); });
+    const P=[...b1.petals,...b2.petals,...b3.petals];
+    return {layers:[{fills:br,strokes:br,fine:[bark]},{occlude:bud,fills:bud,strokes:[...bud,sep]},{occlude:P,fills:P,strokes:P,fine:[b1.fine,b2.fine,b3.fine],solid:[b1.solid,b2.solid,b3.solid]}]};
+  },
+  chrysanthemum(){
+    const L1=[],L2=[],L3=[],f1=new Path2D(),f2=new Path2D();
+    const sp=(r0,len,w,a)=>{ const p=new Path2D(); const x=Math.cos(a), y=Math.sin(a), nx=-y, ny=x;
+      p.moveTo(x*r0,y*r0); p.quadraticCurveTo(x*(r0+len*.5)+nx*w,y*(r0+len*.5)+ny*w,x*(r0+len),y*(r0+len)); p.quadraticCurveTo(x*(r0+len*.5)-nx*w,y*(r0+len*.5)-ny*w,x*r0,y*r0); p.closePath(); return p; };
+    for(let k=0;k<24;k++){ const a=k*TAU/24; L1.push(sp(14,32,3.8,a)); f1.moveTo(Math.cos(a)*18,Math.sin(a)*18); f1.lineTo(Math.cos(a)*42,Math.sin(a)*42); }
+    for(let k=0;k<18;k++){ const a=(k+.5)*TAU/18; L2.push(sp(8,24,3.4,a)); f2.moveTo(Math.cos(a)*12,Math.sin(a)*12); f2.lineTo(Math.cos(a)*28,Math.sin(a)*28); }
+    for(let k=0;k<12;k++){ const a=k*TAU/12; L3.push(sp(4,14,2.8,a)); }
+    const c=circle(0,0,6), dots=new Path2D();
+    for(let k=0;k<7;k++){ const a=k*TAU/7, r=k?3.2:0; dots.moveTo(Math.cos(a)*r+1,Math.sin(a)*r); dots.arc(Math.cos(a)*r,Math.sin(a)*r,1,0,TAU); }
+    return {layers:[{fills:L1,strokes:L1,fine:[f1]},{occlude:L2,fills:L2,strokes:L2,fine:[f2]},{occlude:L3,fills:L3,strokes:L3},{occlude:[c],fills:[c],strokes:[c],solid:[dots]}]};
+  },
+  orchid(){
+    const defs=[[[0,46],[-4,10],[-28,-28],[-46,-36],3.4],[[2,46],[10,4],[30,-34],[46,-30],3.4],[[-2,46],[-18,22],[-42,10],[-48,26],3],[[2,46],[18,26],[34,18],[44,32],3],[[0,46],[2,20],[-10,0],[-16,-14],2.6]];
+    const leaves=defs.map(d=>tubeC(d[0],d[1],d[2],d[3],d[4],.3)), mids=new Path2D();
+    defs.forEach(d=>{ const pts=cubicPts(d[0],d[1],d[2],d[3],30); mids.moveTo(pts[2][0],pts[2][1]); pts.slice(3,26).forEach(q=>mids.lineTo(q[0],q[1])); });
+    const stem=tubeC([3,46],[6,30],[12,14],[14,-2],1.1,.9), stem2=tubeC([5,36],[14,30],[22,22],[26,12],.9,.7);
+    const fl=(x,y,s,rot)=>{ const ps=[leafV(x,y,rot-95,15*s,.42,2),leafV(x,y,rot-35,13*s,.42,2),leafV(x,y,rot-155,13*s,.42,2),leafV(x,y,rot+25,9*s,.5,1),leafV(x,y,rot+155,9*s,.5,1)];
+      const lip=new Path2D(); lip.moveTo(x,y); lip.bezierCurveTo(x+5*s,y+4*s,x+4*s,y+10*s,x,y+9*s); lip.bezierCurveTo(x-4*s,y+10*s,x-5*s,y+4*s,x,y); lip.closePath();
+      const d=scaleDots([[x-1.2*s,y+5*s],[x+1.4*s,y+6*s],[x,y+3.5*s]],.9*s); return {p:[...ps.map(o=>o.p),lip], v:ps.map(o=>o.v), d}; };
+    const f1=fl(14,-4,1,0), f2=fl(27,10,.7,30);
+    const bud=leafN(26,12,-60,8,.5);
+    return {layers:[{fills:leaves,strokes:leaves,fine:[mids]},{fills:[stem,stem2,bud],strokes:[stem,stem2,bud]},{occlude:[...f1.p,...f2.p],fills:[...f1.p,...f2.p],strokes:[...f1.p,...f2.p],fine:[...f1.v,...f2.v],solid:[f1.d,f2.d]}]};
+  },
+  bamboo(){
+    const segs=[], nodes=new Path2D(), hl=new Path2D(), tw=new Path2D();
+    const stalk=(x,w,ys)=>{ for(let i=0;i<ys.length-1;i++){ const p=new Path2D(); const y0=ys[i]+1.5, y1=ys[i+1]-1.5;
+        p.moveTo(x-w/2,y0+1); p.quadraticCurveTo(x,y0-1.2,x+w/2,y0+1); p.lineTo(x+w/2,y1-1); p.quadraticCurveTo(x,y1+1.2,x-w/2,y1-1); p.closePath(); segs.push(p);
+        hl.moveTo(x-w*.22,y0+3); hl.lineTo(x-w*.22,y1-3); }
+      ys.slice(1,-1).forEach(y=>{ nodes.moveTo(x-w/2-1.5,y-1); nodes.quadraticCurveTo(x,y+1.5,x+w/2+1.5,y-1); nodes.moveTo(x-w/2-1,y+1.6); nodes.quadraticCurveTo(x,y+3.6,x+w/2+1,y+1.6); }); };
+    stalk(-16,9,[-52,-24,6,34,52]); stalk(10,6,[-52,-36,-8,22,52]);
+    tw.moveTo(13,-8); tw.quadraticCurveTo(20,-14,26,-14); tw.moveTo(-19,6); tw.quadraticCurveTo(-26,4,-30,0); tw.moveTo(13,22); tw.quadraticCurveTo(18,26,22,26);
+    const lv=[leafV(24,-14,-40,26,.22,0),leafV(24,-14,-12,24,.22,0),leafV(24,-14,16,26,.22,0),leafV(-30,0,200,26,.22,0),leafV(-30,0,176,22,.22,0),leafV(-30,0,228,22,.22,0),leafV(22,26,140,18,.24,0),leafV(22,26,170,16,.24,0)];
+    return {layers:[{fills:segs,strokes:[...segs,nodes],fine:[hl]},{fills:[],strokes:[tw]},{occlude:lv.map(o=>o.p),fills:lv.map(o=>o.p),strokes:lv.map(o=>o.p),fine:lv.map(o=>o.v)}]};
+  },
+  pine(){
+    const trunk=tubeC([-2,48],[-16,26],[16,6],[8,-30],6.5,2.6);
+    const br=[tubeC([-3,18],[-12,12],[-20,8],[-30,2],2.6,1.4),tubeC([3,2],[12,2],[20,0],[28,-4],2.4,1.3),tubeC([5,-12],[0,-18],[-6,-22],[-14,-26],2.2,1.2)];
+    const bark=new Path2D(); [[-4,40],[-6,32],[-3,24],[2,16],[6,8],[7,0],[7,-8],[7,-16]].forEach(([x,y],i)=>{ const o=i%2?1.6:-1.6; bark.moveTo(x+o-2,y); bark.quadraticCurveTo(x+o,y-2.4,x+o+2.2,y); });
+    const tufts=[], lines=new Path2D(), dark=new Path2D();
+    [[-30,2,19],[28,-4,17],[-14,-26,15],[8,-30,17]].forEach(([x,y,r])=>{
+      const t=new Path2D(); t.moveTo(x-r,y); t.ellipse(x,y,r,r*.72,0,Math.PI,TAU); t.closePath(); tufts.push(t);
+      for(let k=1;k<16;k++){ const a=Math.PI+k*Math.PI/16, rr=k%2?1.08:.92; lines.moveTo(x,y); lines.lineTo(x+Math.cos(a)*r*rr,y+Math.sin(a)*r*.72*rr); }
+      dark.moveTo(x-r*.5,y); dark.ellipse(x,y,r*.5,r*.3,0,Math.PI,TAU); dark.closePath();
+    });
+    return {layers:[{fills:[trunk,...br],strokes:[trunk,...br],fine:[bark]},{occlude:tufts,fills:tufts,strokes:tufts,fine:[lines],solid:[dark]}]};
+  },
+  crane(){
+    const far=new Path2D();
+    far.moveTo(0,-2); far.bezierCurveTo(4,-20,0,-34,-10,-46); far.lineTo(-9,-38); far.lineTo(-15,-37); far.lineTo(-8,-31); far.bezierCurveTo(-6,-18,-4,-8,6,0); far.closePath();
+    const farTip=new Path2D(); farTip.moveTo(-6,-36); farTip.bezierCurveTo(-4,-40,-8,-44,-10,-46); farTip.lineTo(-9,-38); farTip.lineTo(-15,-37); farTip.lineTo(-8,-31); farTip.closePath();
+    const body=ell(-2,4,18,7.5,-.12);
+    const wing=new Path2D(); wing.moveTo(-10,0); wing.bezierCurveTo(-16,-22,-28,-38,-46,-44); wing.lineTo(-41,-38); wing.lineTo(-48,-35); wing.lineTo(-40,-31); wing.lineTo(-45,-26); wing.bezierCurveTo(-30,-18,-16,-8,4,0); wing.closePath();
+    const tip=new Path2D(); tip.moveTo(-34,-36); tip.bezierCurveTo(-38,-40,-42,-43,-46,-44); tip.lineTo(-41,-38); tip.lineTo(-48,-35); tip.lineTo(-40,-31); tip.lineTo(-45,-26); tip.bezierCurveTo(-40,-24,-36,-22,-32,-21); tip.closePath();
+    const feath=new Path2D(); for(let k=0;k<7;k++){ const t=k/6, x=-12-t*26, y=-4-t*26; feath.moveTo(x,y); feath.quadraticCurveTo(x-4,y+4,x-6,y+10-t*4); }
+    for(let k=0;k<4;k++){ feath.moveTo(-2-k*2,-6-k*7); feath.lineTo(-6-k*2,-2-k*7); }
+    const neck=tubeC([12,0],[22,-2],[28,-8],[36,-16],2.6,1.8), head=circle(38,-17,4.2);
+    const misc=new Path2D(); misc.moveTo(41,-18); misc.lineTo(51,-13); misc.lineTo(41,-15.5);
+    misc.moveTo(-14,8); misc.lineTo(-46,22); misc.moveTo(-12,10); misc.lineTo(-46,27); misc.moveTo(-46,22); misc.lineTo(-50,19); misc.moveTo(-46,27); misc.lineTo(-50,25);
+    const tail=new Path2D(); tail.moveTo(-16,4); tail.lineTo(-30,2); tail.lineTo(-26,6); tail.lineTo(-32,8); tail.lineTo(-18,10); tail.closePath();
+    const knees=scaleDots([[-28,15],[-28,18.5]],.9);
+    const crown=circle(37,-20.5,1.8), eye=circle(39.5,-17.5,.9);
+    const bodyF=new Path2D(); for(let k=0;k<4;k++){ bodyF.moveTo(-14+k*7,2); bodyF.quadraticCurveTo(-11+k*7,5,-12+k*7,8); }
+    return {layers:[{occlude:[far],fills:[far],strokes:[far],solid:[farTip]},{solid:[tail]},
+      {occlude:[body,wing],fills:[body,wing],strokes:[misc,body,wing],fine:[feath,bodyF],solid:[tip,neck,knees]},{occlude:[head],fills:[head],strokes:[head],solid:[crown,eye]}]};
+  },
+  turtle(){
+    const parts=[ell(0,-35,7,9), ell(-23,-18,6,10,.7), ell(23,-18,6,10,-.7), ell(-21,20,6,9,-.7), ell(21,20,6,9,.7)];
+    const tail=new Path2D(); tail.moveTo(-3,28); tail.lineTo(0,40); tail.lineTo(3,28);
+    const legF=new Path2D(); [[-26,-22,.7],[26,-22,-.7],[-24,24,-.7],[24,24,.7]].forEach(([x,y,a])=>{ for(let k=-1;k<=1;k++){ const ax=x+Math.sin(a)*k*3, ay=y-Math.cos(a)*k*3; legF.moveTo(ax-1.5,ay); legF.lineTo(ax+1.5,ay); } });
+    const claws=new Path2D(); [[-28,-25],[28,-25],[-26,27],[26,27]].forEach(([x,y])=>{ for(let k=-1;k<=1;k++){ claws.moveTo(x+k*2,y); claws.lineTo(x+k*2.6+(x>0?1:-1)*1.5,y+(y>0?3:-3)); } });
+    const shell=ell(0,0,24,28), rim=ell(0,0,19.5,23.5);
+    const hex=new Path2D(), pts=[], rad=new Path2D(), hexIn=new Path2D();
+    for(let k=0;k<6;k++){ const a=k*TAU/6; pts.push([Math.cos(a)*9,Math.sin(a)*10.5]); }
+    hex.moveTo(pts[0][0],pts[0][1]); pts.forEach(p=>hex.lineTo(p[0],p[1])); hex.closePath();
+    hexIn.addPath(hex,new DOMMatrix().scale(.55));
+    pts.forEach(p=>{ const m=Math.hypot(p[0]/19.5,p[1]/23.5); hex.moveTo(p[0],p[1]); hex.lineTo(p[0]/m,p[1]/m); });
+    for(let k=0;k<22;k++){ const a=k*TAU/22; rad.moveTo(Math.cos(a)*19.5,Math.sin(a)*23.5); rad.lineTo(Math.cos(a)*24,Math.sin(a)*28); }
+    const eyes=scaleDots([[-3,-38],[3,-38]],1.1), sc=new Path2D(); [[0,-31],[-2,-33],[2,-33]].forEach(([x,y])=>{ sc.moveTo(x-1,y); sc.lineTo(x+1,y); });
+    return {layers:[{fills:parts,strokes:[...parts,tail],fine:[legF,claws,sc],solid:[eyes]},{occlude:[shell],fills:[shell],strokes:[shell,hex],fine:[rim,rad,hexIn]}]};
+  },
+  deer(){
+    const legs=[tubeC([-20,10],[-21,22],[-23,32],[-25,45],3.2,1.6),tubeC([-13,12],[-13,24],[-12,34],[-11,45],3.2,1.6),tubeC([7,11],[8,24],[8,34],[9,45],3,1.6),tubeC([13,8],[15,20],[17,32],[19,44],3,1.6)];
+    const hooves=[ell(-25.5,46,2.2,1.4),ell(-11,46,2.2,1.4),ell(9,46,2.2,1.4),ell(19.5,45,2.2,1.4)];
+    const body=new Path2D(); body.moveTo(-28,2); body.bezierCurveTo(-26,-8,-6,-8,6,-6); body.bezierCurveTo(12,-8,15,-14,18,-22);
+    body.lineTo(25,-17); body.bezierCurveTo(22,-8,19,2,16,8); body.bezierCurveTo(6,16,-14,16,-24,12); body.bezierCurveTo(-30,10,-31,6,-28,2); body.closePath();
+    const head=new Path2D(); head.moveTo(16,-24); head.bezierCurveTo(18,-30,26,-30,30,-26); head.lineTo(36,-21); head.quadraticCurveTo(37,-18,34,-18); head.lineTo(26,-18); head.quadraticCurveTo(20,-18,16,-24); head.closePath();
+    const ear=leafN(18,-27,-150,10,.45), earIn=new Path2D(); earIn.moveTo(16,-28); earIn.lineTo(11,-30);
+    const tail=leafN(-27,0,205,7,.5);
+    const ant=new Path2D(); ant.moveTo(21,-29); ant.quadraticCurveTo(15,-40,20,-50); ant.moveTo(18,-38); ant.lineTo(10,-43); ant.moveTo(19,-45); ant.lineTo(27,-49); ant.moveTo(17,-41); ant.lineTo(13,-50);
+    ant.moveTo(24,-29); ant.quadraticCurveTo(28,-40,36,-46); ant.moveTo(28,-37); ant.lineTo(35,-36); ant.moveTo(32,-42); ant.lineTo(33,-49);
+    const spots=scaleDots([[-16,0],[-8,-2],[0,-1],[-12,7],[-3,6],[6,3],[-20,5],[10,-3]],1.6);
+    const eye=scaleDots([[26.5,-24]],1.2), nose=scaleDots([[35.5,-20.5]],1.1);
+    const fur=new Path2D(); fur.moveTo(17,-12); fur.lineTo(20,-14); fur.moveTo(16,-6); fur.lineTo(19,-8); fur.moveTo(-20,12); fur.quadraticCurveTo(-8,15,4,13); fur.moveTo(30,-21); fur.quadraticCurveTo(32,-19,34,-19);
+    return {layers:[{fills:legs,strokes:legs,solid:hooves},{occlude:[body,head],fills:[body,head,ear,tail],strokes:[body,head,ear,tail,ant],fine:[earIn,fur],solid:[spots,eye,nose]}]};
+  },
+  lingzhi(){
+    const cap=new Path2D();
+    cap.moveTo(-36,0); cap.bezierCurveTo(-42,-28,-10,-42,4,-30); cap.bezierCurveTo(20,-44,46,-28,38,-4); cap.bezierCurveTo(32,6,10,0,0,4); cap.bezierCurveTo(-12,8,-30,8,-36,0); cap.closePath();
+    const rings=new Path2D(), fine=new Path2D();
+    [.7,.42].forEach(k=>rings.addPath(cap,new DOMMatrix().translate(0,-12).scale(k).translate(0,12)));
+    [.84,.56,.28].forEach(k=>fine.addPath(cap,new DOMMatrix().translate(0,-12).scale(k).translate(0,12)));
+    for(let k=0;k<26;k++){ const a=k*TAU/26; fine.moveTo(Math.cos(a)*6,-12+Math.sin(a)*4); fine.lineTo(Math.cos(a)*(k%2?14:10),-12+Math.sin(a)*(k%2?10:7)); }
+    const stem=tubeC([0,2],[6,18],[-12,30],[-4,46],4,3), stl=new Path2D(); stl.moveTo(1,6); stl.bezierCurveTo(5,18,-10,30,-3,44);
+    const sm=new Path2D(); sm.moveTo(-2,32); sm.bezierCurveTo(-18,26,-30,30,-34,36); sm.bezierCurveTo(-26,40,-14,40,-2,34);
+    const smf=new Path2D(); smf.moveTo(-6,33); smf.bezierCurveTo(-16,30,-24,32,-28,35);
+    const cl=new Path2D(); spiralFrom(cl,-4,46,5,1.1,0,1); spiralFrom(cl,-4,46,5,1.1,Math.PI,-1);
+    return {layers:[{fills:[stem,sm],strokes:[stem,sm,cl],fine:[stl,smf]},{occlude:[cap],fills:[cap],strokes:[cap,rings],fine:[fine]}]};
+  },
+  mountain(){
+    const m=new Path2D();
+    m.moveTo(-48,30); m.lineTo(-32,-2); m.quadraticCurveTo(-28,-10,-24,-2); m.lineTo(-14,14); m.lineTo(2,-34); m.quadraticCurveTo(6,-44,10,-34); m.lineTo(26,6); m.lineTo(33,-8); m.quadraticCurveTo(37,-15,41,-8); m.lineTo(48,30); m.closePath();
+    const s=new Path2D(); s.moveTo(6,-30); s.quadraticCurveTo(0,-10,6,10); s.moveTo(-28,2); s.quadraticCurveTo(-32,14,-28,24); s.moveTo(37,-4); s.quadraticCurveTo(34,8,38,20);
+    s.moveTo(-48,40); s.bezierCurveTo(-36,32,-24,46,-12,40); s.bezierCurveTo(0,34,12,46,24,40); s.bezierCurveTo(34,35,42,42,48,38);
+    const tex=new Path2D(); [[-2,-18],[0,-8],[12,-16],[16,-4],[-6,0],[18,8],[-36,10],[-22,16],[30,6],[42,12],[-10,22],[10,22]].forEach(([x,y])=>{ tex.moveTo(x-3,y+2); tex.quadraticCurveTo(x,y-1,x+3,y+3); });
+    tex.moveTo(-48,46); tex.bezierCurveTo(-36,40,-24,50,-12,46); tex.bezierCurveTo(0,42,12,50,24,46);
+    const trees=scaleDots([[2,-32],[5,-35],[8,-32],[-30,-4],[-26,-4],[35,-9],[39,-9]],1.1);
+    return {fills:[m], strokes:[m,s], fine:[tex], solid:[trees]};
+  },
+  sun(){
+    const d=circle(0,-6,24), r=circle(0,-6,30), ri=circle(0,-6,19);
+    const c=new Path2D(); c.moveTo(-48,34); c.bezierCurveTo(-36,24,-24,40,-12,32); c.bezierCurveTo(0,24,10,40,24,32); c.bezierCurveTo(34,26,42,34,48,30);
+    spiralFrom(c,-12,32,6,1.1,Math.PI*1.4,1); spiralFrom(c,24,32,6,1.1,Math.PI*1.4,1);
+    const f=new Path2D(); f.moveTo(-40,44); f.bezierCurveTo(-28,36,-16,48,-4,42); f.bezierCurveTo(8,36,20,46,34,42);
+    for(let k=0;k<24;k++){ const a=k*TAU/24; f.moveTo(Math.cos(a)*32,-6+Math.sin(a)*32); f.lineTo(Math.cos(a)*(k%2?36:38),-6+Math.sin(a)*(k%2?36:38)); }
+    return {fills:[d], strokes:[d,r,c], fine:[ri,f]};
+  },
+  bat(){
+    const w=new Path2D(); w.moveTo(5,-8); w.bezierCurveTo(16,-22,34,-22,48,-12); w.quadraticCurveTo(40,-4,42,8); w.quadraticCurveTo(34,2,30,13); w.quadraticCurveTo(22,6,17,15); w.quadraticCurveTo(12,7,5,8); w.closePath();
+    const wl=mirrorX(w), rib=new Path2D(); rib.moveTo(6,-5); rib.lineTo(42,8); rib.moveTo(6,-5); rib.lineTo(30,13); rib.moveTo(6,-5); rib.lineTo(17,15); rib.moveTo(6,-5); rib.lineTo(46,-12);
+    const ribL=mirrorX(rib), mem=new Path2D(); [[14,-4],[22,-2],[30,0],[36,2]].forEach(([x,y])=>{ mem.moveTo(x,y-4); mem.quadraticCurveTo(x+2,y,x,y+4); }); const memL=mirrorX(mem);
+    const body=ell(0,2,7,13), head=circle(0,-14,7);
+    const ears=new Path2D(); ears.moveTo(-6,-17); ears.lineTo(-7,-27); ears.lineTo(-1,-20); ears.moveTo(6,-17); ears.lineTo(7,-27); ears.lineTo(1,-20);
+    const tail=new Path2D(); tail.moveTo(-4,14); tail.quadraticCurveTo(0,26,4,14);
+    const fur=new Path2D(); for(let k=0;k<5;k++){ fur.moveTo(-3,-6+k*4.5); fur.quadraticCurveTo(0,-4+k*4.5,3,-6+k*4.5); }
+    const eyes=scaleDots([[-3,-14],[3,-14]],1.3), nose=scaleDots([[0,-10.5]],.9);
+    return {layers:[{fills:[w,wl],strokes:[w,wl],fine:[rib,ribL,mem,memL]},{occlude:[body,head],fills:[body,head],strokes:[body,head,ears,tail],fine:[fur],solid:[eyes,nose]}]};
+  }
+});
+
+/* ---------- 세밀한 동물: 용, 뱀 ---------- */
+function flameTuft(len,wid,curl){
+  const p=new Path2D(); p.moveTo(0,-wid);
+  p.bezierCurveTo(len*.35,-wid*1.25,len*.7,-wid*.3+curl*.6,len,curl);
+  p.bezierCurveTo(len*.72,wid*.55+curl*.5,len*.38,wid*1.05,0,wid); p.closePath();
+  const f=new Path2D(); f.moveTo(len*.1,0); f.bezierCurveTo(len*.4,-wid*.2,len*.65,curl*.3,len*.85,curl*.85);
+  return {p,f};
+}
+function placeM(path,m){ const q=new Path2D(); q.addPath(path,m); return q; }
+function frame(x,y,ux,uy,vx,vy,s){ s=s||1; return new DOMMatrix([ux*s,uy*s,vx*s,vy*s,x,y]); }
+function rotM(x,y,deg,s){ return new DOMMatrix().translate(x,y).rotate(deg).scale(s||1); }
+
+function creature(o){
+  const pts=catmull(o.cps,o.seg||16), n=pts.length;
+  const T=[],N=[],W=[],S=[0];
+  for(let i=0;i<n;i++){
+    const a=pts[Math.max(0,i-1)], b=pts[Math.min(n-1,i+1)]; let tx=b[0]-a[0], ty=b[1]-a[1]; const m=Math.hypot(tx,ty)||1; tx/=m; ty/=m;
+    T.push([tx,ty]); N.push([-ty,tx]); W.push(o.wf(i/(n-1)));
+    if(i) S.push(S[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+  }
+  const dsg=o.dorsal||1, D=i=>[N[i][0]*dsg,N[i][1]*dsg];
+  const pos=(i,v)=>{ const d=D(i); return [pts[i][0]-d[0]*W[i]*v, pts[i][1]-d[1]*W[i]*v]; };
+  const idxAt=s=>{ let lo=0,hi=n-1; while(lo<hi){ const mid=(lo+hi)>>1; if(S[mid]<s) lo=mid+1; else hi=mid; } return lo; };
+  const back={fills:[],strokes:[],fine:[],solid:[],occlude:[]};
+  const chunkOf=i=>Math.floor(i/(o.chunk||10));
+  const nch=chunkOf(n-2)+1, ch=[];
+  for(let c=0;c<nch;c++) ch.push({poly:new Path2D(),side:new Path2D(),fine:new Path2D(),solid:new Path2D()});
+  for(let c=0;c<nch;c++){
+    const a=c*(o.chunk||10), b=Math.min(n-1,a+(o.chunk||10)), P=ch[c];
+    const Lp=[],Rp=[]; for(let i=a;i<=b;i++){ Lp.push(pos(i,-1)); Rp.push(pos(i,1)); }
+    P.poly.moveTo(Lp[0][0],Lp[0][1]); Lp.forEach(q=>P.poly.lineTo(q[0],q[1])); Rp.slice().reverse().forEach(q=>P.poly.lineTo(q[0],q[1])); P.poly.closePath();
+    P.side.moveTo(Lp[0][0],Lp[0][1]); Lp.forEach(q=>P.side.lineTo(q[0],q[1])); P.side.moveTo(Rp[0][0],Rp[0][1]); Rp.forEach(q=>P.side.lineTo(q[0],q[1]));
+    if(b===n-1){ P.side.moveTo(Lp[Lp.length-1][0],Lp[Lp.length-1][1]); P.side.lineTo(Rp[Rp.length-1][0],Rp[Rp.length-1][1]); }
+    if(o.belly){ const bl=[]; for(let i=a;i<=b;i++) bl.push(pos(i,o.belly)); P.fine.moveTo(bl[0][0],bl[0][1]); bl.forEach(q=>P.fine.lineTo(q[0],q[1])); }
+  }
+  const sp=o.scale||3, vmin=-.94, vmax=o.belly||.94, total=S[n-1];
+  for(let r=0,s=sp*.6+(o.scaleStart||0);s<total-sp*(o.scaleEnd||1);r++,s+=sp*.62){
+    const i=idxAt(s); const P=ch[Math.min(nch-1,chunkOf(i))], w=W[i]; if(w<1.2) continue;
+    const cols=Math.max(2,Math.round((vmax-vmin)*w/sp)), hs=(vmax-vmin)*w/cols/2*1.08, d=D(i), t=T[i];
+    for(let k=0;k<cols;k++){
+      const v=vmin+(k+.5+(r%2?.5:0))*(vmax-vmin)/cols; if(v>vmax-.05) continue;
+      const c=pos(i,v), A=[c[0]+d[0]*hs,c[1]+d[1]*hs], B=[c[0]-d[0]*hs,c[1]-d[1]*hs];
+      const q1=[c[0]+t[0]*hs*1.55,c[1]+t[1]*hs*1.55], q2=[c[0]+t[0]*hs*1.05,c[1]+t[1]*hs*1.05];
+      P.fine.moveTo(A[0],A[1]); P.fine.quadraticCurveTo(q1[0],q1[1],B[0],B[1]);
+      if(o.crescent!==false){ P.solid.moveTo(A[0],A[1]); P.solid.quadraticCurveTo(q1[0],q1[1],B[0],B[1]); P.solid.quadraticCurveTo(q2[0],q2[1],A[0],A[1]); P.solid.closePath(); }
+    }
+  }
+  if(o.belly){ const bp=o.plate||2.4;
+    for(let s=bp;s<total-bp*1.5;s+=bp){ const i=idxAt(s), P=ch[Math.min(nch-1,chunkOf(i))], a=pos(i,o.belly), b=pos(i,1), t=T[i], m=pos(i,(o.belly+1)/2);
+      P.fine.moveTo(a[0],a[1]); P.fine.quadraticCurveTo(m[0]-t[0]*1.1,m[1]-t[1]*1.1,b[0],b[1]); } }
+  if(o.blotch){ for(let s=o.blotch*1.2;s<total-o.blotch;s+=o.blotch){ const i=idxAt(s), P=ch[Math.min(nch-1,chunkOf(i))], w=W[i], c=pos(i,-.25), t=T[i], d=D(i), a=w*.55, b=w*.5;
+      P.solid.moveTo(c[0]+t[0]*a,c[1]+t[1]*a); P.solid.lineTo(c[0]+d[0]*b,c[1]+d[1]*b); P.solid.lineTo(c[0]-t[0]*a,c[1]-t[1]*a); P.solid.lineTo(c[0]-d[0]*b*.8,c[1]-d[1]*b*.8); P.solid.closePath(); } }
+  const layers=ch.map(P=>({occlude:[P.poly],fills:[P.poly],strokes:[P.side],fine:[P.fine],solid:[P.solid]})).reverse();
+  return {pts,T,N,W,D,pos,n,S,layers,back,idxAt};
+}
+
+function dragonHead(){
+  const sk=new Path2D();
+  sk.moveTo(0,-8); sk.bezierCurveTo(3,-11,7,-12,10,-11); sk.bezierCurveTo(13,-10,15,-8,18,-8); sk.bezierCurveTo(22,-8,25,-9,27,-10);
+  sk.bezierCurveTo(30,-11,33,-8,32,-5); sk.bezierCurveTo(32,-3,31,-1.5,29.5,-1.5); sk.lineTo(13,.2); sk.bezierCurveTo(8,0,3,2,0,4);
+  const skS=new Path2D(sk); sk.closePath();
+  const jaw=new Path2D(); jaw.moveTo(12,1.4); jaw.lineTo(26.5,4.6); jaw.bezierCurveTo(28,5,28.5,7,27,7.8); jaw.bezierCurveTo(22,8.6,14,8.8,7,8); jaw.bezierCurveTo(4,7.6,2,6.4,0,5); const jawS=new Path2D(jaw); jaw.closePath();
+  const cav=new Path2D(); cav.moveTo(13,.2); cav.lineTo(29.5,-1.5); cav.lineTo(26.5,4.6); cav.lineTo(12,1.4); cav.closePath();
+  const teeth=new Path2D();
+  [16,19,22,25.5].forEach(x=>{ const y=.2-(x-13)*.104; teeth.moveTo(x-1,y); teeth.lineTo(x,y+1.6); teeth.lineTo(x+1,y-.1); });
+  const fy=-1.2; teeth.moveTo(26.6,fy); teeth.lineTo(27.6,fy+3.4); teeth.lineTo(28.6,fy-.2);
+  [17,20.5,23.5].forEach(x=>{ const y=1.4+(x-12)*.22; teeth.moveTo(x-.9,y); teeth.lineTo(x,y-1.5); teeth.lineTo(x+.9,y+.1); });
+  const tongue=tubeC([14,2],[20,1.5],[26,3],[31,0],1,.3);
+  const eye=ell(14.5,-5.6,3.2,2.1,-.15), pupil=ell(15.2,-5.6,1.2,1.5);
+  const brow=flameTuft(9,1.6,-2.2), browP=placeM(brow.p,rotM(11,-8.4,195)), browF=placeM(brow.f,rotM(11,-8.4,195));
+  const det=new Path2D();
+  det.moveTo(11,-3.5); det.quadraticCurveTo(14.5,-2.6,18,-3.8);
+  spiral(det,27.5,-6.6,2.4,1.3,Math.PI,1);
+  spiral(det,6,-2,3.2,1.25,0,-1);
+  det.moveTo(19,-9.4); det.quadraticCurveTo(22,-10.6,25,-9.6); det.moveTo(20,-7); det.lineTo(22.5,-7.4);
+  for(let k=0;k<6;k++){ det.moveTo(9+k*2.8,7.4); det.lineTo(9.6+k*2.8,8.6); }
+  const horns=[tubeC([3,-9.5],[-2,-16],[-8,-20],[-19,-20],2,.5),tubeC([6,-10],[2,-18],[-3,-23],[-12,-27],1.7,.4)];
+  const hb=[tubeC([-6,-18.5],[-8,-22],[-8,-25],[-6,-28],.9,.3),tubeC([0,-19.5],[-1,-24],[0,-27],[3,-30],.8,.3)];
+  const hr=new Path2D(); for(let k=0;k<6;k++){ const x=1-k*3.2; hr.moveTo(x,-12-k*1.3); hr.lineTo(x-.8,-10.2-k*1.4); }
+  const wh=[tubeC([30,-6],[40,-16],[42,6],[54,-6],1,.15),tubeC([28,-3],[36,4],[34,16],[46,20],.9,.15)];
+  const beard=[], beardF=new Path2D();
+  [[22,8,110,7],[17,8.6,118,8.5],[12,8.6,125,9],[7,8,135,8]].forEach(([x,y,d,l])=>{ const t=flameTuft(l,1.5,1.6); beard.push(placeM(t.p,rotM(x,y,d))); beardF.addPath(t.f,rotM(x,y,d)); });
+  const mane=[], maneF=new Path2D();
+  [[1,-6,200,15],[0,-2,190,17],[0,2,178,16],[1,5.5,165,13],[2,-9,215,11]].forEach(([x,y,d,l],i)=>{ const t=flameTuft(l,2.3,i%2?2.4:-2.4); mane.push(placeM(t.p,rotM(x,y,d))); maneF.addPath(t.f,rotM(x,y,d)); });
+  return {layers:[
+    {occlude:mane,fills:mane,strokes:mane,fine:[maneF]},
+    {fills:[...horns,...hb],strokes:[...horns,...hb],fine:[hr]},
+    {fills:wh,strokes:wh},
+    {occlude:beard,fills:beard,strokes:beard,fine:[beardF]},
+    {solid:[cav]},
+    {occlude:[jaw],fills:[jaw],strokes:[jawS]},
+    {solid:[tongue]},
+    {occlude:[sk],fills:[sk],strokes:[skS],fine:[det,browF]},
+    {occlude:[teeth],strokes:[],fine:[teeth]},
+    {occlude:[eye,browP],fills:[browP],strokes:[eye,browP],solid:[pupil]}
+  ]};
+}
+function mapLayers(ls,m){ return ls.map(L=>{ const o={}; Object.keys(L).forEach(k=>{ o[k]=L[k].map(p=>placeM(p,m)); }); return o; }); }
+
+Object.assign(BUILDERS,{
+  dragon(){
+    const C=creature({cps:[[16,-27],[2,-31],[-20,-25],[-31,-9],[-15,3],[13,1],[31,13],[24,31],[0,38],[-24,34],[-44,42]], seg:18, chunk:9,
+      wf:t=>.9+6.1*Math.pow(Math.sin(Math.PI*Math.min(1,.42+t*.62)),.7), dorsal:1, belly:.42, scale:3.1, plate:2.3});
+    const back={fills:[],strokes:[],fine:new Path2D(),occ:[]};
+    for(let i=4;i<C.n-12;i+=5){ const w=C.W[i], d=C.D(i), t=C.T[i], r=C.pos(i,-.82);
+      let ux=d[0]+t[0]*.9, uy=d[1]+t[1]*.9; const m=Math.hypot(ux,uy); ux/=m; uy/=m;
+      const len=2.4+w*(i%10<5?1.15:.8), f=flameTuft(len,Math.max(1,w*.32),(i%10<5?1:-1)*w*.18);
+      const M=frame(r[0],r[1],ux,uy,-uy,ux); const p=placeM(f.p,M); back.fills.push(p); back.fine.addPath(f.f,M); }
+    const tl=C.n-1, tp=C.pts[tl], tt=C.T[tl];
+    [-50,-25,0,25,50].forEach((a,k)=>{ const ang=Math.atan2(tt[1],tt[0])+a*Math.PI/180, f=flameTuft(k===2?14:10,2,(k-2)*1.2);
+      const M=frame(tp[0],tp[1],Math.cos(ang),Math.sin(ang),-Math.sin(ang),Math.cos(ang)); back.fills.push(placeM(f.p,M)); back.fine.addPath(f.f,M); });
+    const legs=[], legF=new Path2D(), claws=new Path2D();
+    [[.16,1],[.34,1],[.6,.9],[.78,.85]].forEach(([t,s])=>{
+      const i=Math.round(t*(C.n-1)), q=C.pos(i,.55), d=C.D(i), tg=C.T[i];
+      const M=frame(q[0],q[1],-tg[0],-tg[1],-d[0],-d[1],s);
+      const th=tubeC([0,0],[-1,3],[-3,6],[-4,9],3.2,2.4), fa=tubeC([-4,9],[-2,12],[1,14],[4,15],2.3,1.7);
+      const el=flameTuft(7,1.6,1.4), pad=circle(4,15.2,2);
+      legs.push(placeM(th,M),placeM(fa,M),placeM(el.p,M.multiply(rotM(-4,9,160))),placeM(pad,M));
+      legF.addPath(el.f,M.multiply(rotM(-4,9,160)));
+      const bands=new Path2D(); [[-1.5,3],[-2.8,5.5],[-3.6,7.6],[-1,11.5],[1.2,13.2]].forEach(([x,y])=>{ bands.moveTo(x-1.8,y-.6); bands.quadraticCurveTo(x,y+.6,x+1.8,y-.2); }); legF.addPath(bands,M);
+      [-35,-5,25,55].forEach(a=>{ const r=a*Math.PI/180, x1=4+Math.cos(r)*3.2, y1=15.2+Math.sin(r)*3.2+1.2, x2=4+Math.cos(r)*5.6, y2=15.2+Math.sin(r)*5.6+2.2;
+        const tal=new Path2D(); tal.moveTo(x1-Math.sin(r)*.9,y1+Math.cos(r)*.9); tal.quadraticCurveTo(x2,y2-1.4,x2+Math.cos(r)*.6,y2+1.6); tal.lineTo(x1+Math.sin(r)*.9,y1-Math.cos(r)*.9); tal.closePath();
+        claws.addPath(tal,M); const tb=new Path2D(); tb.moveTo(4,15.2); tb.lineTo(x1,y1); legF.addPath(tb,M); });
+    });
+    const p0=C.pts[0], t0=C.T[0], ha=Math.atan2(-t0[1],-t0[0]);
+    const HM=frame(p0[0]-Math.cos(ha)*1.5,p0[1]-Math.sin(ha)*1.5,Math.cos(ha),Math.sin(ha),-Math.sin(ha),Math.cos(ha),1.05);
+    const head=mapLayers(dragonHead().layers,HM);
+    const pearl=circle(38,-2,6.5), pf=new Path2D(); spiral(pf,38,-2,4.5,1.2,0,1);
+    const pfl=[]; [[-130,9],[-90,10],[-50,9],[150,7],[30,7]].forEach(([d,l],k)=>{ const a=d*Math.PI/180, t=flameTuft(l,1.6,(k%2?1:-1)*1.4), M=frame(38+Math.cos(a)*6,-2+Math.sin(a)*6,Math.cos(a),Math.sin(a),-Math.sin(a),Math.cos(a)); pfl.push(placeM(t.p,M)); pf.addPath(t.f,M); });
+    const cl=new Path2D(); spiral(cl,-36,-34,5,1.2,0,1); cl.moveTo(-31,-34); cl.bezierCurveTo(-26,-38,-18,-36,-14,-40); spiral(cl,40,40,4.5,1.2,Math.PI,1); cl.moveTo(35.5,40); cl.bezierCurveTo(30,44,22,42,18,46);
+    return {layers:[{fine:[cl],strokes:[]},{occlude:pfl,fills:pfl,strokes:pfl,fine:[pf]},{occlude:[pearl],fills:[pearl],strokes:[pearl],fine:[pf]},
+      {occlude:back.fills,fills:back.fills,strokes:back.fills,fine:[back.fine]},
+      {occlude:legs,fills:legs,strokes:legs,fine:[legF],solid:[claws]},
+      ...C.layers, ...head], lwk:.55};
+  },
+  snake(){
+    const C=creature({cps:[[8,-27],[-4,-22],[-7,-9],[5,0],[26,6],[32,22],[14,36],[-18,37],[-36,25],[-28,9],[-6,12],[12,20],[16,30]], seg:16, chunk:8,
+      wf:t=>(.6+5.2*Math.pow(Math.sin(Math.PI*Math.min(1,.5+t*.5)),.55))*Math.min(1,.72+t*5), dorsal:-1, belly:.55, scale:2.2, plate:1.6, blotch:5.2, crescent:false});
+    const p0=C.pts[0], t0=C.T[0], ha=Math.atan2(-t0[1],-t0[0]);
+    const hd=new Path2D(); hd.moveTo(0,-4.6); hd.bezierCurveTo(6,-6,12,-6.6,17,-5.2); hd.bezierCurveTo(21,-4,23,-2,23,0); hd.bezierCurveTo(23,2,21,3.6,17,4.4); hd.bezierCurveTo(12,5.4,6,5.4,0,4.6); const hdS=new Path2D(hd); hd.closePath();
+    const det=new Path2D(); det.moveTo(22.5,1); det.quadraticCurveTo(15,3,7,3.4);
+    det.moveTo(9,-5.2); det.quadraticCurveTo(13,-3.6,18,-4.6); det.moveTo(13,-5.9); det.lineTo(13.4,-4.2); det.moveTo(17,-5.4); det.lineTo(17.6,-3.8);
+    det.moveTo(4,-5); det.lineTo(5,-2.6); det.moveTo(8,-5.5); det.lineTo(8.6,-3);
+    for(let k=0;k<5;k++){ det.moveTo(4+k*3.6,4.4); det.lineTo(4.6+k*3.6,5.3); }
+    const eye=circle(15,-2,2.3), pupil=ell(15.1,-2,.55,1.7), nos=circle(20.8,-1.6,.6);
+    const tg=new Path2D(); tg.moveTo(23,.3); tg.lineTo(29,.4); tg.lineTo(32.5,-2.2); tg.lineTo(29.6,.8); tg.lineTo(32.8,3.2); tg.lineTo(29,1.2); tg.lineTo(23,1.1); tg.closePath();
+    const HM=frame(p0[0]-Math.cos(ha)*1,p0[1]-Math.sin(ha)*1,Math.cos(ha),Math.sin(ha),-Math.sin(ha),Math.cos(ha),1.05);
+    const head=mapLayers([{solid:[tg]},{occlude:[hd],fills:[hd],strokes:[hdS],fine:[det]},{occlude:[eye],strokes:[eye],solid:[pupil,nos]}],HM);
+    return {layers:[...C.layers,...head], lwk:.6};
+  }
+});
+
+/* ---------- 사실적인 잉어 ---------- */
+function PB(){ this.ps=[]; this.cur=null; }
+PB.prototype.M=function(x,y){ this.cur=[[x,y]]; this.ps.push(this.cur); return this; };
+PB.prototype.L=function(x,y){ this.cur.push([x,y]); return this; };
+PB.prototype.C=function(a,b,c,d,e,f,n){ const p=this.cur[this.cur.length-1]; n=n||14; for(let i=1;i<=n;i++){ const t=i/n,u=1-t; this.cur.push([u*u*u*p[0]+3*u*u*t*a+3*u*t*t*c+t*t*t*e, u*u*u*p[1]+3*u*u*t*b+3*u*t*t*d+t*t*t*f]); } return this; };
+PB.prototype.Q=function(a,b,c,d,n){ const p=this.cur[this.cur.length-1]; n=n||10; for(let i=1;i<=n;i++){ const t=i/n,u=1-t; this.cur.push([u*u*p[0]+2*u*t*a+t*t*c, u*u*p[1]+2*u*t*b+t*t*d]); } return this; };
+PB.prototype.O=function(cx,cy,r,n){ n=n||20; this.M(cx+r,cy); for(let i=1;i<=n;i++){ const a=i/n*TAU; this.cur.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r]); } this.cur.closed=true; return this; };
+PB.prototype.Z=function(){ this.cur.closed=true; return this; };
+PB.prototype.path=function(w){ const p=new Path2D(); this.ps.forEach(pl=>{ pl.forEach((q,i)=>{ const v=w?w(q):q; if(i) p.lineTo(v[0],v[1]); else p.moveTo(v[0],v[1]); }); if(pl.closed) p.closePath(); }); return p; };
+function bendWarp(cps,len){
+  const P=catmull(cps,24), S=[0]; for(let i=1;i<P.length;i++) S.push(S[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));
+  const tot=S[S.length-1], f=tot/len;
+  return q=>{ const s=Math.max(0,Math.min(tot,q[0]*f)); let i=1; while(i<S.length-1&&S[i]<s) i++;
+    const a=P[i-1], b=P[i], u=(s-S[i-1])/((S[i]-S[i-1])||1), x=a[0]+(b[0]-a[0])*u, y=a[1]+(b[1]-a[1])*u;
+    let tx=b[0]-a[0], ty=b[1]-a[1]; const m=Math.hypot(tx,ty)||1; tx/=m; ty/=m;
+    let ex=0; if(q[0]<0) ex=q[0]*f; else if(q[0]>len) ex=(q[0]-len)*f;
+    return [x+tx*ex-ty*q[1]*f, y+ty*ex+tx*q[1]*f]; };
+}
+BUILDERS.koi=function(){
+  const W=bendWarp([[22,30],[4,20],[-6,0],[-2,-21],[14,-40]],80);
+  const top=new PB().M(16,-4.6).C(26,-6,36,-14,50,-14.6).C(60,-15,68,-12,74,-8).C(78,-6,80,-3.5,80,-1);
+  const bot=new PB().M(16,4.6).C(24,7,34,12,44,13).C(54,14,64,11,73,7).C(78,5,80,2,80,-1);
+  const yAt=(pb,x)=>{ const a=pb.ps[0]; for(let i=1;i<a.length;i++){ if((a[i][0]-x)*(a[i-1][0]-x)<=0){ const u=(x-a[i-1][0])/((a[i][0]-a[i-1][0])||1); return a[i-1][1]+(a[i][1]-a[i-1][1])*u; } } return 0; };
+  const body=new PB().M(16,-4.6).C(26,-6,36,-14,50,-14.6).C(60,-15,68,-12,74,-8).C(78,-6,80,-3.5,80,-1).C(80,2,78,5,73,7).C(64,11,54,14,44,13).C(34,12,24,7,16,4.6).Z();
+  const tail=new PB().M(17.5,-4.2).C(11,-7,5,-13,-1,-18).C(1.5,-12,4,-5,7,0).C(4.5,4,3,9,2.5,13.5).C(6.5,10.5,11,7,17.5,4.2).Z();
+  const tedge=new PB().M(-1,-18).C(1.5,-12,4,-5,7,0).C(4.5,4,3,9,2.5,13.5,28).ps[0];
+  const trays=new PB(); for(let k=0;k<=14;k++){ const e=tedge[Math.round(k/14*(tedge.length-1))], by=-3.8+7.6*k/14; trays.M(15.5,by).Q((15.5+e[0])/2+1.5,(by+e[1])/2,e[0]+.4,e[1]); }
+  const dor=new PB().M(54,-14.4).C(53,-20,50,-25,46.5,-25).C(40,-22,34,-16.5,30,-11.6).Z();
+  const dedge=new PB().M(53,-17).C(51,-23,49,-25,46.5,-25).C(40,-22,34,-16.5,30.5,-12,24).ps[0];
+  const drays=new PB(); for(let k=0;k<dedge.length;k+=2){ const e=dedge[k]; drays.M(e[0]+.6,yAt(top,e[0])+.6).L(e[0],e[1]); }
+  const finWithRays=(shape,base,edge,n)=>{ const r=new PB(); const E=edge.ps[0]; for(let k=0;k<=n;k++){ const e=E[Math.round(k/n*(E.length-1))]; r.M(base[0],base[1]).L(e[0],e[1]); } return {s:shape,r}; };
+  const pecF=finWithRays(new PB().M(64.5,7).C(60,13,54,20,50,26).C(57,26.5,64,19,68,10).Z(),[65.6,8.4],new PB().M(50,26).C(57,26.5,64,19,68,10,20),10);
+  const pelF=finWithRays(new PB().M(45.5,12.6).C(42,17,38,22,35,25.5).C(41,25,46,19,49.5,13.2).Z(),[47.2,13],new PB().M(35,25.5).C(41,25,46,19,49.5,13.2,16),7);
+  const anaF=finWithRays(new PB().M(30.5,10.2).C(28,13.5,25,17.5,21.5,21).C(27,20.5,32,16,35,11.8).Z(),[32.6,11],new PB().M(21.5,21).C(27,20.5,32,16,35,11.8,14),7);
+  const scF=new PB(), scS=new PB(), lat=new PB();
+  for(let c=0,x=19.5;x<62.5;c++,x+=3.5){
+    const yt=yAt(top,x)+1.5, yb=yAt(bot,x)-1.2, hs=1.95;
+    for(let y=yt+(c%2?1.75:0);y<yb;y+=3.5){
+      scF.M(x,y-hs).Q(x-hs*1.7,y,x,y+hs);
+      scS.M(x,y-hs).Q(x-hs*1.7,y,x,y+hs).Q(x-hs*1.15,y,x,y-hs).Z();
+    }
+    const ly=yAt(top,x)*.45+yAt(bot,x)*.55-1.2; lat.O(x-1.2,ly,.42,8);
+  }
+  const head=new PB();
+  head.M(66.5,-10.5).C(62.5,-4,62.5,4,66.5,9.5);
+  head.M(68.5,-9).C(65.5,-4,65.5,3,68.5,8);
+  head.M(80,.2).Q(78.6,1.4,77,1.2); head.M(73,-9.5).Q(76,-8.6,78,-6.6);
+  head.M(70.5,6.5).Q(73,5.4,75.5,6);
+  const eye=new PB().O(72.6,-4.4,2.7,24), pup=new PB().O(72.9,-4.4,1.4,16), hl=new PB().O(73.5,-5.2,.5,8), nos=new PB().O(77.2,-4,.55,8);
+  const barb=new PB().M(79.4,1.4).C(80,5,77,8,74,10.5).M(77.6,2).C(78,4,76.5,5.5,75,6.2);
+  const w=pb=>pb.path(W);
+  const waveBack=new PB();
+  waveBack.M(-50,50).C(-50,36,-42,25,-30,24).C(-18,23,-12,31,-18,36).C(-22,39,-28,35,-24,31).C(-21,29,-18,31,-19,33);
+  waveBack.M(-30,24).C(-20,28,-14,40,-6,50);
+  waveBack.M(50,50).C(50,40,44,32,36,32).C(28,32,25,38,29,41).C(32,43,35,40,33,38);
+  waveBack.M(36,32).C(30,36,26,44,24,50);
+  const crestB=new PB().M(-50,50).C(-50,36,-42,25,-30,24).C(-20,28,-14,40,-6,50).Z();
+  const crestB2=new PB().M(50,50).C(50,40,44,32,36,32).C(30,36,26,44,24,50).Z();
+  const wl=new PB(); [[-46,44,-34,30],[-42,48,-30,34],[-36,50,-26,40]].forEach(([a,b,c,d])=>wl.M(a,b).Q((a+c)/2-3,(b+d)/2-3,c,d));
+  [[46,46,38,36],[42,50,34,40]].forEach(([a,b,c,d])=>wl.M(a,b).Q((a+c)/2+3,(b+d)/2-3,c,d));
+  const foam=new PB(); [[-30,22,1.6],[-24,20,1],[-36,21,1.2],[-14,26,1.3],[30,28,1.4],[38,27,1],[24,30,1.1],[-8,30,.9],[42,24,.8],[-40,18,.8],[6,30,1.2],[-2,24,.8],[28,22,.9],[34,18,.7],[-20,16,.7]].forEach(([x,y,r])=>foam.O(x,y,r,10));
+  const fsp=new PB(); fsp.M(-28,18).Q(-26,14,-22,14); fsp.M(32,22).Q(34,18,38,18); fsp.M(-10,24).Q(-9,20,-6,19);
+  const front=new PB().M(-4,50).C(-2,40,6,33,14,33).C(22,33,26,38,23,41).C(20.5,43,17.5,41,18.5,39).C(19.3,38,21,38.6,20.6,39.8);
+  const frontS=new PB().M(-4,50).C(-2,40,6,33,14,33).C(20,36,26,44,28,50).Z();
+  const frl=new PB().M(0,49).Q(3,42,10,38).M(5,50).Q(8,44,14,41).M(11,50).Q(14,46,19,45);
+  const frf=new PB(); [[10,30,1.1],[16,29,.8],[24,33,1],[2,32,.9],[6,28,.7]].forEach(([x,y,r])=>frf.O(x,y,r,10));
+  return {lwk:.6, layers:[
+    {occlude:[crestB.path(),crestB2.path()],fills:[crestB.path(),crestB2.path()],strokes:[waveBack.path()],fine:[wl.path(),fsp.path()],solid:[foam.path()]},
+    {occlude:[w(tail)],fills:[w(tail)],strokes:[w(tail)],fine:[w(trays)]},
+    {occlude:[w(dor)],fills:[w(dor)],strokes:[w(dor)],fine:[w(drays)]},
+    {occlude:[w(pelF.s),w(anaF.s)],fills:[w(pelF.s),w(anaF.s)],strokes:[w(pelF.s),w(anaF.s)],fine:[w(pelF.r),w(anaF.r)]},
+    {occlude:[w(body)],fills:[w(body)],strokes:[w(body)],fine:[w(scF),w(head)],solid:[w(scS),w(lat)]},
+    {occlude:[w(eye)],strokes:[w(eye),w(barb)],fine:[w(nos)],solid:[w(pup)]},{occlude:[w(hl)]},
+    {occlude:[w(pecF.s)],fills:[w(pecF.s)],strokes:[w(pecF.s)],fine:[w(pecF.r)]},
+    {occlude:[frontS.path()],fills:[frontS.path()],strokes:[front.path()],fine:[frl.path()],solid:[frf.path()]}
+  ]};
+};
+
+const MOTIFS = [
+  {id:"flowers", g:"전통 무늬", name:"초화", meaning:"풀과 꽃이 덩굴처럼 이어지는 무늬로, 끊임없이 피고 지는 생명력과 자연의 순환을 나타내요."},
+  {id:"vine", g:"전통 무늬", name:"당초", meaning:"덩굴이 끊임없이 뻗어 나가는 모양으로, 이어지는 생명력과 장수를 바라는 마음을 담았어요."},
+  {id:"meander", g:"전통 무늬", name:"번개", meaning:"각진 선이 끝없이 감겨 들어가는 뇌문으로, 영원히 이어짐을 나타내며 도자기의 띠 장식에 많이 쓰였어요."},
+  {id:"wave", g:"전통 무늬", name:"물결", meaning:"겹겹이 밀려오는 물결을 비늘처럼 겹쳐 그린 무늬로, 바다와 끝없는 흐름을 나타냅니다."},
+  {id:"sun", g:"십장생", name:"해", meaning:"만물을 살리는 생명의 근원으로 십장생의 으뜸입니다. 일월오봉도에서는 왕을 상징해요."},
+  {id:"mountain", g:"십장생", name:"산", meaning:"언제나 그 자리에 있는 굳건함과 영원함을 뜻합니다. 일월오봉도의 다섯 봉우리가 대표적이에요."},
+  {id:"cloud", g:"십장생", name:"구름", meaning:"하늘과 신선의 세계를 뜻하며, 오래 사는 것을 바라는 십장생 가운데 하나입니다."},
+  {id:"pine", g:"십장생", name:"소나무", meaning:"사계절 내내 푸르러 변하지 않는 절개와 오래 사는 삶을 상징합니다."},
+  {id:"lingzhi", g:"십장생", name:"불로초", meaning:"먹으면 늙지 않는다고 전해진 영지버섯으로, 장수를 바라는 마음을 담았어요."},
+  {id:"crane", g:"십장생", name:"학", meaning:"천 년을 산다고 여겨진 새로 장수를 뜻하고, 고고한 선비의 기품을 나타내기도 합니다."},
+  {id:"turtle", g:"십장생", name:"거북", meaning:"오래 사는 동물이라 장수를 상징합니다. 등껍질의 육각형은 귀갑문이라는 무늬로도 쓰였어요."},
+  {id:"deer", g:"십장생", name:"사슴", meaning:"신선이 부리는 동물로 장수를 뜻하며, 한자 녹(鹿)이 벼슬을 뜻하는 녹(祿)과 소리가 같아 출세의 의미도 담겼어요."},
+  {id:"plum", g:"사군자", name:"매화", meaning:"추운 겨울을 이기고 가장 먼저 피어 지조와 절개를 상징하는 사군자 가운데 하나입니다."},
+  {id:"orchid", g:"사군자", name:"난초", meaning:"깊은 산에서 은은한 향을 내어, 드러내지 않아도 빛나는 군자의 고결한 인품을 나타냅니다."},
+  {id:"chrysanthemum", g:"사군자", name:"국화", meaning:"서리가 내리는 늦가을에 피어 어려움에 굽히지 않는 절개와 장수를 상징합니다."},
+  {id:"bamboo", g:"사군자", name:"대나무", meaning:"곧게 자라고 속이 비어 있어 곧은 절개와 겸손한 마음을 나타냅니다."},
+  {id:"peony", g:"길상", name:"모란", meaning:"꽃 중의 왕이라 불리며 부귀와 영화를 상징해 혼례 병풍이나 모란도에 즐겨 그려졌어요."},
+  {id:"koi", g:"길상", name:"잉어", meaning:"거센 물살을 거슬러 용문을 뛰어오른 잉어가 용이 된다는 등용문 이야기에서 나와, 어려움을 이겨 내고 큰 뜻을 이루는 것을 뜻해요."},
+  {id:"lotus", g:"길상", name:"연꽃", meaning:"진흙 속에서도 깨끗하게 피어나 청렴과 고결함을 상징합니다. 불교 미술과 청자·백자에 자주 쓰였어요."},
+  {id:"dragon", g:"길상", name:"용", meaning:"비와 바람을 다스리는 상상의 동물로 왕의 권위와 이끄는 힘을 상징합니다. 여의주는 뜻을 이루는 구슬이에요."},
+  {id:"snake", g:"길상", name:"뱀", meaning:"허물을 벗고 새로 태어나 재생과 치유, 지혜를 상징합니다. 우리 민속에서는 집과 재물을 지키는 업신으로 여기기도 했어요."},
+  {id:"bat", g:"길상", name:"박쥐", meaning:"박쥐 복(蝠) 자가 복 복(福) 자와 소리가 같아 복을 부르는 무늬로 가구 장식이나 베갯모에 많이 쓰였어요."},
+  {id:"su", g:"문자문", name:"壽 수", meaning:"목숨 수(壽). 오래 건강하게 살기를 바라는 글자로, 그릇·베갯모·옷감에 무늬처럼 새겼어요."},
+  {id:"bok", g:"문자문", name:"福 복", meaning:"복 복(福). 삶에 좋은 일이 가득하기를 바라는 글자입니다."},
+  {id:"gang", g:"문자문", name:"康 강", meaning:"편안할 강(康). 몸과 마음이 튼튼하고 건강하기를 바라는 글자예요."},
+  {id:"nyeong", g:"문자문", name:"寧 녕", meaning:"편안할 녕(寧). 걱정 없이 평안하기를 바라는 글자로, 수복강녕은 오래 살고 복을 누리며 건강하고 평안하기를 바라는 말이에요."},
+  {id:"photo", g:"내 문양", name:"사진 도안", meaning:"사진이나 그림을 선 도안으로 바꾼 문양입니다. 원래 사진에서 무엇을 살리고 무엇을 덜어냈는지 비교해 보세요."},
+  {id:"custom", g:"내 문양", name:"내 문양", meaning:"내가 직접 그린 단위 문양입니다. 어떤 뜻을 담았는지 작품 설명에 적어 보세요."}
+];
+
+const ARRS = [
+  {id:"grid", name:"사방연속", desc:"단위 문양을 위아래, 좌우로 같은 간격으로 되풀이하는 사방연속무늬입니다."},
+  {id:"brick", name:"엇갈린 반복", desc:"줄마다 반 칸씩 밀어서 되풀이합니다. 벽돌을 쌓듯 리듬감이 생겨요."},
+  {id:"mirror", name:"대칭 반복", desc:"이웃한 무늬를 거울처럼 뒤집어 놓아 좌우·상하 대칭을 만듭니다."},
+  {id:"rotate", name:"회전 반복", desc:"무늬를 90도씩 돌려 가며 놓아 바람개비 같은 움직임을 만듭니다."},
+  {id:"radial", name:"방사형", desc:"가운데에서 바깥으로 퍼져 나가도록 놓습니다. 접시 안쪽이나 연꽃 무늬에 자주 쓰이는 배열이에요."},
+  {id:"band", name:"띠무늬", desc:"좌우로 이어지는 이방연속무늬입니다. 도자기의 어깨나 굽 둘레를 두르는 띠 장식에 쓰여요."}
+];
+
+const PALETTES = [
+  {id:"cheonghwa", name:"청화", ink:["#23408E"], bg:"#F3F5F2"},
+  {id:"jinsa", name:"진사", ink:["#9E2F24"], bg:"#F4F3EF"},
+  {id:"cheolhwa", name:"철화", ink:["#5B3A26"], bg:"#ECE8DD"},
+  {id:"meok", name:"먹", ink:["#25262A"], bg:"#F1EEE6"},
+  {id:"obang", name:"오방색", ink:["#1F5FA8","#C0392B","#D99A1E","#1E1E1E"], bg:"#F7F5EF"},
+  {id:"custom", name:"직접 고르기", ink:null, bg:null}
+];
+
+const VIEWS = [{id:"flat",name:"평면"},{id:"bottle",name:"병에 입혀 보기"},{id:"plate",name:"접시에 입혀 보기"}];
+
+/* ---------- 상태 ---------- */
+const DEFAULT = {motif:"lotus", arr:"grid", size:90, gap:12, rot:0, lw:3, count:8, palette:"cheonghwa", ink:"#23408E", bg:"#F3F5F2", fill:true, view:"flat", custom:[], shape:"maebyeong", spin:0};
+let S = Object.assign({}, DEFAULT);
+try{ const saved = JSON.parse(localStorage.getItem("pattern-maker-v1")||"null"); if(saved) S = Object.assign(S, saved); }catch(e){}
+if(S.motif==="custom" && !(S.custom&&S.custom.length)) S.motif="lotus";
+function persist(){ try{ localStorage.setItem("pattern-maker-v1", JSON.stringify(S)); }catch(e){} }
+
+const cache = {};
+let photoCanvas=null;
+function getMotif(id){ if(id==="photo") return photoCanvas?{raster:photoCanvas}:{fills:[],strokes:[]}; if(id==="custom") return BUILDERS.custom(); return cache[id] || (cache[id]=BUILDERS[id]()); }
+function palette(){ return PALETTES.find(p=>p.id===S.palette)||PALETTES[0]; }
+function inks(){ const p=palette(); return p.ink || [S.ink]; }
+function bgColor(){ const p=palette(); return p.bg || S.bg; }
+const odd = n => Math.abs(n)%2===1;
+
+/* ---------- 그리기 ---------- */
+function tinted(src,color){
+  src._tint=src._tint||{};
+  if(src._tint[color]) return src._tint[color];
+  const c=document.createElement("canvas"); c.width=src.width; c.height=src.height;
+  const x=c.getContext("2d"); x.drawImage(src,0,0); x.globalCompositeOperation="source-in"; x.fillStyle=color; x.fillRect(0,0,c.width,c.height);
+  return (src._tint[color]=c);
+}
+function drawMotifAt(ctx, m, x, y, size, ang, fx, fy, color, bg){
+  const k=size/100;
+  if(m.text){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(ang); ctx.scale(k,k);
+    if(S.fill){ ctx.globalAlpha=.16; ctx.fillStyle=color; ctx.beginPath(); ctx.arc(0,0,47,0,TAU); ctx.fill(); ctx.globalAlpha=1; }
+    ctx.strokeStyle=color; ctx.lineWidth=S.lw/k; ctx.beginPath(); ctx.arc(0,0,47,0,TAU); ctx.stroke();
+    ctx.lineWidth=S.lw*.5/k; ctx.beginPath(); ctx.arc(0,0,41,0,TAU); ctx.stroke();
+    ctx.fillStyle=color; ctx.font='700 56px "Noto Serif KR","Nanum Myeongjo","Batang",serif'; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(m.text,0,3); ctx.restore(); return;
+  }
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang); ctx.scale(fx*k, fy*k);
+  if(m.raster){
+    const t=tinted(m.raster,color), ar=t.width/t.height; let w=100,h=100; if(ar>1) h=100/ar; else w=100*ar;
+    ctx.drawImage(t,-w/2,-h/2,w,h); ctx.restore(); return;
+  }
+  const lw=S.lw*(m.lwk||1);
+  ctx.strokeStyle=color; ctx.lineWidth=lw/k; ctx.lineCap="round"; ctx.lineJoin="round";
+  (m.layers||[m]).forEach(L=>{
+    if(L.occlude){ ctx.fillStyle=bg; L.occlude.forEach(p=>ctx.fill(p)); }
+    if(S.fill && L.fills && L.fills.length){ ctx.globalAlpha=.26; ctx.fillStyle=color; L.fills.forEach(p=>ctx.fill(p)); ctx.globalAlpha=1; }
+    (L.strokes||[]).forEach(p=>ctx.stroke(p));
+    if(L.fine){ ctx.lineWidth=Math.max(.35,lw*.42)/k; L.fine.forEach(p=>ctx.stroke(p)); ctx.lineWidth=lw/k; }
+    if(L.solid){ ctx.fillStyle=color; L.solid.forEach(p=>ctx.fill(p)); }
+  });
+  ctx.restore();
+}
+
+function drawPattern(ctx, w, h){
+  const bg=bgColor(), ink=inks(), m=getMotif(S.motif), rot=S.rot*Math.PI/180;
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  const col=(i)=>ink[((i%ink.length)+ink.length)%ink.length];
+  if(S.arr==="radial"){
+    const cell=S.size+S.gap, maxR=Math.hypot(w,h)/2+cell;
+    drawMotifAt(ctx,m,w/2,h/2,S.size,rot,1,1,col(0),bg);
+    for(let k=1;k*cell<maxR;k++){
+      const n=S.count*k;
+      for(let t=0;t<n;t++){
+        const a=TAU*t/n-Math.PI/2+(odd(k)?Math.PI/n:0);
+        drawMotifAt(ctx,m,w/2+Math.cos(a)*k*cell,h/2+Math.sin(a)*k*cell,S.size,a+Math.PI/2+rot,1,1,col(k),bg);
+      }
+    }
+    return;
+  }
+  if(S.arr==="band"){
+    const cell=S.size+S.gap, pad=Math.max(6,S.size*.12), step=S.size+pad*2+S.size*.45;
+    const nb=Math.ceil(h/step/2)+1, nx=Math.ceil(w/cell/2)+2;
+    for(let b=-nb;b<=nb;b++){
+      const yc=h/2+b*step;
+      ctx.strokeStyle=col(b); ctx.lineWidth=Math.max(1,S.lw*.7);
+      [-1,1].forEach(sgn=>{const y0=yc+sgn*(S.size/2+pad); ctx.beginPath(); ctx.moveTo(0,y0); ctx.lineTo(w,y0); ctx.moveTo(0,y0+sgn*5); ctx.lineTo(w,y0+sgn*5); ctx.stroke();});
+      for(let i=-nx;i<=nx;i++){
+        drawMotifAt(ctx,m,w/2+i*cell+(odd(b)?cell/2:0),yc,S.size,rot,1,odd(b)?-1:1,col(b),bg);
+      }
+    }
+    return;
+  }
+  const cx=S.size+S.gap, cy=S.size*(m.rowRatio||1)+S.gap;
+  const nx=Math.ceil(w/cx/2)+2, ny=Math.ceil(h/cy/2)+3;
+  for(let j=-ny;j<=ny;j++){
+    for(let i=-nx;i<=nx;i++){
+      let x=w/2+i*cx, y=h/2+j*cy, ang=rot, fx=1, fy=1;
+      if(S.arr==="brick" && odd(j)) x+=cx/2;
+      if(S.arr==="mirror"){ if(odd(i)) fx=-1; if(odd(j)) fy=-1; }
+      if(S.arr==="rotate"){ const q=[[0,1],[3,2]][odd(j)?1:0][odd(i)?1:0]; ang+=q*Math.PI/2; }
+      drawMotifAt(ctx,m,x,y,S.size,ang,fx,fy,col(i+j*2),bg);
+    }
+  }
+}
+
+function bottlePath(){
+  const p=new Path2D();
+  p.moveTo(318,70); p.lineTo(402,70); p.lineTo(400,122);
+  p.bezierCurveTo(400,152,522,166,542,252);
+  p.bezierCurveTo(562,342,532,470,482,580);
+  p.bezierCurveTo(470,612,470,640,462,658);
+  p.lineTo(258,658);
+  p.bezierCurveTo(250,640,250,612,238,580);
+  p.bezierCurveTo(188,470,158,342,178,252);
+  p.bezierCurveTo(198,166,320,152,320,122);
+  p.closePath(); return p;
+}
+
+const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
+let fastRender=false;
+function setupCanvas(c, size, fast){ const d=fast?1:Math.min(window.devicePixelRatio||1,2); c.width=size*d; c.height=size*d; const x=c.getContext("2d"); x.setTransform(d,0,0,d,0,0); return x; }
+
+function render(){
+  setupCanvas(cv,W,fastRender&&S.view==="bottle");
+  const stage=getComputedStyle(document.documentElement).getPropertyValue("--stage").trim()||"#DCE3E4";
+  if(S.view==="flat"){ drawPattern(ctx,W,W); }
+  else{
+    ctx.fillStyle=stage; ctx.fillRect(0,0,W,W);
+    const ink=inks()[0];
+    if(S.view==="bottle"){
+      renderBottle3D();
+    } else {
+      ctx.save(); ctx.fillStyle="rgba(0,0,0,.14)"; ctx.beginPath(); ctx.arc(366,372,326,0,TAU); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.beginPath(); ctx.arc(360,360,326,0,TAU); ctx.clip(); drawPattern(ctx,W,W);
+      const g=ctx.createRadialGradient(300,280,40,360,360,340);
+      g.addColorStop(0,"rgba(255,255,255,.22)"); g.addColorStop(.7,"rgba(255,255,255,0)"); g.addColorStop(1,"rgba(0,0,0,.16)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,W); ctx.restore();
+      ctx.strokeStyle=ink; ctx.lineWidth=5; ctx.beginPath(); ctx.arc(360,360,322,0,TAU); ctx.stroke();
+      ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(360,360,304,0,TAU); ctx.stroke();
+    }
+  }
+  updateInfo();
+  $("bottleCtl").hidden=S.view!=="bottle";
+}
+
+/* ---------- 입체 병 ---------- */
+function symPath(pts){
+  const p=new Path2D(); p.moveTo(360+pts[0][1],pts[0][0]); pts.forEach(([y,r])=>p.lineTo(360+r,y));
+  pts.slice().reverse().forEach(([y,r])=>p.lineTo(360-r,y)); p.closePath(); return p;
+}
+function ribs(y0,y1,step,r,d){ const o=[]; for(let y=y0;y<=y1;y+=step) o.push([y-3,r],[y,r-d],[y+3,r]); return o; }
+const SHAPES={
+  maebyeong:{name:"매병", path:bottlePath},
+  moon:{name:"달항아리", path(){ const p=new Path2D(); p.moveTo(282,118); p.lineTo(438,118); p.lineTo(440,146);
+    p.bezierCurveTo(596,172,640,290,628,392); p.bezierCurveTo(614,512,532,598,452,634); p.lineTo(452,660); p.lineTo(268,660); p.lineTo(268,634);
+    p.bezierCurveTo(188,598,106,512,92,392); p.bezierCurveTo(80,290,124,172,280,146); p.closePath(); return p; }},
+  pet:{name:"생수병", cap:[46,98], plain:[[98,108]], capped:true, ridges:44, petal:{n:5,depth:9},
+    path(){ return symPath([[46,28],[48,33],[52,34],[96,34],[98,31],[100,40],[106,40],[108,30],[128,30],[140,33],[155,41],[170,53],[185,68],[200,83],[215,96],[228,105],[240,110],[252,112],
+      [290,112],...ribs(300,320,10,112,6),[330,112],[470,112],...ribs(490,580,15,112,5),[600,112],[624,110],[640,104],[650,94],[656,76],[658,50]]); }},
+  soda:{name:"탄산음료병", cap:[50,96], plain:[[96,106]], capped:true, ridges:36, petal:{n:5,depth:22},
+    path(){ return symPath([[50,26],[52,30],[56,31],[94,31],[96,28],[98,37],[104,37],[106,27],[124,27],[140,30],[160,40],[185,58],[210,78],[235,94],[260,104],[285,108],
+      [320,106],[360,98],[395,94],[430,97],[470,106],[510,110],[560,110],[600,108],[624,102],[642,88],[654,66],[658,40]]); }},
+  can:{name:"캔", capped:true, plain:[[148,176],[574,600]],
+    path(){ return symPath([[148,74],[152,80],[160,84],[172,90],[184,93],[566,93],[578,90],[588,84],[596,76],[600,62]]); }},
+  tube:{name:"원통 용기", cap:[96,168], capped:true, ridges:0,
+    path(){ return symPath([[96,110],[100,114],[166,114],[170,108],[640,108],[648,104],[652,94]]); }},
+  yakult:{name:"요구르트병",
+    path(){ return symPath([[176,46],[180,50],[188,50],[196,52],[210,59],[228,67],[250,71],[272,68],[296,61],[320,54],[340,52],[362,55],[390,62],[420,69],[450,73],[500,74],[536,73],[552,69],[560,60],[564,44]].map(([y,r])=>[370+(y-370)*1.45,r*1.45])); }}
+};
+const profCache={};
+function profile(id){
+  if(profCache[id]) return profCache[id];
+  const c=document.createElement("canvas"); c.width=W; c.height=W; const x=c.getContext("2d");
+  x.fillStyle="#000"; x.fill((SHAPES[id]||SHAPES.maebyeong).path()); const d=x.getImageData(0,0,W,W).data;
+  const r=new Float32Array(W); let top=-1,bot=-1;
+  for(let y=0;y<W;y++){ for(let xx=0;xx<W/2;xx++){ const a=d[(y*W+xx)*4+3]; if(a>0){ r[y]=W/2-xx+(a/255)-.5; if(top<0) top=y; bot=y; break; } } }
+  const rs=new Float32Array(W); for(let y=0;y<W;y++){ let sum=0,n=0; for(let k=-2;k<=2;k++){ const yy=y+k; if(yy>=top&&yy<=bot){ sum+=r[yy]; n++; } } rs[y]=n?sum/n:0; }
+  const dr=new Float32Array(W), sl=new Float32Array(W); let rmax=0;
+  for(let y=top;y<=bot;y++){ dr[y]=(rs[Math.min(bot,y+2)]-rs[Math.max(top,y-2)])/((Math.min(bot,y+2))-(Math.max(top,y-2))||1); if(rs[y]>rmax) rmax=rs[y]; }
+  for(let y=top+1;y<=bot;y++) sl[y]=sl[y-1]+Math.sqrt(1+(rs[y]-rs[y-1])**2);
+  return (profCache[id]={r:rs,dr,s:sl,top,bot,rmax});
+}
+const texCaches={};
+function bottleTexture(P,d,src){
+  const TW=Math.ceil(TAU*P.rmax)+4, TH=Math.ceil(P.s[P.bot])+8, key=src.key+"|"+d+"|"+TW+"|"+TH;
+  const tc=texCaches[src.id]; if(tc&&tc.key===key) return tc;
+  const c=document.createElement("canvas"); c.width=TW*d; c.height=TH*d; const x=c.getContext("2d"); x.setTransform(d,0,0,d,0,0);
+  src.draw(x,TW,TH);
+  return (texCaches[src.id]={key,data:x.getImageData(0,0,c.width,c.height).data,w:c.width,h:c.height,TW,TH,d});
+}
+function renderBottle3D(){
+  renderBottleOn(ctx,S.shape,S.spin,fastRender,{id:"pat",key:JSON.stringify([S.motif,S.arr,S.size,S.gap,S.rot,S.lw,S.count,S.palette,S.ink,S.bg,S.fill,S.custom.length,S.shape,!!photoCanvas]),draw:drawPattern});
+}
+function renderBottleOn(c2,shapeId,spin,fast,src){
+  const SH=SHAPES[shapeId]||SHAPES.maebyeong, BGP=hexRgb(bgColor()).map(c=>c*.98);
+  const d=fast?1:Math.min(window.devicePixelRatio||1,2), P=profile(SHAPES[shapeId]?shapeId:"maebyeong"), T3=bottleTexture(P,d,src);
+  const e=.13, cx=W/2, phi=(spin||0)*Math.PI/180;
+  const rAt=y=>{ if(y<P.top||y>P.bot) return -1; const i=Math.floor(y), f=y-i; return P.r[i]*(1-f)+P.r[Math.min(P.bot,i+1)]*f; };
+  const at=(arr,y)=>{ const i=Math.max(P.top,Math.min(P.bot,Math.floor(y))); return arr[i]; };
+  const rb=P.r[P.bot];
+  c2.save(); c2.fillStyle="rgba(0,0,0,.16)"; c2.beginPath(); c2.ellipse(cx+10,P.bot+e*rb+4,rb*1.18,e*rb*1.5+8,0,0,TAU); c2.fill(); c2.restore();
+  const Wd=W*d, img=c2.getImageData(0,0,Wd,Wd), D=img.data, TD=T3.data, tw=T3.w, th=T3.h;
+  const Lx=-.45,Ly=-.5,Lz=.74, Hn=Math.hypot(Lx,Ly,Lz+1), Hx=Lx/Hn, Hy=Ly/Hn, Hz=(Lz+1)/Hn;
+  const x0=Math.max(0,Math.floor((cx-P.rmax-2)*d)), x1=Math.min(Wd,Math.ceil((cx+P.rmax+2)*d));
+  const y0s=Math.max(0,Math.floor((P.top-2)*d)), y1s=Math.min(Wd,Math.ceil((P.bot+e*P.rmax+3)*d));
+  for(let py=y0s;py<y1s;py++){
+    const y=(py+.5)/d;
+    for(let px=x0;px<x1;px++){
+      const dx=(px+.5)/d-cx; let yy=y, r=-1, ok=true;
+      for(let it=0;it<4;it++){ r=rAt(yy); if(r<=0||Math.abs(dx)>=r){ ok=false; break; } const sx=dx/r; yy=y-e*r*Math.sqrt(1-sx*sx); }
+      if(!ok) continue;
+      r=rAt(yy); if(r<=0||Math.abs(dx)>=r) continue;
+      const sx=dx/r, cz=Math.sqrt(1-sx*sx), th0=Math.asin(sx);
+      let lim=P.bot; if(SH.petal){ const c=-Math.cos(SH.petal.n*(th0+phi)); if(c>0) lim=P.bot-SH.petal.depth*Math.pow(c,.8); }
+      let cov=Math.min(1,(r-Math.abs(dx))*d); cov=Math.min(cov,(yy-P.top)*d,(lim-yy)*d+1); if(cov<=0) continue;
+      let a=r*(th0+phi), C2=TAU*r; a=((a+C2/2)%C2+C2)%C2-C2/2;
+      const u=Math.min(tw-1,Math.max(0,Math.round((T3.TW/2+a)*d))), v=Math.min(th-1,Math.max(0,Math.round((at(P.s,yy)+4)*d)));
+      let ti=(v*tw+u)*4, src=TD, rid=1;
+      if(SH.cap&&yy<=SH.cap[1]){ src=BGP; ti=0; rid=.86+.14*Math.cos(SH.ridges*(th0+phi)); }
+      else if(SH.plain&&SH.plain.some(q=>yy>=q[0]&&yy<=q[1])){ src=BGP; ti=0; }
+      const drv=at(P.dr,yy), nr=1/Math.sqrt(1+drv*drv), nx=nr*sx, ny=-drv*nr, nz=nr*cz;
+      const diff=Math.max(0,nx*Lx+ny*Ly+nz*Lz), nh=Math.max(0,nx*Hx+ny*Hy+nz*Hz);
+      const shade=.58+.5*diff, spec=255*(Math.pow(nh,60)*.6+Math.pow(nh,8)*.05);
+      const o=(py*Wd+px)*4;
+      for(let k=0;k<3;k++){ const c=Math.min(255,src[ti+k]*shade*rid+spec); D[o+k]=D[o+k]+(c-D[o+k])*cov; }
+    }
+  }
+  c2.putImageData(img,0,0);
+  const rt=P.r[P.top+1];
+  if(SH.capped){ const bg=bgColor();
+    c2.fillStyle=bg; c2.beginPath(); c2.ellipse(cx,P.top+1,rt,e*rt,0,0,TAU); c2.fill();
+    c2.fillStyle="rgba(0,0,0,.06)"; c2.beginPath(); c2.ellipse(cx,P.top+1,rt*.72,e*rt*.72,0,0,TAU); c2.fill();
+    c2.strokeStyle="rgba(0,0,0,.22)"; c2.lineWidth=1; c2.beginPath(); c2.ellipse(cx,P.top+1,rt-.5,e*(rt-.5),0,0,TAU); c2.stroke(); return; }
+  const g=c2.createLinearGradient(0,P.top-e*rt,0,P.top+e*rt);
+  g.addColorStop(0,"rgba(25,32,48,.75)"); g.addColorStop(1,"rgba(60,70,90,.45)");
+  c2.fillStyle=g; c2.beginPath(); c2.ellipse(cx,P.top+1,rt-3,e*(rt-3),0,0,TAU); c2.fill();
+  c2.strokeStyle=bgColor(); c2.lineWidth=3.5; c2.beginPath(); c2.ellipse(cx,P.top+1,rt-2,e*(rt-2),0,0,TAU); c2.stroke();
+  c2.strokeStyle="rgba(0,0,0,.18)"; c2.lineWidth=1; c2.beginPath(); c2.ellipse(cx,P.top+1,rt-.5,e*(rt-.5),0,0,TAU); c2.stroke();
+}
+
+/* ---------- 화면 구성 ---------- */
+const $=id=>document.getElementById(id);
+function pressed(container, attr, val){ container.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset[attr]===val))); }
+
+function buildViews(){
+  const box=$("views"); box.innerHTML="";
+  VIEWS.forEach(v=>{const b=document.createElement("button"); b.type="button"; b.textContent=v.name; b.dataset.v=v.id; b.onclick=()=>{S.view=v.id; pressed(box,"v",v.id); cv.classList.toggle("grab",v.id==="bottle"); render(); persist();}; box.appendChild(b);});
+  pressed(box,"v",S.view);
+}
+
+function drawThumb(c, id){
+  const x=setupCanvas(c,64); const bg=bgColor(), ink=inks()[0];
+  x.fillStyle=bg; x.fillRect(0,0,64,64);
+  const save={fill:S.fill,lw:S.lw}; S.lw=2.2;
+  drawMotifAt(x,getMotif(id),32,32,52,0,1,1,ink,bg);
+  S.lw=save.lw;
+}
+function buildMotifs(){
+  const box=$("motifs"); box.innerHTML="";
+  let lastG=null;
+  MOTIFS.forEach(m=>{
+    if(m.id==="custom" && !(S.custom&&S.custom.length)) return;
+    if(m.id==="photo" && !photoCanvas) return;
+    if(m.g!==lastG){ lastG=m.g; const h=document.createElement("p"); h.className="mgroup"; h.textContent=m.g; box.appendChild(h); }
+    const b=document.createElement("button"); b.type="button"; b.className="motif"; b.dataset.m=m.id;
+    const c=document.createElement("canvas"); b.appendChild(c);
+    const s=document.createElement("span"); s.textContent=m.name; b.appendChild(s);
+    b.onclick=()=>{S.motif=m.id; pressed(box,"m",m.id); render(); persist();};
+    box.appendChild(b); drawThumb(c,m.id);
+  });
+  const d=document.createElement("button"); d.type="button"; d.className="motif draw"; d.innerHTML='<span class="plus">+</span><span>직접 그리기</span>';
+  d.onclick=openPad; box.appendChild(d);
+  pressed(box,"m",S.motif);
+}
+function buildArrs(){
+  const box=$("arrs"); box.innerHTML="";
+  ARRS.forEach(a=>{const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=a.name; b.dataset.a=a.id;
+    b.onclick=()=>{S.arr=a.id; pressed(box,"a",a.id); syncCount(); render(); persist();}; box.appendChild(b);});
+  pressed(box,"a",S.arr);
+}
+function buildPalettes(){
+  const box=$("palettes"); box.innerHTML="";
+  PALETTES.forEach(p=>{
+    const b=document.createElement("button"); b.type="button"; b.className="swatch"; b.dataset.p=p.id;
+    const i=document.createElement("i");
+    const cols = p.ink ? p.ink : [S.ink]; const bgc = p.bg || S.bg;
+    const e0=document.createElement("em"); e0.style.background=bgc; i.appendChild(e0);
+    cols.forEach(cc=>{const e=document.createElement("em"); e.style.background=cc; i.appendChild(e);});
+    b.appendChild(i); b.appendChild(document.createTextNode(p.name));
+    b.onclick=()=>{S.palette=p.id; if(p.ink){S.ink=p.ink[0]; S.bg=p.bg;} syncColors(); pressed(box,"p",p.id); buildMotifs(); render(); persist();};
+    box.appendChild(b);
+  });
+  pressed(box,"p",S.palette);
+}
+function syncColors(){ $("customColors").hidden = S.palette!=="custom"; $("inkPick").value=S.ink; $("bgPick").value=S.bg; }
+function syncCount(){ $("countRow").hidden = S.arr!=="radial"; }
+
+const SLIDERS={size:v=>v+"px", gap:v=>v+"px", rot:v=>v+"°", lw:v=>v, count:v=>v+"개"};
+function buildSliders(){
+  Object.keys(SLIDERS).forEach(k=>{
+    const inp=$(k), out=$(k+"O"); inp.value=S[k]; out.textContent=SLIDERS[k](S[k]);
+    inp.oninput=()=>{S[k]=parseFloat(inp.value); out.textContent=SLIDERS[k](S[k]); render();};
+    inp.onchange=persist;
+  });
+}
+function syncSliders(){ Object.keys(SLIDERS).forEach(k=>{$(k).value=S[k]; $(k+"O").textContent=SLIDERS[k](S[k]);}); }
+
+function updateInfo(){
+  const m=MOTIFS.find(x=>x.id===S.motif)||MOTIFS[0], a=ARRS.find(x=>x.id===S.arr)||ARRS[0];
+  $("infoTitle").textContent=m.name+" 문양 × "+a.name;
+  $("infoMotif").innerHTML=""; const b1=document.createElement("b"); b1.textContent="문양의 뜻 "; $("infoMotif").append(b1, m.meaning);
+  $("infoArr").innerHTML=""; const b2=document.createElement("b"); b2.textContent="배열 방법 "; $("infoArr").append(b2, a.desc);
+}
+
+$("fill").checked=S.fill;
+$("fill").onchange=()=>{S.fill=$("fill").checked; buildMotifs(); render(); persist();};
+$("inkPick").oninput=()=>{S.ink=$("inkPick").value; render();};
+$("bgPick").oninput=()=>{S.bg=$("bgPick").value; render();};
+$("inkPick").onchange=$("bgPick").onchange=()=>{buildPalettes(); buildMotifs(); persist();};
+
+$("random").onclick=()=>{
+  const pick=a=>a[Math.floor(Math.random()*a.length)];
+  const base=MOTIFS.filter(m=>(m.id!=="custom"||(S.custom&&S.custom.length))&&(m.id!=="photo"||photoCanvas));
+  S.motif=pick(base).id; S.arr=pick(ARRS).id;
+  S.size=Math.round(50+Math.random()*80); S.gap=Math.round(Math.random()*24); S.rot=pick([0,0,0,45,90]);
+  S.count=Math.round(6+Math.random()*6);
+  const p=pick(PALETTES.filter(p=>p.ink)); S.palette=p.id; S.ink=p.ink[0]; S.bg=p.bg;
+  syncSliders(); syncCount(); syncColors(); buildPalettes(); buildMotifs(); buildArrs(); render(); persist();
+};
+
+/* ---------- 저장 ---------- */
+let downloads=null;
+(async()=>{
+  try{ if(window.claude && typeof window.claude.use==="function"){ downloads=await window.claude.use("downloads"); } }catch(e){ downloads=null; }
+  if(!downloads){ downloads={ save:async({filename,data})=>{ const url=URL.createObjectURL(data), a=document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000); } }; }
+  $("dl").hidden=!downloads; $("aDl3d").hidden=$("aDlFlat").hidden=!downloads; if(tMask) $("tDl").hidden=!downloads; $("cDl").hidden=!downloads;
+})();
+$("dl").onclick=()=>{
+  if(!downloads) return;
+  const m=MOTIFS.find(x=>x.id===S.motif), a=ARRS.find(x=>x.id===S.arr);
+  cv.toBlob(async blob=>{
+    if(!blob){ $("status").textContent="그림을 만들지 못했어요. 다시 눌러 주세요."; return; }
+    try{ await downloads.save({filename:"전통문양_"+m.name+"_"+a.name+".png", data:blob}); $("status").textContent="저장했어요."; }
+    catch(err){
+      const code=err&&err.code;
+      if(code==="declined") $("status").textContent="저장을 취소했어요.";
+      else if(code==="rate_limited") $("status").textContent="잠시 뒤에 다시 눌러 주세요.";
+      else { $("status").textContent="이 화면에서는 저장할 수 없어요."; $("dl").hidden=true; }
+    }
+  },"image/png");
+};
+
+/* ---------- 직접 그리기 ---------- */
+const pad=$("pad"); let pctx, strokes=[], cur=null;
+const PS=300;
+function toUnit(e){ const r=pad.getBoundingClientRect(); return [ (e.clientX-r.left)/r.width*100-50, (e.clientY-r.top)/r.height*100-50 ]; }
+function renderPad(){
+  pctx=setupCanvas(pad,PS);
+  const bg=bgColor(), ink=inks()[0], k=PS/100;
+  pctx.fillStyle=bg; pctx.fillRect(0,0,PS,PS);
+  pctx.strokeStyle="rgba(120,130,145,.35)"; pctx.lineWidth=1; pctx.setLineDash([4,5]);
+  pctx.beginPath(); pctx.moveTo(PS/2,0); pctx.lineTo(PS/2,PS); pctx.moveTo(0,PS/2); pctx.lineTo(PS,PS/2); pctx.stroke();
+  pctx.setLineDash([]);
+  pctx.save(); pctx.translate(PS/2,PS/2); pctx.scale(k,k);
+  pctx.strokeStyle=ink; pctx.lineWidth=3/k; pctx.lineCap="round"; pctx.lineJoin="round";
+  const all=strokes.slice(); if(cur){ all.push(cur); if($("padMirror").checked) all.push(cur.map(p=>[-p[0],p[1]])); }
+  all.forEach(st=>{ pctx.beginPath(); pctx.moveTo(st[0][0],st[0][1]); if(st.length===1) pctx.lineTo(st[0][0]+.01,st[0][1]); st.forEach(p=>pctx.lineTo(p[0],p[1])); pctx.stroke(); });
+  pctx.restore();
+}
+pad.addEventListener("pointerdown",e=>{ e.preventDefault(); pad.setPointerCapture(e.pointerId); cur=[toUnit(e)]; renderPad(); });
+pad.addEventListener("pointermove",e=>{ if(!cur) return; const p=toUnit(e), l=cur[cur.length-1]; if(Math.hypot(p[0]-l[0],p[1]-l[1])>0.7){ cur.push(p); renderPad(); } });
+function endStroke(){ if(!cur) return; strokes.push(cur); if($("padMirror").checked) strokes.push(cur.map(p=>[-p[0],p[1]])); cur=null; renderPad(); }
+pad.addEventListener("pointerup",endStroke); pad.addEventListener("pointercancel",endStroke);
+$("padUndo").onclick=()=>{ strokes.pop(); if($("padMirror").checked && strokes.length) strokes.pop(); renderPad(); };
+$("padClear").onclick=()=>{ strokes=[]; renderPad(); };
+function openPad(){ strokes=(S.custom||[]).map(s=>s.map(p=>p.slice())); $("padWrap").hidden=false; renderPad(); $("padUse").focus(); }
+function closePad(){ $("padWrap").hidden=true; }
+$("padCancel").onclick=closePad;
+$("padWrap").addEventListener("click",e=>{ if(e.target===$("padWrap")) closePad(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape" && !$("padWrap").hidden) closePad(); });
+$("padUse").onclick=()=>{
+  if(!strokes.length){ closePad(); return; }
+  S.custom=strokes.map(s=>s.map(p=>[Math.round(p[0]*10)/10,Math.round(p[1]*10)/10]));
+  S.motif="custom"; S.fill=S.fill; buildMotifs(); render(); persist(); closePad();
+};
+
+
+/* ---------- 작업 고르기 ---------- */
+const SUB={pattern:"단위 문양을 고르고 배열 방식을 바꿔 보며 나만의 연속무늬를 디자인해 보세요. 완성한 무늬는 병이나 접시에 입혀 미리 볼 수 있어요.",
+           trace:"사진이나 그림을 넣으면 한 가지 색의 선 도안이나 청화 붓그림으로 바꿔 줍니다.",
+           comp:"전통 문양과 내가 만든 문양, 꿈을 담은 글귀를 자유롭게 배치해 병 하나를 하나의 작품으로 꾸며 보세요.",
+           card:"진로 분야에 어울리는 전통 문양을 고르고, 문양에 담긴 뜻을 내 꿈과 이어 진로 문양 카드를 만들어 보세요."};
+let mode="pattern";
+function setMode(m){
+  mode=m; $("patternMode").hidden=m!=="pattern"; $("traceMode").hidden=m!=="trace"; $("cardMode").hidden=m!=="card"; $("compMode").hidden=m!=="comp";
+  document.querySelectorAll(".modetabs button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
+  $("subtitle").textContent=SUB[m];
+  if(m==="pattern") render(); else if(m==="trace") tDraw(); else if(m==="comp"){ buildComp(); drawEditor(); drawPreview(false); } else { buildCard(); cDraw(); }
+}
+document.querySelectorAll(".modetabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+
+/* ---------- 사진을 선 도안으로 ---------- */
+const TDEF={mode:"line",detail:5,simple:1,weight:0,speck:4,tone:5,palette:"cheonghwa"};
+let T=Object.assign({},TDEF);
+try{ const t=JSON.parse(localStorage.getItem("pattern-trace-v1")||"null"); if(t) T=Object.assign(T,t); }catch(e){}
+function tPersist(){ try{ localStorage.setItem("pattern-trace-v1",JSON.stringify(T)); }catch(e){} }
+const TMODES=[
+  {id:"line",name:"선 그림",desc:"사진 속 모양의 테두리와 주름을 선으로 바꿔요."},
+  {id:"tone",name:"선과 농담",desc:"선에 진하고 연한 면을 더해 청화 안료의 농담처럼 표현해요."},
+  {id:"trace",name:"밑그림 따기",desc:"종이에 그린 그림이나 도안을 찍은 사진에서 선만 깨끗하게 뽑아요."},
+  {id:"wash",name:"청화 붓그림",desc:"사진의 명암을 청화 안료의 진하고 옅은 붓 칠로 바꿔요. 한 가지 파랑의 농담으로 그린 그림이 돼요."}
+];
+const tPal=()=>PALETTES.find(p=>p.id===T.palette&&p.ink)||PALETTES[0];
+const hexRgb=h=>{h=h.replace("#",""); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+var tSrc=null, gray=null, tw=0, th=0, tMask=null, tOrig=false;
+
+function blurPass(s,w,h,r,horiz){
+  const d=new Float32Array(s.length), n=2*r+1;
+  if(horiz){ for(let y=0;y<h;y++){ const o=y*w; let sum=0; for(let k=-r;k<=r;k++) sum+=s[o+Math.min(w-1,Math.max(0,k))];
+      for(let x=0;x<w;x++){ d[o+x]=sum/n; sum+=s[o+Math.min(w-1,x+r+1)]-s[o+Math.max(0,x-r)]; } } }
+  else { for(let x=0;x<w;x++){ let sum=0; for(let k=-r;k<=r;k++) sum+=s[Math.min(h-1,Math.max(0,k))*w+x];
+      for(let y=0;y<h;y++){ d[y*w+x]=sum/n; sum+=s[Math.min(h-1,y+r+1)*w+x]-s[Math.max(0,y-r)*w+x]; } } }
+  return d;
+}
+function blur2(s,w,h,r){ if(r<1) return s; let a=blurPass(s,w,h,r,true); a=blurPass(a,w,h,r,false); a=blurPass(a,w,h,r,true); return blurPass(a,w,h,r,false); }
+function dilate(s,w,h,r){
+  if(r<1) return s;
+  const a=new Float32Array(s.length), b=new Float32Array(s.length);
+  for(let y=0;y<h;y++){ const o=y*w; for(let x=0;x<w;x++){ let m=0; for(let k=Math.max(0,x-r);k<=Math.min(w-1,x+r);k++) if(s[o+k]>m) m=s[o+k]; a[o+x]=m; } }
+  for(let x=0;x<w;x++){ for(let y=0;y<h;y++){ let m=0; for(let k=Math.max(0,y-r);k<=Math.min(h-1,y+r);k++) if(a[k*w+x]>m) m=a[k*w+x]; b[y*w+x]=m; } }
+  return b;
+}
+function removeSpecks(mask,w,h,min){
+  if(min<2) return;
+  const n=w*h, lab=new Int32Array(n), stack=new Int32Array(n), sizes=[0]; let id=0;
+  for(let p=0;p<n;p++){
+    if(mask[p]<=.35||lab[p]) continue;
+    id++; let sp=0,cnt=0; stack[sp++]=p; lab[p]=id;
+    while(sp){ const q=stack[--sp]; cnt++; const x=q%w, y=(q/w)|0;
+      for(let dy=-1;dy<=1;dy++){ const yy=y+dy; if(yy<0||yy>=h) continue;
+        for(let dx=-1;dx<=1;dx++){ const xx=x+dx; if(xx<0||xx>=w) continue; const r=yy*w+xx; if(!lab[r]&&mask[r]>.35){ lab[r]=id; stack[sp++]=r; } } } }
+    sizes[id]=cnt;
+  }
+  for(let p=0;p<n;p++){ if(lab[p]){ if(sizes[lab[p]]<min){ mask[p]=0; lab[p]=-1; } } }
+  for(let p=0;p<n;p++){
+    if(lab[p]!==0||mask[p]===0) continue;
+    const x=p%w, y=(p/w)|0; let keep=false;
+    for(let dy=-1;dy<=1&&!keep;dy++) for(let dx=-1;dx<=1;dx++){ const xx=x+dx, yy=y+dy; if(xx<0||yy<0||xx>=w||yy>=h) continue; if(lab[yy*w+xx]>0){ keep=true; break; } }
+    if(!keep) mask[p]=0;
+  }
+}
+function tProcess(){
+  if(!gray) return;
+  const n=tw*th, sc=Math.max(tw,th)/700, mask=new Float32Array(n);
+  const r1=Math.max(1,Math.round((.7+T.simple*.75)*Math.max(sc,.8)));
+  if(T.mode==="trace"){
+    const g=blur2(gray,tw,th,Math.round(T.simple*.5*sc));
+    const mean=blur2(gray,tw,th,Math.max(4,Math.round(16*sc)));
+    const c=4+(10-T.detail)*3;
+    for(let i=0;i<n;i++){ const v=(mean[i]-g[i]-c)/6; mask[i]=v<0?0:v>1?1:v; }
+  } else {
+    const g1=blur2(gray,tw,th,r1), g2=blur2(gray,tw,th,Math.round(r1*1.6)+1);
+    const eps=1.5+(10-T.detail)*1.6;
+    for(let i=0;i<n;i++){ const v=(g2[i]-g1[i]-eps)/4; mask[i]=v<0?0:v>1?1:v; }
+  }
+  removeSpecks(mask,tw,th,Math.round(T.speck*T.speck*sc*sc*1.6));
+  let out=dilate(mask,tw,th,Math.round(T.weight*sc));
+  if(T.mode==="wash"){
+    const g=blur2(gray,tw,th,Math.max(1,Math.round(r1*.8))), lo=.06+(10-T.tone)*.04, hi=.9;
+    const nz=new Float32Array(n); for(let i=0;i<n;i++) nz[i]=Math.random();
+    const nb=blur2(nz,tw,th,Math.max(2,Math.round(3*sc))), nb2=blur2(nz,tw,th,Math.max(6,Math.round(14*sc)));
+    if(out===mask) out=Float32Array.from(mask);
+    for(let i=0;i<n;i++){
+      let t=(1-g[i]/255-lo)/(hi-lo); t=t<0?0:t>1?1:t;
+      const st=Math.round(t*4)/4; t=t*.45+st*.55;
+      t+=((nb[i]-.5)*2.2+(nb2[i]-.5)*5)*t; t=t<0?0:t>1?1:t;
+      const v=Math.max(t,out[i]*.95); out[i]=v;
+    }
+  }
+  if(T.mode==="tone"){
+    const g=blur2(gray,tw,th,Math.max(2,r1*2)), t2=70+T.tone*14, t1=t2-70;
+    if(out===mask) out=Float32Array.from(mask);
+    for(let i=0;i<n;i++){ const tv=g[i]<t1?.8:g[i]<t2?.34:0; if(tv>out[i]) out[i]=tv; }
+  }
+  tMask=out; tDraw();
+}
+const tctx=$("tcv").getContext("2d");
+function tDraw(){
+  if(!tMask) return;
+  const c=$("tcv"); c.width=tw; c.height=th;
+  if(tOrig){ tctx.drawImage(tSrc,0,0); return; }
+  const p=tPal(), ink=hexRgb(p.ink[0]), bg=hexRgb(p.bg), im=tctx.createImageData(tw,th), d=im.data;
+  if(T.mode==="wash"){
+    const mid=ink.map(c=>Math.round(c+(255-c)*.5)), deep=ink.map(c=>Math.round(c*.72));
+    for(let i=0,j=0;i<tMask.length;i++,j+=4){ const a=tMask[i]; let A,B,u;
+      if(a<.5){A=bg;B=mid;u=a*2;} else if(a<.85){A=mid;B=ink;u=(a-.5)/.35;} else {A=ink;B=deep;u=(a-.85)/.15;}
+      d[j]=A[0]+(B[0]-A[0])*u; d[j+1]=A[1]+(B[1]-A[1])*u; d[j+2]=A[2]+(B[2]-A[2])*u; d[j+3]=255; }
+    tctx.putImageData(im,0,0); return;
+  }
+  for(let i=0,j=0;i<tMask.length;i++,j+=4){ const a=tMask[i];
+    d[j]=bg[0]+(ink[0]-bg[0])*a; d[j+1]=bg[1]+(ink[1]-bg[1])*a; d[j+2]=bg[2]+(ink[2]-bg[2])*a; d[j+3]=255; }
+  tctx.putImageData(im,0,0);
+}
+function tStatus(t){ $("tStatus").textContent=t; }
+function tLoad(file){
+  if(!file||!/^image\//.test(file.type)){ tStatus("그림 파일만 넣을 수 있어요."); return; }
+  const url=URL.createObjectURL(file), im=new Image();
+  im.onload=()=>{ URL.revokeObjectURL(url); tSet(im); };
+  im.onerror=()=>{ URL.revokeObjectURL(url); tStatus("이 파일은 열 수 없어요. 다른 사진을 골라 주세요."); };
+  im.src=url;
+}
+function tSet(im){
+  const mx=Math.max(im.naturalWidth,im.naturalHeight), sc=mx>1000?1000/mx:Math.min(3,Math.max(1,700/mx));
+  tw=Math.max(1,Math.round(im.naturalWidth*sc)); th=Math.max(1,Math.round(im.naturalHeight*sc));
+  const c=document.createElement("canvas"); c.width=tw; c.height=th; const x=c.getContext("2d");
+  x.fillStyle="#fff"; x.fillRect(0,0,tw,th); x.drawImage(im,0,0,tw,th); tSrc=c;
+  const d=x.getImageData(0,0,tw,th).data; gray=new Float32Array(tw*th);
+  for(let i=0,j=0;i<gray.length;i++,j+=4) gray[i]=.299*d[j]+.587*d[j+1]+.114*d[j+2];
+  tOrig=false; $("tOrig").setAttribute("aria-pressed","false"); $("tOrig").textContent="원본 보기";
+  $("tempty").hidden=true; $("tcv").hidden=false; $("tUse").hidden=false; $("tOrig").hidden=false; $("tDl").hidden=!downloads;
+  tStatus(""); tProcess();
+}
+$("tPick").onclick=$("tPick2").onclick=()=>$("tFile").click();
+$("tFile").onchange=()=>{ tLoad($("tFile").files[0]); $("tFile").value=""; };
+const tst=$("tstage");
+tst.addEventListener("dragover",e=>{ e.preventDefault(); tst.classList.add("drag"); });
+tst.addEventListener("dragleave",()=>tst.classList.remove("drag"));
+tst.addEventListener("drop",e=>{ e.preventDefault(); tst.classList.remove("drag"); tLoad(e.dataTransfer.files[0]); });
+document.addEventListener("paste",e=>{ if(mode!=="trace") return; const it=[...(e.clipboardData?e.clipboardData.items:[])].find(i=>i.type.startsWith("image/")); if(it) tLoad(it.getAsFile()); });
+$("tOrig").onclick=()=>{ tOrig=!tOrig; $("tOrig").setAttribute("aria-pressed",String(tOrig)); $("tOrig").textContent=tOrig?"도안 보기":"원본 보기"; tDraw(); };
+
+function buildTModes(){
+  const box=$("tModes"); box.innerHTML="";
+  TMODES.forEach(m=>{ const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=m.name; b.dataset.t=m.id;
+    b.onclick=()=>{ T.mode=m.id; syncT(); tProcess(); tPersist(); }; box.appendChild(b); });
+}
+function buildTPal(){
+  const box=$("tPalettes"); box.innerHTML="";
+  PALETTES.filter(p=>p.ink&&p.ink.length===1).forEach(p=>{
+    const b=document.createElement("button"); b.type="button"; b.className="swatch"; b.dataset.p=p.id;
+    const i=document.createElement("i"); [p.bg,p.ink[0]].forEach(c=>{const e=document.createElement("em"); e.style.background=c; i.appendChild(e);});
+    b.append(i,document.createTextNode(p.name));
+    b.onclick=()=>{ T.palette=p.id; pressed(box,"p",p.id); tDraw(); tPersist(); }; box.appendChild(b);
+  });
+  pressed(box,"p",T.palette);
+}
+const TSL={tDetail:"detail",tSimple:"simple",tWeight:"weight",tSpeck:"speck",tTone:"tone"};
+let tTimer;
+Object.keys(TSL).forEach(id=>{ const k=TSL[id], inp=$(id);
+  inp.oninput=()=>{ T[k]=+inp.value; $(id+"O").textContent=inp.value; clearTimeout(tTimer); tTimer=setTimeout(tProcess,60); };
+  inp.onchange=tPersist; });
+function syncT(){
+  pressed($("tModes"),"t",T.mode);
+  $("tModeDesc").textContent=(TMODES.find(m=>m.id===T.mode)||TMODES[0]).desc;
+  $("tToneRow").hidden=T.mode!=="tone"&&T.mode!=="wash";
+  Object.keys(TSL).forEach(id=>{ $(id).value=T[TSL[id]]; $(id+"O").textContent=T[TSL[id]]; });
+}
+
+function setPhotoFromMask(){
+  let x0=tw,y0=th,x1=-1,y1=-1;
+  for(let y=0;y<th;y++) for(let x=0;x<tw;x++) if(tMask[y*tw+x]>.1){ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
+  if(x1<0) return false;
+  const cw=x1-x0+1, ch=y1-y0+1, sc=Math.min(1,420/Math.max(cw,ch));
+  const full=document.createElement("canvas"); full.width=cw; full.height=ch;
+  const fx=full.getContext("2d"), im=fx.createImageData(cw,ch);
+  for(let y=0;y<ch;y++) for(let x=0;x<cw;x++){ const a=tMask[(y+y0)*tw+x+x0]; im.data[(y*cw+x)*4+3]=a*255; }
+  fx.putImageData(im,0,0);
+  const c=document.createElement("canvas"); c.width=Math.max(1,Math.round(cw*sc)); c.height=Math.max(1,Math.round(ch*sc));
+  c.getContext("2d").drawImage(full,0,0,c.width,c.height);
+  photoCanvas=c;
+  try{ localStorage.setItem("pattern-photo-v1",c.toDataURL("image/png")); }catch(e){}
+  return true;
+}
+$("tUse").onclick=()=>{
+  if(!tMask||!setPhotoFromMask()){ tStatus("남은 선이 없어요. 선의 양을 늘려 보세요."); return; }
+  S.motif="photo"; persist(); buildMotifs(); setMode("pattern"); window.scrollTo(0,0);
+};
+$("tDl").onclick=()=>{
+  if(!downloads||!tMask) return;
+  const was=tOrig; tOrig=false; tDraw();
+  $("tcv").toBlob(async blob=>{
+    tOrig=was; tDraw();
+    if(!blob){ tStatus("그림을 만들지 못했어요. 다시 눌러 주세요."); return; }
+    try{ await downloads.save({filename:"선도안_"+(TMODES.find(m=>m.id===T.mode)||TMODES[0]).name+".png", data:blob}); tStatus("저장했어요."); }
+    catch(err){ const code=err&&err.code;
+      if(code==="declined") tStatus("저장을 취소했어요."); else if(code==="rate_limited") tStatus("잠시 뒤에 다시 눌러 주세요.");
+      else { tStatus("이 화면에서는 저장할 수 없어요."); $("tDl").hidden=true; } }
+  },"image/png");
+};
+try{
+  const du=localStorage.getItem("pattern-photo-v1");
+  if(du){ const im=new Image(); im.onload=()=>{ const c=document.createElement("canvas"); c.width=im.width; c.height=im.height; c.getContext("2d").drawImage(im,0,0); photoCanvas=c; buildMotifs(); if(S.motif==="photo") render(); }; im.src=du; }
+}catch(e){}
+buildTModes(); buildTPal(); syncT();
+
+/* ---------- 진로 문양 카드 ---------- */
+const FIELDS=[
+  {id:"edu",name:"학문·교육·IT",sub:"끊임없는 탐구와 성장을 꿈꾸는 이들을 위해",items:[
+    {motif:"bamboo",title:"사군자 (매난국죽)",sym:"혹독한 환경을 이겨내는 올곧은 성품과 지조.",jobs:"연구자, 교육자, 교사",alts:["bamboo","plum","orchid","chrysanthemum"]},
+    {motif:"koi",title:"잉어문 (등용문)",sym:"거센 물결을 거슬러 오르는 용기, 어려움을 극복하고 큰 뜻을 이룸.",jobs:"IT 개발자, 스타트업 창업가"},
+    {motif:"crane",title:"운학문 (구름과 학)",sym:"세속을 벗어난 고고함과 흔들리지 않는 높은 이상.",jobs:"학자, 기획자, 데이터 분석가",alts:["crane","cloud"]}]},
+  {id:"med",name:"의료·보건·생명",sub:"생명의 가치와 건강을 지키는 이들을 위해",items:[
+    {motif:"deer",title:"십장생문 (소나무, 사슴, 거북)",sym:"변치 않는 굳건한 건강과 무병장수의 기원. 오랜 시간 생명을 지키는 숭고한 의지.",jobs:"의사, 간호사, 보건직, 스포츠 관련",alts:["deer","pine","turtle","lingzhi"]},
+    {motif:"flowers",title:"초화문 (풀과 꽃)",sym:"끊임없이 피고 지는 끈질긴 생명력. 상처의 치유와 경이로운 자연의 순환.",jobs:"약사, 생명공학자, 환경운동가, 심리상담사"}]},
+  {id:"biz",name:"경영·창업·미디어·예술",sub:"세상을 무대로 부가가치를 창출하는 이들을 위해",items:[
+    {motif:"peony",title:"모란문",sym:"꽃 중의 왕. 압도적인 부귀영화와 번영의 상징.",jobs:"경영자, CEO, 경제전문가"},
+    {motif:"dragon",title:"용문",sym:"날씨를 부리는 권위와 역동적인 리더십.",jobs:"글로벌 마케터, 리더"},
+    {motif:"su",title:"문자문 (수복강녕)",sym:"메시지를 직관적이고 강력하게 전달하는 시각적 타이포그래피.",jobs:"크리에이터, 언론인, 디자이너",alts:["su","bok","gang","nyeong"]}]}
+];
+const ARTS=[{id:"single",name:"단독 문양"},{id:"pattern",name:"패턴"},{id:"plate",name:"접시"},{id:"photo",name:"사진 도안"}];
+let C={field:"edu",item:0,motif:"bamboo",title:"사군자 (매난국죽)",art:"single",dream:"",meaning:"혹독한 환경을 이겨내는 올곧은 성품과 지조.",name:""};
+try{ const c=JSON.parse(localStorage.getItem("pattern-card-v1")||"null"); if(c) C=Object.assign(C,c); }catch(e){}
+function cPersist(){ try{ localStorage.setItem("pattern-card-v1",JSON.stringify(C)); }catch(e){} }
+const curField=()=>FIELDS.find(f=>f.id===C.field)||FIELDS[0];
+const motifName=id=>(MOTIFS.find(m=>m.id===id)||{name:id}).name;
+
+function buildCard(){
+  const fb=$("cFields"); fb.innerHTML="";
+  FIELDS.forEach(f=>{ const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=f.name; b.dataset.f=f.id;
+    b.onclick=()=>{ C.field=f.id; pickItem(0); }; fb.appendChild(b); });
+  pressed(fb,"f",C.field); $("cFieldSub").textContent=curField().sub;
+  const ib=$("cItems"); ib.innerHTML="";
+  curField().items.forEach((it,i)=>{ const b=document.createElement("button"); b.type="button"; b.className="citem"; b.dataset.i=String(i);
+    const t=document.createElement("b"); t.textContent=it.title; const sm=document.createElement("small"); sm.textContent=it.sym+" 추천 진로: "+it.jobs;
+    b.append(t,sm); b.onclick=()=>pickItem(i); ib.appendChild(b); });
+  pressed(ib,"i",String(C.item));
+  const ab=$("cAlts"); ab.innerHTML=""; const it=curField().items[C.item];
+  if(it&&it.alts&&it.title===C.title){ it.alts.forEach(a=>{ const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=motifName(a); b.dataset.a=a;
+      b.onclick=()=>{ C.motif=a; pressed(ab,"a",a); $("cAny").value=a; cDraw(); cPersist(); }; ab.appendChild(b); }); pressed(ab,"a",C.motif); ab.style.marginTop="4px"; }
+  const sel=$("cAny"); sel.innerHTML="";
+  MOTIFS.forEach(m=>{ if(m.id==="custom"&&!(S.custom&&S.custom.length)) return; if(m.id==="photo"&&!photoCanvas) return;
+    const o=document.createElement("option"); o.value=m.id; o.textContent=m.g+" · "+m.name; sel.appendChild(o); });
+  sel.value=C.motif;
+  const rb=$("cArts"); rb.innerHTML="";
+  ARTS.forEach(a=>{ if(a.id==="photo"&&!photoCanvas) return; const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=a.name; b.dataset.r=a.id;
+    b.onclick=()=>{ C.art=a.id; pressed(rb,"r",a.id); cDraw(); cPersist(); }; rb.appendChild(b); });
+  if(C.art==="photo"&&!photoCanvas) C.art="single";
+  pressed(rb,"r",C.art);
+  $("cDream").value=C.dream; $("cMeaning").value=C.meaning; $("cName").value=C.name;
+}
+function pickItem(i){
+  const it=curField().items[i]; C.item=i; C.motif=it.motif; C.title=it.title; C.meaning=it.sym;
+  buildCard(); cDraw(); cPersist();
+}
+$("cAny").onchange=()=>{ C.motif=$("cAny").value; C.title=motifName(C.motif).replace(/^(\S+) (\S+)$/,"$1")+" 문양"; const m=MOTIFS.find(x=>x.id===C.motif); if(m) C.meaning=m.meaning; buildCard(); cDraw(); cPersist(); };
+[["cDream","dream"],["cMeaning","meaning"],["cName","name"]].forEach(([id,k])=>{ $(id).oninput=()=>{ C[k]=$(id).value; cDraw(); }; $(id).onchange=cPersist; });
+
+function wrapText(ctx,text,maxW){
+  const words=String(text).split(/\s+/).filter(Boolean), lines=[]; let line="";
+  words.forEach(w=>{ const t=line?line+" "+w:w; if(ctx.measureText(t).width<=maxW) line=t; else { if(line) lines.push(line); line=w; while(ctx.measureText(line).width>maxW){ let k=line.length-1; while(k>1&&ctx.measureText(line.slice(0,k)).width>maxW) k--; lines.push(line.slice(0,k)); line=line.slice(k);} } });
+  if(line) lines.push(line); return lines;
+}
+function cDraw(){
+  const cv2=$("ccv"), x=cv2.getContext("2d"), CW=1080, CH=1350;
+  const pal=palette(), ink=(pal.ink||[S.ink])[0], bg=pal.bg||S.bg, red=pal.id==="jinsa"?"#23408E":"#9E2F24";
+  const serif='"Gowun Batang","Nanum Myeongjo",serif', sans='"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  x.setTransform(1,0,0,1,0,0); x.fillStyle=bg; x.fillRect(0,0,CW,CH);
+  x.strokeStyle=ink; x.lineWidth=6; x.strokeRect(34,34,CW-68,CH-68); x.lineWidth=1.5; x.strokeRect(50,50,CW-100,CH-100);
+  x.textAlign="center"; x.textBaseline="alphabetic";
+  x.fillStyle=ink; x.globalAlpha=.75; x.font="400 32px "+serif; x.fillText("진로 연계 문양 디자인 · "+curField().name,CW/2,128); x.globalAlpha=1;
+  x.font="700 62px "+serif; x.fillText(C.title||motifName(C.motif),CW/2,208);
+  const A=660, ax=(CW-A)/2, ay=250, m=getMotif(C.motif);
+  const save={motif:S.motif,lw:S.lw}; S.motif=C.motif;
+  x.save();
+  if(C.art==="single"){ S.lw=Math.max(2,save.lw)*3; drawMotifAt(x,m,CW/2,ay+A/2,A*.88,0,1,1,ink,bg); }
+  else if(C.art==="pattern"){ x.beginPath(); x.rect(ax,ay,A,A); x.clip(); x.translate(ax,ay); drawPattern(x,A,A); x.setTransform(1,0,0,1,0,0); x.strokeStyle=ink; x.lineWidth=3; x.strokeRect(ax,ay,A,A); }
+  else if(C.art==="plate"){ const cx=CW/2, cy=ay+A/2, r=A/2-6; x.beginPath(); x.arc(cx,cy,r,0,TAU); x.clip(); x.translate(ax,ay); drawPattern(x,A,A); x.setTransform(1,0,0,1,0,0);
+    x.strokeStyle=ink; x.lineWidth=7; x.beginPath(); x.arc(cx,cy,r-3,0,TAU); x.stroke(); x.lineWidth=2; x.beginPath(); x.arc(cx,cy,r-24,0,TAU); x.stroke(); }
+  else if(C.art==="photo"&&photoCanvas){ const t=tinted(photoCanvas,ink), ar=t.width/t.height; let w=A,h=A; if(ar>1) h=A/ar; else w=A*ar; x.drawImage(t,CW/2-w/2,ay+A/2-h/2,w,h); }
+  x.restore(); S.motif=save.motif; S.lw=save.lw;
+  x.textAlign="center"; x.fillStyle=ink; x.globalAlpha=.7; x.font="400 28px "+serif; x.fillText("문양에 담은 뜻",CW/2,ay+A+62); x.globalAlpha=1;
+  x.font="400 36px "+sans; x.fillStyle="#2A2F3A";
+  wrapText(x,C.meaning||"",CW-220).slice(0,3).forEach((l,i)=>x.fillText(l,CW/2,ay+A+114+i*50));
+  x.font="700 40px "+serif; x.fillStyle=red;
+  x.fillText(C.dream?"나의 꿈 · "+C.dream:"나의 꿈을 적어 보세요",CW/2,CH-120);
+  if(C.name){ x.font="400 28px "+sans; x.fillStyle=ink; x.textAlign="right"; x.fillText(C.name,CW-86,CH-72); }
+}
+$("cDl").onclick=()=>{
+  if(!downloads) return;
+  $("ccv").toBlob(async blob=>{
+    if(!blob){ $("cStatus").textContent="그림을 만들지 못했어요. 다시 눌러 주세요."; return; }
+    try{ await downloads.save({filename:"진로문양카드"+(C.dream?"_"+C.dream:"")+".png",data:blob}); $("cStatus").textContent="저장했어요."; }
+    catch(err){ const code=err&&err.code;
+      if(code==="declined") $("cStatus").textContent="저장을 취소했어요."; else if(code==="rate_limited") $("cStatus").textContent="잠시 뒤에 다시 눌러 주세요.";
+      else { $("cStatus").textContent="이 화면에서는 저장할 수 없어요."; $("cDl").hidden=true; } }
+  },"image/png");
+};
+if(document.fonts){
+  document.fonts.load('700 56px "Noto Serif KR"',"壽福康寧").then(()=>{ buildMotifs(); if(mode==="pattern") render(); if(mode==="card") cDraw(); }).catch(()=>{});
+  document.fonts.ready.then(()=>{ if(mode==="card") cDraw(); });
+}
+
+
+
+/* ---------- 병 조작 ---------- */
+function buildShapes(){
+  const box=$("shapes"); box.innerHTML="";
+  Object.keys(SHAPES).forEach(id=>{ const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=SHAPES[id].name; b.dataset.s=id;
+    b.onclick=()=>{ S.shape=id; pressed(box,"s",id); render(); persist(); }; box.appendChild(b); });
+  pressed(box,"s",S.shape||"maebyeong");
+  $("spin").value=S.spin||0;
+  $("spin").oninput=()=>{ S.spin=+$("spin").value; fastRender=true; queueRender(); };
+  $("spin").onchange=()=>{ fastRender=false; render(); persist(); };
+}
+let rq=0; function queueRender(){ if(rq) return; rq=requestAnimationFrame(()=>{ rq=0; render(); }); }
+let dragX=null;
+cv.addEventListener("pointerdown",e=>{ if(S.view!=="bottle") return; dragX=e.clientX; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener("pointermove",e=>{ if(dragX===null) return; const r=cv.getBoundingClientRect(); S.spin=(((S.spin||0)-(e.clientX-dragX)*360/r.width*.9)%360+360)%360; dragX=e.clientX; $("spin").value=Math.round(S.spin); fastRender=true; queueRender(); });
+const endDrag=()=>{ if(dragX!==null){ dragX=null; fastRender=false; render(); persist(); } };
+cv.addEventListener("pointerup",endDrag); cv.addEventListener("pointercancel",endDrag);
+buildShapes(); cv.classList.toggle("grab",S.view==="bottle");
+
+/* ---------- 병 작품 꾸미기 ---------- */
+const COMP_KEY="pattern-comp-v1";
+function compExample(){ return {shape:"tube",spin:0,sel:-1,pick:"koi",items:[
+  {t:"band",motif:"meander",y:.17,size:22},
+  {t:"motif",motif:"cloud",x:-150,y:.3,size:96,rot:0,flip:false},
+  {t:"motif",motif:"koi",x:0,y:.56,size:270,rot:0,flip:false},
+  {t:"text",text:"거센 물살을\n거슬러 오르는 꿈",x:118,y:.3,size:26,rot:0},
+  {t:"band",motif:"wave",y:.92,size:34}]}; }
+let A=compExample();
+try{ const c=JSON.parse(localStorage.getItem(COMP_KEY)||"null"); if(c&&Array.isArray(c.items)) A=Object.assign(compExample(),c); }catch(e){}
+A.sel=-1;
+function aPersist(){ try{ localStorage.setItem(COMP_KEY,JSON.stringify(A)); }catch(e){} }
+const geomCache={};
+function geom(id){
+  if(geomCache[id]) return geomCache[id];
+  const P=profile(id), SH=SHAPES[id], TW=Math.ceil(TAU*P.rmax)+4, TH=Math.ceil(P.s[P.bot])+8, rv=new Float32Array(TH+1), dead=new Uint8Array(TH+1);
+  for(let y=P.top;y<=P.bot;y++){ const v=Math.round(P.s[y]+4); if(v<=TH){ rv[v]=P.r[y];
+    if(SH.cap&&y<=SH.cap[1]) dead[v]=1; if(SH.plain&&SH.plain.some(q=>y>=q[0]&&y<=q[1])) dead[v]=1; } }
+  let last=0; for(let v=0;v<=TH;v++){ if(rv[v]) last=rv[v]; else rv[v]=last; }
+  for(let v=TH;v>=0;v--){ if(rv[v]) last=rv[v]; else rv[v]=last; }
+  return (geomCache[id]={P,TW,TH,rv,dead});
+}
+const rvAt=(G,v)=>G.rv[Math.max(0,Math.min(G.TH,Math.round(v)))]||G.P.rmax;
+function drawComp(x,TW,TH,G){
+  const bg=bgColor(), ink=inks();
+  x.fillStyle=bg; x.fillRect(0,0,TW,TH);
+  A.items.forEach((it,i)=>{
+    const col=ink[i%ink.length], v=it.y*TH, C=TAU*rvAt(G,v);
+    if(it.t==="band"){
+      const m=getMotif(it.motif), n=Math.max(3,Math.round(C/(it.size*1.12))), step=C/n, half=it.size/2+Math.max(4,it.size*.14);
+      x.strokeStyle=col; x.lineWidth=Math.max(1,S.lw*.7);
+      [-1,1].forEach(g=>{ const y0=v+g*half; x.beginPath(); x.moveTo(0,y0); x.lineTo(TW,y0); x.moveTo(0,y0+g*4); x.lineTo(TW,y0+g*4); x.stroke(); });
+      const k0=Math.ceil(TW/2/step)+1; for(let k=-k0;k<=k0;k++) drawMotifAt(x,m,TW/2+k*step,v,it.size,0,1,1,col,bg);
+    } else if(it.t==="motif"){
+      const m=getMotif(it.motif);
+      [0,-C,C].forEach(off=>drawMotifAt(x,m,TW/2+it.x+off,v,it.size,(it.rot||0)*Math.PI/180,it.flip?-1:1,1,col,bg));
+    } else if(it.t==="text"){
+      const lines=String(it.text||"").split("\n");
+      [0,-C,C].forEach(off=>{ x.save(); x.translate(TW/2+it.x+off,v); x.rotate((it.rot||0)*Math.PI/180);
+        x.fillStyle=col; x.font='700 '+it.size+'px "Gowun Batang","Nanum Myeongjo",serif'; x.textAlign="center"; x.textBaseline="middle";
+        lines.forEach((l,li)=>x.fillText(l,0,(li-(lines.length-1)/2)*it.size*1.3)); x.restore(); });
+    }
+  });
+}
+function itemExtent(it,G){
+  if(it.t==="band") return {w:G.TW,h:it.size+Math.max(8,it.size*.28)+8};
+  if(it.t==="text"){ const lines=String(it.text||"").split("\n"); const ml=Math.max(1,...lines.map(l=>l.length)); return {w:ml*it.size*1.02,h:lines.length*it.size*1.3}; }
+  return {w:it.size,h:it.size};
+}
+const ecv=$("ecv"), ectx=ecv.getContext("2d"), pcv=$("pcv"), p3ctx=pcv.getContext("2d");
+function drawEditor(){
+  const G=geom(A.shape); ecv.width=G.TW; ecv.height=G.TH;
+  drawComp(ectx,G.TW,G.TH,G);
+  const stage=getComputedStyle(document.documentElement).getPropertyValue("--stage").trim()||"#DCE3E4";
+  ectx.save(); ectx.globalAlpha=.78; ectx.fillStyle=stage;
+  for(let v=0;v<G.TH;v++){ const r=G.rv[v], hw=Math.PI*r; ectx.fillRect(0,v,Math.max(0,G.TW/2-hw),1); ectx.fillRect(G.TW/2+hw,v,G.TW,1); }
+  ectx.globalAlpha=.6; for(let v=0;v<G.TH;v++) if(G.dead[v]) ectx.fillRect(0,v,G.TW,1);
+  ectx.restore();
+  ectx.save(); ectx.strokeStyle="rgba(90,100,120,.7)"; ectx.setLineDash([6,6]); ectx.lineWidth=1.2;
+  ectx.beginPath(); ectx.moveTo(G.TW/2,0); ectx.lineTo(G.TW/2,G.TH); ectx.stroke(); ectx.setLineDash([]);
+  ectx.fillStyle="rgba(60,70,90,.85)"; ectx.font='400 15px "Gowun Dodum",sans-serif'; ectx.textAlign="center";
+  ectx.fillText("앞",G.TW/2,18); const rm=G.P.rmax*Math.PI; ectx.fillText("뒤",Math.max(14,G.TW/2-rm+12),18); ectx.fillText("뒤",Math.min(G.TW-14,G.TW/2+rm-12),18);
+  if(A.sel>=0&&A.items[A.sel]){ const it=A.items[A.sel], e=itemExtent(it,G), v=it.y*G.TH, cx=it.t==="band"?G.TW/2:G.TW/2+it.x;
+    ectx.strokeStyle="#C0392B"; ectx.lineWidth=2; ectx.setLineDash([5,4]);
+    if(it.t==="band") ectx.strokeRect(2,v-e.h/2,G.TW-4,e.h); else { ectx.save(); ectx.translate(cx,v); ectx.rotate((it.rot||0)*Math.PI/180); ectx.strokeRect(-e.w/2-4,-e.h/2-4,e.w+8,e.h+8); ectx.restore(); }
+    ectx.setLineDash([]); }
+  ectx.restore();
+}
+let pTimer=0;
+function drawPreview(fast){
+  setupCanvas(pcv,W,fast);
+  const stage=getComputedStyle(document.documentElement).getPropertyValue("--stage").trim()||"#DCE3E4";
+  p3ctx.fillStyle=stage; p3ctx.fillRect(0,0,W,W);
+  const G=geom(A.shape);
+  renderBottleOn(p3ctx,A.shape,A.spin,fast,{id:"comp",key:JSON.stringify([A.items,A.shape,S.palette,S.ink,S.bg,S.lw,S.fill,!!photoCanvas,(S.custom||[]).length]),draw:(x,TW,TH)=>drawComp(x,TW,TH,G)});
+}
+function previewSoon(){ clearTimeout(pTimer); pTimer=setTimeout(()=>{ drawPreview(true); clearTimeout(pTimer); pTimer=setTimeout(()=>drawPreview(false),350); },60); }
+function compRefresh(){ drawEditor(); previewSoon(); aPersist(); }
+
+function buildComp(){
+  const sb=$("aShapes"); sb.innerHTML="";
+  Object.keys(SHAPES).forEach(id=>{ const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=SHAPES[id].name; b.dataset.s=id;
+    b.onclick=()=>{ A.shape=id; pressed(sb,"s",id); compRefresh(); }; sb.appendChild(b); });
+  pressed(sb,"s",A.shape);
+  const mb=$("aMotifs"); mb.innerHTML="";
+  MOTIFS.forEach(m=>{ if(m.id==="custom"&&!(S.custom&&S.custom.length)) return; if(m.id==="photo"&&!photoCanvas) return;
+    const b=document.createElement("button"); b.type="button"; b.className="motif"; b.dataset.m=m.id;
+    const c=document.createElement("canvas"); const sp=document.createElement("span"); sp.textContent=m.name; b.append(c,sp);
+    b.onclick=()=>{ A.pick=m.id; pressed(mb,"m",m.id); }; mb.appendChild(b); drawThumb(c,m.id); });
+  if(!MOTIFS.some(m=>m.id===A.pick)) A.pick="koi";
+  pressed(mb,"m",A.pick);
+  $("aSpin").value=A.spin||0;
+  syncSel();
+}
+function frontX(){ const G=geom(A.shape), r=rvAt(G,.5*G.TH), C=TAU*r; let x=r*(A.spin||0)*Math.PI/180; x=((x+C/2)%C+C)%C-C/2; return x; }
+function addItem(it){ A.items.push(it); A.sel=A.items.length-1; syncSel(); compRefresh(); }
+$("aAddOne").onclick=()=>addItem({t:"motif",motif:A.pick,x:frontX(),y:.5,size:150,rot:0,flip:false});
+$("aAddBand").onclick=()=>{ const ys=A.items.filter(i=>i.t==="band").map(i=>i.y); const cand=[.2,.88,.5,.35,.7].find(y=>!ys.some(q=>Math.abs(q-y)<.08))||.5; addItem({t:"band",motif:A.pick,y:cand,size:30}); };
+$("aAddText").onclick=()=>{ const t=$("aText").value.trim(); if(!t){ $("aStatus").textContent="글귀를 먼저 적어 주세요."; return; } addItem({t:"text",text:t,x:frontX(),y:.3,size:26,rot:0}); $("aText").value=""; $("aStatus").textContent=""; };
+$("aReset").onclick=()=>{ A=compExample(); buildComp(); compRefresh(); };
+$("aClear").onclick=()=>{ A.items=[]; A.sel=-1; syncSel(); compRefresh(); };
+$("aSpin").oninput=()=>{ A.spin=+$("aSpin").value; drawPreview(true); };
+$("aSpin").onchange=()=>{ drawPreview(false); aPersist(); };
+
+function syncSel(){
+  const it=A.items[A.sel]; $("aSelBox").hidden=!it; if(!it) return;
+  const nm=it.t==="text"?"글귀":(MOTIFS.find(m=>m.id===it.motif)||{name:""}).name+(it.t==="band"?" 띠":" 문양");
+  $("aSelTitle").textContent="고른 요소 · "+nm;
+  const sz=$("aSize"); sz.min=it.t==="band"?14:it.t==="text"?12:30; sz.max=it.t==="band"?90:it.t==="text"?90:420; sz.value=it.size; $("aSizeO").textContent=Math.round(it.size);
+  $("aRotRow").hidden=it.t==="band"; $("aRot").value=it.rot||0; $("aRotO").textContent=(it.rot||0)+"°";
+  $("aFlip").hidden=it.t!=="motif"; $("aTextRow").hidden=it.t!=="text"; if(it.t==="text") $("aEdit").value=it.text;
+}
+$("aSize").oninput=()=>{ const it=A.items[A.sel]; if(!it) return; it.size=+$("aSize").value; $("aSizeO").textContent=it.size; drawEditor(); previewSoon(); };
+$("aRot").oninput=()=>{ const it=A.items[A.sel]; if(!it) return; it.rot=+$("aRot").value; $("aRotO").textContent=it.rot+"°"; drawEditor(); previewSoon(); };
+$("aSize").onchange=$("aRot").onchange=aPersist;
+$("aEdit").oninput=()=>{ const it=A.items[A.sel]; if(!it||it.t!=="text") return; it.text=$("aEdit").value; drawEditor(); previewSoon(); };
+$("aFlip").onclick=()=>{ const it=A.items[A.sel]; if(!it) return; it.flip=!it.flip; compRefresh(); };
+$("aDup").onclick=()=>{ const it=A.items[A.sel]; if(!it) return; const c=JSON.parse(JSON.stringify(it)); if(c.t==="band") c.y=Math.min(.97,c.y+.08); else { c.x+=40; c.y=Math.min(.97,c.y+.05); } addItem(c); };
+$("aFront").onclick=()=>{ const it=A.items[A.sel]; if(!it) return; A.items.splice(A.sel,1); A.items.push(it); A.sel=A.items.length-1; compRefresh(); };
+$("aDel").onclick=()=>{ if(A.sel<0) return; A.items.splice(A.sel,1); A.sel=-1; syncSel(); compRefresh(); };
+
+function ePt(e){ const r=ecv.getBoundingClientRect(); return [(e.clientX-r.left)*ecv.width/r.width,(e.clientY-r.top)*ecv.height/r.height]; }
+let eDrag=null;
+ecv.addEventListener("pointerdown",e=>{
+  const G=geom(A.shape), [px,py]=ePt(e); let hit=-1;
+  for(let i=A.items.length-1;i>=0;i--){ const it=A.items[i], v=it.y*G.TH, ex=itemExtent(it,G);
+    if(it.t==="band"){ if(Math.abs(py-v)<=ex.h/2){ hit=i; break; } continue; }
+    const C=TAU*rvAt(G,v); if([0,-C,C].some(off=>Math.abs(px-(G.TW/2+it.x+off))<=ex.w/2+6&&Math.abs(py-v)<=ex.h/2+6)){ hit=i; break; } }
+  A.sel=hit; syncSel(); drawEditor();
+  if(hit>=0){ eDrag={x:px,y:py}; ecv.setPointerCapture(e.pointerId); e.preventDefault(); }
+});
+ecv.addEventListener("pointermove",e=>{
+  if(!eDrag) return; const G=geom(A.shape), [px,py]=ePt(e), it=A.items[A.sel]; if(!it) return;
+  it.y=Math.max(0,Math.min(1,it.y+(py-eDrag.y)/G.TH));
+  if(it.t!=="band"){ const C=TAU*rvAt(G,it.y*G.TH); it.x+=px-eDrag.x; it.x=((it.x+C/2)%C+C)%C-C/2; }
+  eDrag={x:px,y:py}; if(!rq) rq=requestAnimationFrame(()=>{ rq=0; drawEditor(); });
+});
+const eEnd=()=>{ if(eDrag){ eDrag=null; compRefresh(); } };
+ecv.addEventListener("pointerup",eEnd); ecv.addEventListener("pointercancel",eEnd);
+let pDragX=null;
+pcv.addEventListener("pointerdown",e=>{ pDragX=e.clientX; pcv.setPointerCapture(e.pointerId); });
+pcv.addEventListener("pointermove",e=>{ if(pDragX===null) return; const r=pcv.getBoundingClientRect(); A.spin=(((A.spin||0)-(e.clientX-pDragX)*360/r.width*.9)%360+360)%360; pDragX=e.clientX; $("aSpin").value=Math.round(A.spin); if(!rq) rq=requestAnimationFrame(()=>{ rq=0; drawPreview(true); }); });
+const pEnd=()=>{ if(pDragX!==null){ pDragX=null; drawPreview(false); aPersist(); } };
+pcv.addEventListener("pointerup",pEnd); pcv.addEventListener("pointercancel",pEnd);
+document.addEventListener("keydown",e=>{ if(mode!=="comp"||A.sel<0) return; if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return; if(e.key==="Delete"||e.key==="Backspace"){ e.preventDefault(); $("aDel").click(); } });
+
+async function aSave(canvas,name){
+  if(!downloads) return;
+  canvas.toBlob(async blob=>{ if(!blob){ $("aStatus").textContent="그림을 만들지 못했어요."; return; }
+    try{ await downloads.save({filename:name,data:blob}); $("aStatus").textContent="저장했어요."; }
+    catch(err){ const c=err&&err.code; $("aStatus").textContent=c==="declined"?"저장을 취소했어요.":c==="rate_limited"?"잠시 뒤에 다시 눌러 주세요.":"이 화면에서는 저장할 수 없어요."; } },"image/png");
+}
+$("aDl3d").onclick=()=>{ drawPreview(false); aSave(pcv,"병작품_"+SHAPES[A.shape].name+".png"); };
+$("aDlFlat").onclick=()=>{ const G=geom(A.shape), c=document.createElement("canvas"); c.width=G.TW; c.height=G.TH; const x=c.getContext("2d"); drawComp(x,G.TW,G.TH,G);
+  x.strokeStyle="rgba(0,0,0,.35)"; x.lineWidth=1; x.setLineDash([4,4]); x.beginPath(); for(let v=0;v<G.TH;v+=2){ const hw=Math.PI*G.rv[v]; x.moveTo(G.TW/2-hw,v); x.lineTo(G.TW/2-hw,v+2); x.moveTo(G.TW/2+hw,v); x.lineTo(G.TW/2+hw,v+2); } x.stroke();
+  aSave(c,"펼친도안_"+SHAPES[A.shape].name+".png"); };
+
+/* ---------- 시작 ---------- */
+buildViews(); buildMotifs(); buildArrs(); buildPalettes(); buildSliders(); syncColors(); syncCount(); setMode("pattern");
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{});
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",render);
+let rt; window.addEventListener("resize",()=>{clearTimeout(rt); rt=setTimeout(render,150);});
+})();
+</script>
+</body>
+</html>
